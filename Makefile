@@ -41,6 +41,7 @@ all: ${MYTARGETS} ${ISOS}
 	cp datafiles/grub.cfg $@/EFI/BOOT/grub.cfg
 	cp datafiles/grub.conf $@/isolinux/grub.conf
 	cp datafiles/isolinux.cfg $@/isolinux/isolinux.cfg
+	cp README.md $@/wekabits
 
 
 
@@ -52,7 +53,7 @@ clean:
 docker-ce:
 	@echo Updating docker-ce
 	reposync --repo=docker-ce-stable --download-path $@ --norepopath --newest-only
-	createrepo docker-ce-stable
+	createrepo docker-ce
 	touch $@
 
 upload:
