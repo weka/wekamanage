@@ -1,0 +1,55 @@
+#! /usr/bin/bash
+
+# weka-install - install weka on bootup of a new server, and configure misc items that can't be done in kickstart
+# working dir should be /opt/wekabits   (if put in /opt/weka, it would be removed with wekawhacker)
+
+cd ..
+tar xvf wekabits/local-weka-home-bundle.tgz
+tar xvf wekabits/weka-mon-*.tgz
+
+# unpack tools
+tar xvf wekabits/tools-*.tar.gz
+
+# install weka-mon
+cd weka-mon*
+./install.sh
+
+cd ../wekabits
+
+### other weka installation items
+
+# configure firewall
+firewall-cmd --set-default-zone=public  # other options are set in the kickstart
+
+# set up ssh keys for root and weka (predefined in subdirs of current directory)
+echo Working in $PWD...
+mkdir ~root/.ssh
+chmod 700 ~root/.ssh
+cp root/* ~root/.ssh
+chown -R root ~root/.ssh
+chmod 600 ~root/.ssh/id_rsa
+
+mkdir ~weka/.ssh
+chmod 700 ~weka/.ssh
+cp weka/* ~weka/.ssh
+chown -R weka ~weka/.ssh
+chmod 600 ~weka/.ssh/id_rsa
+
+# this is a bit of a hack - there should be an RPM somewhere in the repo that sets this stuff?
+# should we change the cockpit port from 9090 to something else?
+#mkdir -p /usr/share/cockpit/branding/weka
+#cp weka-cockpit-branding/* /usr/share/cockpit/branding/weka
+
+echo 'exclude=kernel* rocky-release*' >> /etc/dnf/dnf.conf
+
+# disable systemd unit that starts this script so it never runs again
+systemctl disable weka-firstboot.service
+
+# start cockpit
+systemctl enable --now cockpit.socket
+
+echo >> /etc/motd
+echo "============================" >> /etc/motd
+echo "This is a BETA release - for Testing ONLY - NOT for Production use" >> /etc/motd
+echo "============================" >> /etc/motd
+echo >> /etc/motd
