@@ -1,0 +1,13 @@
+[Unit]
+Description="Install Weka"
+
+[Service]
+User=root
+WorkingDirectory=/opt/wekabits
+ExecStart=/opt/wekabits/weka-install
+#Restart=never
+
+[Install]
+WantedBy=multi-user.target
+After=docker.service network-online.target
+Wants=network-online.target

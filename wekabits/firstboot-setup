@@ -1,0 +1,7 @@
+
+
+# setup Weka firstboot env
+
+cp /opt/wekabits/weka-firstboot.service /etc/systemd/system
+systemctl enable weka-firstboot.service
+
