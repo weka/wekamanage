@@ -1,0 +1,63 @@
+
+.PHONY: all clean Makefile Linux-full/BaseOS Linux-full/AppStream Weka
+.DEFAULT_GOAL:=all
+
+# to do: download iso from http://dl.rockylinux.org/vault/rocky/8.6/isos/x86_64/Rocky-8.6-x86_64-dvd1.iso rather than expecting it to be there
+SOURCEISO=../Rocky-8.6-LTS/Rocky-8.6-LTS-beta.iso
+#SOURCEISO=../Rocky-8.6-LTS/Rocky-8.6-LTS-dvd1.iso
+
+SUFFIX=-beta1
+
+LABEL := $(shell file ${SOURCEISO} | cut -d\' -f2)
+#WEKAVERSIONS=$(wildcard weka-*.tar)
+ISOS=wekamanage${SUFFIX}.iso
+MYTARGETS=$(ISOS:%.iso=%.dir)
+
+all: ${MYTARGETS} ${ISOS} 
+	@echo making all $<
+	@echo ISOS is ${ISOS}
+	@echo TARGETS is ${MYTARGETS}
+
+%${SUFFIX}.iso: %${SUFFIX}.dir
+	@echo Building ISO for $< target is $@
+	@echo LABEL is ${LABEL}
+	mkisofs -o $@ -quiet -b isolinux/isolinux.bin -J -R -l -c isolinux/boot.cat -no-emul-boot \
+		-boot-load-size 4 -boot-info-table -eltorito-alt-boot -e images/efiboot.img --joliet-long \
+		-no-emul-boot -graft-points -V ${LABEL} $<
+	implantisomd5 $@
+
+%${SUFFIX}.dir: docker-ce ${SOURCEISO}
+	@echo Creating build directory for $@ 
+	mkdir -p source_iso
+	mount ${SOURCEISO} source_iso
+	cp -r source_iso $@
+	umount source_iso
+	cp -r wekabits $@
+	#cp -r Weka $@	- now has weka on it already
+	cp -r docker-ce $@
+	cp datafiles/ks.cfg $@
+	cp -r python-wheels $@
+	echo Install kickstart
+	cp datafiles/grub.cfg $@/EFI/BOOT/grub.cfg
+	cp datafiles/grub.conf $@/isolinux/grub.conf
+	cp datafiles/isolinux.cfg $@/isolinux/isolinux.cfg
+
+
+
+clean:
+	@echo making clean
+	rm -rf ${ISOS} ${MYTARGETS}
+
+
+docker-ce:
+	@echo Updating docker-ce
+	reposync --repo=docker-ce-stable --download-path $@ --norepopath --newest-only
+	createrepo docker-ce-stable
+	touch $@
+
+upload:
+	./aws_upload_iso
+
+dist:
+	scp ${ISOS} whorfin:/sns/samba_share
+	scp ${ISOS} zweka07:/opt
