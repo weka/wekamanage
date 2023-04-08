@@ -6,7 +6,7 @@
 SOURCEISO=../Rocky-8.6-LTS/Rocky-8.6-LTS-beta.iso
 #SOURCEISO=../Rocky-8.6-LTS/Rocky-8.6-LTS-dvd1.iso
 
-SUFFIX=-beta1
+SUFFIX=-beta2
 
 LABEL := $(shell file ${SOURCEISO} | cut -d\' -f2)
 #WEKAVERSIONS=$(wildcard weka-*.tar)
@@ -35,7 +35,8 @@ all: ${MYTARGETS} ${ISOS}
 	cp -r wekabits $@
 	#cp -r Weka $@	- now has weka on it already
 	cp -r docker-ce $@
-	cp datafiles/ks.cfg $@
+	#cp datafiles/ks.cfg $@
+	cp datafiles/partmap $@
 	cp -r python-wheels $@
 	echo Install kickstart
 	cp datafiles/grub.cfg $@/EFI/BOOT/grub.cfg
@@ -59,7 +60,7 @@ docker-ce:
 	touch $@
 
 upload:
-	./aws_upload_iso
+	./aws_upload_iso ${ISOS}
 
 dist:
 	scp ${ISOS} whorfin:/sns/samba_share
