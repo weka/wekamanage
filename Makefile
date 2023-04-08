@@ -6,7 +6,7 @@
 SOURCEISO=../Rocky-8.6-LTS/Rocky-8.6-LTS-beta.iso
 #SOURCEISO=../Rocky-8.6-LTS/Rocky-8.6-LTS-dvd1.iso
 
-SUFFIX=-beta1
+SUFFIX=-beta2
 
 LABEL := $(shell file ${SOURCEISO} | cut -d\' -f2)
 #WEKAVERSIONS=$(wildcard weka-*.tar)
@@ -42,6 +42,7 @@ all: ${MYTARGETS} ${ISOS}
 	cp datafiles/grub.conf $@/isolinux/grub.conf
 	cp datafiles/isolinux.cfg $@/isolinux/isolinux.cfg
 	cp README.md $@/wekabits
+	touch $@
 
 
 
@@ -52,6 +53,7 @@ clean:
 
 docker-ce:
 	@echo Updating docker-ce
+	mkdir -p docker-ce
 	reposync --repo=docker-ce-stable --download-path $@ --norepopath --newest-only
 	createrepo docker-ce
 	touch $@
