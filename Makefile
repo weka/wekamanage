@@ -21,6 +21,7 @@ all: ${MYTARGETS} ${ISOS}
 %${SUFFIX}.iso: %${SUFFIX}.dir
 	@echo Building ISO for $< target is $@
 	@echo LABEL is ${LABEL}
+	date > $</.weka-buildstamp
 	mkisofs -o $@ -quiet -b isolinux/isolinux.bin -J -R -l -c isolinux/boot.cat -no-emul-boot \
 		-boot-load-size 4 -boot-info-table -eltorito-alt-boot -e images/efiboot.img --joliet-long \
 		-no-emul-boot -graft-points -V ${LABEL} $<
@@ -37,6 +38,9 @@ all: ${MYTARGETS} ${ISOS}
 	cp -r docker-ce $@
 	#cp datafiles/ks.cfg $@
 	cp datafiles/partmap $@
+	cp datafiles/ks-packagelist $@
+	cp datafiles/ks-local-repos $@
+	cp datafiles/ks-postinstall $@
 	cp -r python-wheels $@
 	echo Install kickstart
 	cp datafiles/grub.cfg $@/EFI/BOOT/grub.cfg
@@ -64,4 +68,5 @@ upload:
 
 dist:
 	scp ${ISOS} whorfin:/sns/samba_share
+	scp ${ISOS} whorfin:/var/ansible-install/bigfiles
 	scp ${ISOS} zweka07:/opt

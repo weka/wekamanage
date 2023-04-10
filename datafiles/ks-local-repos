@@ -1,0 +1,1 @@
+repo --name="docker-ce" --baseurl=file:///run/install/repo/docker-ce

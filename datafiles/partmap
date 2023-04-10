@@ -1,3 +1,4 @@
+# TYPE NAME PART FSTYPE SIZE OPTIONS
 raid boot /boot xfs 300	--asprimary
 raid bootefi /boot/efi efi 300
 raid root / xfs 50000
