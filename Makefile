@@ -6,7 +6,7 @@
 SOURCEISO=../Rocky-8.6-LTS/Rocky-8.6-LTS-beta.iso
 #SOURCEISO=../Rocky-8.6-LTS/Rocky-8.6-LTS-dvd1.iso
 
-SUFFIX=-beta2
+SUFFIX=-beta3
 
 LABEL := $(shell file ${SOURCEISO} | cut -d\' -f2)
 #WEKAVERSIONS=$(wildcard weka-*.tar)
@@ -21,7 +21,6 @@ all: ${MYTARGETS} ${ISOS}
 %${SUFFIX}.iso: %${SUFFIX}.dir
 	@echo Building ISO for $< target is $@
 	@echo LABEL is ${LABEL}
-	date > $</.weka-buildstamp
 	mkisofs -o $@ -quiet -b isolinux/isolinux.bin -J -R -l -c isolinux/boot.cat -no-emul-boot \
 		-boot-load-size 4 -boot-info-table -eltorito-alt-boot -e images/efiboot.img --joliet-long \
 		-no-emul-boot -graft-points -V ${LABEL} $<
@@ -48,6 +47,7 @@ all: ${MYTARGETS} ${ISOS}
 	cp datafiles/isolinux.cfg $@/isolinux/isolinux.cfg
 	cp README.md $@/wekabits
 	touch $@
+	date > $@/.weka-buildstamp
 
 
 
