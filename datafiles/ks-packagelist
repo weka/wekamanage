@@ -28,10 +28,13 @@ socat
 open-vm-tools
 librdmacm
 iptables-ebtables
-rocky-release
-rocky-repos
-rocky-gpg-keys
+#rocky-release
+#rocky-repos
+#rocky-gpg-keys
 ansible-core
+weka-rocky-lts86-release
+weka-rocky-lts86-repos
+rocky-gpg-keys
 
 # docker
 containerd.io
