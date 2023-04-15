@@ -68,5 +68,4 @@ upload:
 
 dist:
 	scp ${ISOS} whorfin:/sns/samba_share
-	scp ${ISOS} whorfin:/var/ansible-install/bigfiles
 	scp ${ISOS} zweka07:/opt

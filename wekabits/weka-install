@@ -48,8 +48,10 @@ systemctl disable weka-firstboot.service
 # start cockpit
 systemctl enable --now cockpit.socket
 
-echo >> /etc/motd
-echo "============================" >> /etc/motd
-echo "This is a BETA release - for Testing ONLY - NOT for Production use" >> /etc/motd
-echo "============================" >> /etc/motd
-echo >> /etc/motd
+# Turn off account management in Cockpit (so it's more secure)
+#cp override.json /usr/share/cockpit/users/
+# copy our local filesystem overrides into place..
+cp -r usr /
+
+# install motd (for betas, it's a warning, otherwise a welcome message)
+cp motd /etc/
