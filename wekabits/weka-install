@@ -4,17 +4,15 @@
 # working dir should be /opt/wekabits   (if put in /opt/weka, it would be removed with wekawhacker)
 
 cd ..
-tar xvf wekabits/local-weka-home-bundle.tgz
-tar xvf wekabits/weka-mon-*.tgz
-
-# unpack tools
-tar xvf wekabits/tools-*.tar.gz
+tar xvf wekabits/local-weka-home.tgz
+tar xvf wekabits/weka-mon.tgz
+tar xvf wekabits/snaptool.tgz
+tar xvf wekabits/tools.tgz
 
 # install weka-mon
-cd weka-mon*
+pushd weka-mon
 ./install.sh
-
-cd ../wekabits
+popd
 
 ### other weka installation items
 

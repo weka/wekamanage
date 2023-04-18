@@ -1,0 +1,19 @@
+#! /usr/bin/env bash
+
+# download and repackage the tools repo tarball (dir name is tied to version - remove version dep)
+
+# download the latest tarball
+TMPDIR=$(mktemp -d)
+curl -Lo $TMPDIR/temp.tgz $(curl -L https://api.github.com/repos/weka/tools/releases/latest | jq .tarball_url | sed -e 's/^"//' -e 's/"$//')
+
+pushd $TMPDIR
+tar xvf temp.tgz
+
+DIRNAME=$(echo weka-tools*)
+
+mv $DIRNAME tools
+tar cvzf tools.tgz tools
+
+popd
+cp $TMPDIR/tools.tgz wekabits
+rm -rf $TMPDIR
