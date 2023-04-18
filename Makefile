@@ -26,7 +26,7 @@ all: ${MYTARGETS} ${ISOS}
 		-no-emul-boot -graft-points -V ${LABEL} $<
 	implantisomd5 $@
 
-%${SUFFIX}.dir: docker-ce ${SOURCEISO}
+%${SUFFIX}.dir: docker-ce ${SOURCEISO} wekabits/tools.tgz wekabits/snaptool.tgz wekabits/weka-mon.tgz wekabits/local-weka-home.tgz
 	@echo Creating build directory for $@ 
 	mkdir -p source_iso
 	mount ${SOURCEISO} source_iso
@@ -49,7 +49,17 @@ all: ${MYTARGETS} ${ISOS}
 	touch $@
 	date > $@/.weka-buildstamp
 
+wekabits/tools.tgz:
+	./repack_tools
 
+wekabits/snaptool.tgz:
+	cd wekabits; curl -LO https://weka-repo-test.s3.us-west-2.amazonaws.com/snaptool.tgz
+
+wekabits/weka-mon.tgz:
+	cd wekabits; curl -LO https://weka-repo-test.s3.us-west-2.amazonaws.com/weka-mon.tgz
+
+wekabits/local-weka-home.tgz:
+	cd wekabits; curl -LO https://weka-repo-test.s3.us-west-2.amazonaws.com/local-weka-home.tgz
 
 clean:
 	@echo making clean
