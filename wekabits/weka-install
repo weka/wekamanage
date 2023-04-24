@@ -3,7 +3,7 @@
 # weka-install - install weka on bootup of a new server, and configure misc items that can't be done in kickstart
 # working dir should be /opt/wekabits   (if put in /opt/weka, it would be removed with wekawhacker)
 
-cd ..
+pushd ..
 tar xvf wekabits/local-weka-home.tgz
 tar xvf wekabits/weka-mon.tgz
 tar xvf wekabits/snaptool.tgz
@@ -12,6 +12,12 @@ tar xvf wekabits/tools.tgz
 # install weka-mon
 pushd weka-mon
 ./install.sh
+popd
+
+# prep local weka home
+pushd local-weka-home/wekahome_offline
+./update_config.sh
+popd
 popd
 
 ### other weka installation items
