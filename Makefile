@@ -37,9 +37,9 @@ all: ${MYTARGETS} ${ISOS}
 	cp -r docker-ce $@
 	#cp datafiles/ks.cfg $@
 	cp datafiles/partmap $@
-	cp datafiles/ks-packagelist $@
-	cp datafiles/ks-local-repos $@
-	cp datafiles/ks-postinstall $@
+	cp datafiles/ks-* $@
+	#cp datafiles/ks-local-repos $@
+	#cp datafiles/ks-postinstall $@
 	cp -r python-wheels $@
 	echo Install kickstart
 	cp datafiles/grub.cfg $@/EFI/BOOT/grub.cfg
@@ -77,5 +77,5 @@ upload:
 	./aws_upload_iso ${ISOS}
 
 dist:
-	scp ${ISOS} whorfin:/sns/samba_share
 	scp ${ISOS} zweka07:/opt
+	#scp ${ISOS} whorfin:/sns/samba_share
