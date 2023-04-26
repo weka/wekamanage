@@ -1,1 +1,1 @@
-firewall --enabled --ssh --port=3000:tcp --port=6443:tcp --port=10259:tcp --port=10257:tcp --port=10250:tcp --port=2379:tcp --port=2380:tcp --port=80:tcp --port=443:tcp --port=3000:tcp --port=9090:tcp --port=9093:tcp --port=8090:tcp --port=8501:tcp --port=8101:tcp
+firewall --enabled --ssh --port=3000:tcp --port=6443:tcp --port=10259:tcp --port=10257:tcp --port=10250:tcp --port=2379:tcp --port=2380:tcp --port=80:tcp --port=443:tcp --port=9090:tcp --port=9093:tcp --port=8090:tcp --port=8501:tcp --port=8101:tcp
