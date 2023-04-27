@@ -1,0 +1,125 @@
+alertdispatcher:
+  email_link_domain_name: localhost
+apiforwarding:
+  api_forwarding_url: https://api.home.weka.io
+  enabled: false
+apiservice:
+  autoscaling:
+    enabled: true
+    maxReplicas: 5
+    minReplicas: 1
+    targetCPUUtilizationPercentage: 70
+    targetMemoryUtilizationPercentage: 80
+  replica_count: 2
+core:
+  credentials:
+    admin_login_enabled: true
+diags_handler:
+  autoscaling:
+    enabled: true
+    maxReplicas: 10
+    minReplicas: 1
+    targetCPUUtilizationPercentage: 70
+    targetMemoryUtilizationPercentage: 80
+  replica_count: 1
+domain: 0.0.0.0
+event_db_0:
+  persistence:
+    storageClass: local-path
+frontend:
+  autoscaling:
+    enabled: true
+    maxReplicas: 5
+    minReplicas: 1
+  replica_count: 1
+garbage_collection:
+  events:
+    max_age: 30d
+  support_files:
+    max_age: 365d
+global:
+  ingress:
+    annotations:
+      nginx.ingress.kubernetes.io/proxy-body-size: 1000m
+      nginx.ingress.kubernetes.io/proxy-buffering: 'off'
+      nginx.ingress.kubernetes.io/ssl-redirect: 'false'
+    domain: 0.0.0.0
+    nginx:
+      tls:
+        cert: '-----BEGIN CERTIFICATE-----
+
+          <cert-data-comes-here>
+
+          -----END CERTIFICATE-----
+
+          '
+        cn: server.example.com
+        enabled: false
+        key: '-----BEGIN PRIVATE KEY-----
+
+          <private-key-data-comes-here>
+
+          -----END PRIVATE KEY-----
+
+          '
+  persistence:
+    DBstorageClass: local-path
+  support_files:
+    persistence:
+      enabled: true
+      storageClass: local-path
+    size: 15Gi
+grafana:
+  persistence:
+    storageClass: local-path
+main_db:
+  persistence:
+    storageClass: local-path
+nats:
+  maxStorage:
+    events: 2147483000
+    forwardingHigh: 3221225000
+    forwardingLow: 10737410000
+    stats: 10737410000
+  nats:
+    jetstream:
+      fileStorage:
+        size: 30Gi
+        storageDirectory: /data
+smtp_user_data:
+  sender_email: weka-home-noreply@weka.io
+  sender_email_name: Weka Home
+  smtp_host: 1.1.1.1
+  smtp_insecure_tls: true
+  smtp_password: weka.io123
+  smtp_port: '25'
+  smtp_username: email_user
+statistics:
+  autoscaling:
+    enabled: true
+    maxReplicas: 10
+    minReplicas: 1
+    targetCPUUtilizationPercentage: 70
+    targetMemoryUtilizationPercentage: 80
+  replica_count: 2
+statsdb:
+  vminsert:
+    autoscaling:
+      enabled: true
+      maxReplicas: 5
+      minReplicas: 1
+      targetCPUUtilizationPercentage: 70
+      targetMemoryUtilizationPercentage: 80
+    replica_count: 2
+  vmselect:
+    persistentVolume:
+      storageClass: local-path
+    replica_count: 2
+  vmstorage:
+    persistentVolume:
+      storageClass: local-path
+    replica_count: 3
+    retentionPeriod: 7d
+support_db:
+  persistence:
+    storageClass: local-path
