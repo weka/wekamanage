@@ -1,12 +1,12 @@
 
-.PHONY: all clean Makefile Linux-full/BaseOS Linux-full/AppStream Weka
+.PHONY: all clean Makefile Linux-full/BaseOS Linux-full/AppStream Weka wekabits/wms-gui.tgz
 .DEFAULT_GOAL:=all
 
 # to do: download iso from http://dl.rockylinux.org/vault/rocky/8.6/isos/x86_64/Rocky-8.6-x86_64-dvd1.iso rather than expecting it to be there
 SOURCEISO=../Rocky-8.6-LTS/Rocky-8.6-LTS-beta.iso
 #SOURCEISO=../Rocky-8.6-LTS/Rocky-8.6-LTS-dvd1.iso
 
-SUFFIX=-beta6
+SUFFIX=-beta6.1
 
 LABEL := $(shell file ${SOURCEISO} | cut -d\' -f2)
 #WEKAVERSIONS=$(wildcard weka-*.tar)
@@ -66,7 +66,7 @@ wekabits/local-weka-home.tgz:
 
 clean:
 	@echo making clean
-	rm -rf ${ISO} ${MYTARGETS}
+	rm -rf ${ISO} ${DIR}
 
 
 docker-ce:

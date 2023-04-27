@@ -4,7 +4,8 @@ if [ ! -d venv ]; then
 	/usr/bin/python3.11 -m venv venv
 
 	source venv/bin/activate
-	pip3 install local_wheels/*
+	# *.* excludes the makefile. :facepalm:
+	pip3 install local_wheels/*.*
 else
 	source venv/bin/activate
 fi

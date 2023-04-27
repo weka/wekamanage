@@ -3,5 +3,5 @@
 .DEFAULT_GOAL:=all
 
 all:
-	pip3 download ../requirements.txt
+	pip3 download -r ../requirements.txt
 
