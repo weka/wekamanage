@@ -1,3 +1,4 @@
 requests~=2.28.2
 streamlit~=1.21.0
 PyYAML~=6.0
+streamlit_javascript

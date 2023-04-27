@@ -1,4 +1,12 @@
 #! /usr/bin/env bash
 
-source venv/bin/activate
+if [ ! -d venv ]; then 
+	/usr/bin/python3.11 -m venv venv
+
+	source venv/bin/activate
+	pip3 install local_wheels/*
+else
+	source venv/bin/activate
+fi
+
 streamlit run Landing_Page.py

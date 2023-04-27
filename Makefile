@@ -6,19 +6,21 @@
 SOURCEISO=../Rocky-8.6-LTS/Rocky-8.6-LTS-beta.iso
 #SOURCEISO=../Rocky-8.6-LTS/Rocky-8.6-LTS-dvd1.iso
 
-SUFFIX=-beta5
+SUFFIX=-beta6
 
 LABEL := $(shell file ${SOURCEISO} | cut -d\' -f2)
 #WEKAVERSIONS=$(wildcard weka-*.tar)
-ISOS=wekamanage${SUFFIX}.iso
-MYTARGETS=$(ISOS:%.iso=%.dir)
+ISO=wekamanage${SUFFIX}.iso
+DIR=$(ISO:%.iso=%.dir)
 
-all: ${MYTARGETS} ${ISOS} 
+all: ${DIR} ${ISO} 
 	@echo making all $<
-	@echo ISOS is ${ISOS}
-	@echo TARGETS is ${MYTARGETS}
+	@echo ISO is ${ISO}
+	@echo TARGETS is ${DIR}
 
-%${SUFFIX}.iso: %${SUFFIX}.dir
+#%wekamanage${SUFFIX}.iso: %wekamanage${SUFFIX}.dir
+
+${ISO}: ${DIR}
 	@echo Building ISO for $< target is $@
 	@echo LABEL is ${LABEL}
 	mkisofs -o $@ -quiet -b isolinux/isolinux.bin -J -R -l -c isolinux/boot.cat -no-emul-boot \
@@ -26,7 +28,7 @@ all: ${MYTARGETS} ${ISOS}
 		-no-emul-boot -graft-points -V ${LABEL} $<
 	implantisomd5 $@
 
-%${SUFFIX}.dir: docker-ce ${SOURCEISO} wekabits/tools.tgz wekabits/weka-mon.tgz wekabits/local-weka-home.tgz wekabits/gui.tar
+${DIR}: docker-ce ${SOURCEISO} wekabits/tools.tgz wekabits/weka-mon.tgz wekabits/local-weka-home.tgz wekabits/wms-gui.tgz
 	@echo Creating build directory for $@ 
 	mkdir -p source_iso
 	mount ${SOURCEISO} source_iso
@@ -55,15 +57,16 @@ wekabits/tools.tgz:
 wekabits/weka-mon.tgz:
 	cd wekabits; curl -LO https://weka-repo-test.s3.us-west-2.amazonaws.com/weka-mon.tgz
 
-wekabits/gui.tgz:
-	cd wekabits; curl -LO https://weka-repo-test.s3.us-west-2.amazonaws.com/gui.tgz
+wekabits/wms-gui.tgz: 
+	$(MAKE) -C wms-gui
+	tar cvzf $@ wms-gui
 
 wekabits/local-weka-home.tgz:
 	cd wekabits; curl -LO https://weka-repo-test.s3.us-west-2.amazonaws.com/local-weka-home.tgz
 
 clean:
 	@echo making clean
-	rm -rf ${ISOS} ${MYTARGETS}
+	rm -rf ${ISO} ${MYTARGETS}
 
 
 docker-ce:
@@ -74,8 +77,8 @@ docker-ce:
 	touch $@
 
 upload:
-	./aws_upload_iso ${ISOS}
+	./aws_upload_iso ${ISO}
 
 dist:
-	scp ${ISOS} zweka07:/opt
-	#scp ${ISOS} whorfin:/sns/samba_share
+	scp ${ISO} zweka07:/opt
+	scp ${ISO} whorfin:/sns/samba_share
