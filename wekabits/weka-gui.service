@@ -1,13 +1,13 @@
 [Unit]
-Description="Install Weka"
+Description="WEKA Management Station GUI"
 After=docker.service network-online.target
 Wants=network-online.target
 
 [Service]
 User=root
-WorkingDirectory=/opt/wekabits
-ExecStart=/opt/wekabits/weka-install
-#Restart=never
+WorkingDirectory=/opt/gui
+ExecStart=/opt/gui/start_gui
+Restart=always
 
 [Install]
 WantedBy=multi-user.target

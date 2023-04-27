@@ -26,7 +26,7 @@ all: ${MYTARGETS} ${ISOS}
 		-no-emul-boot -graft-points -V ${LABEL} $<
 	implantisomd5 $@
 
-%${SUFFIX}.dir: docker-ce ${SOURCEISO} wekabits/tools.tgz wekabits/snaptool.tgz wekabits/weka-mon.tgz wekabits/local-weka-home.tgz
+%${SUFFIX}.dir: docker-ce ${SOURCEISO} wekabits/tools.tgz wekabits/weka-mon.tgz wekabits/local-weka-home.tgz wekabits/gui.tar
 	@echo Creating build directory for $@ 
 	mkdir -p source_iso
 	mount ${SOURCEISO} source_iso
@@ -37,9 +37,9 @@ all: ${MYTARGETS} ${ISOS}
 	cp -r docker-ce $@
 	#cp datafiles/ks.cfg $@
 	cp datafiles/partmap $@
-	cp datafiles/ks-packagelist $@
-	cp datafiles/ks-local-repos $@
-	cp datafiles/ks-postinstall $@
+	cp datafiles/ks-* $@
+	#cp datafiles/ks-local-repos $@
+	#cp datafiles/ks-postinstall $@
 	cp -r python-wheels $@
 	echo Install kickstart
 	cp datafiles/grub.cfg $@/EFI/BOOT/grub.cfg
@@ -52,11 +52,11 @@ all: ${MYTARGETS} ${ISOS}
 wekabits/tools.tgz:
 	./repack_tools
 
-wekabits/snaptool.tgz:
-	cd wekabits; curl -LO https://weka-repo-test.s3.us-west-2.amazonaws.com/snaptool.tgz
-
 wekabits/weka-mon.tgz:
 	cd wekabits; curl -LO https://weka-repo-test.s3.us-west-2.amazonaws.com/weka-mon.tgz
+
+wekabits/gui.tgz:
+	cd wekabits; curl -LO https://weka-repo-test.s3.us-west-2.amazonaws.com/gui.tgz
 
 wekabits/local-weka-home.tgz:
 	cd wekabits; curl -LO https://weka-repo-test.s3.us-west-2.amazonaws.com/local-weka-home.tgz
@@ -77,5 +77,5 @@ upload:
 	./aws_upload_iso ${ISOS}
 
 dist:
-	scp ${ISOS} whorfin:/sns/samba_share
 	scp ${ISOS} zweka07:/opt
+	#scp ${ISOS} whorfin:/sns/samba_share

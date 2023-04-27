@@ -8,16 +8,26 @@ tar xvf wekabits/local-weka-home.tgz
 tar xvf wekabits/weka-mon.tgz
 tar xvf wekabits/snaptool.tgz
 tar xvf wekabits/tools.tgz
+tar xvf wekabits/gui.tgz
+pushd gui
+chmod +x start_gui
+tar xvf venv.tgz
+popd
+
+cp /opt/wekabits/weka-gui.service /etc/systemd/system
+systemctl enable --now weka-gui.service
 
 # install weka-mon
 pushd weka-mon
 ./install.sh
+sed -i 's,${PWD},/opt/weka-mon,' docker-compose.yml
 popd
 
 # prep local weka home
 pushd local-weka-home/wekahome_offline
 ./update_config.sh
 popd
+
 popd
 
 ### other weka installation items
@@ -59,3 +69,7 @@ cp -r usr /
 
 # install motd (for betas, it's a warning, otherwise a welcome message)
 cp motd /etc/
+
+firewall-cmd --add-port 3000/tcp --add-port 8151/tcp --add-port 8090/tcp --add-port 445/tcp --add-port 80/tcp -permenant
+firewall-cmd --remove-port=14000-15000/tcp
+
