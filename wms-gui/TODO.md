@@ -15,6 +15,9 @@
     2. ensure they're all backends
 11. Enhance log collection with a configuration file that has the log collection commands in it and a framework for "executing" it.
     1. add support for LWH/k8s logs, syslog, and the like
+12. Separate SMTP configuration from LWH config - it applies to both WEKAmon and LWH.  Update the config of both tools
+13. Perhaps provide start/stop/restart of the subsystems separately from configuring them?
+    1. Have a "Save Config" and separate Install/Start/Stop/Restart buttons (as appropriate) on the config pages?
 
 
 * turn apps.py into an API so it runs outside of streamlit?  This might make container-izing this easier.
