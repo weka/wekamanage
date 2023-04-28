@@ -46,8 +46,8 @@ if st.session_state["authentication_status"]:
                                         'snaptool']:
                             run(f'{docker_logs} {service} > {st.session_state.logfile_dir}/{service}.log', shell=True)
 
-                        # journalctl -u weka-gui.service > weka_gui.log # collect logs from streamlit service
-                        run(f'journalctl -u weka-gui.service > {st.session_state.logfile_dir}/weka_gui.log', shell=True)
+                        # journalctl -u wms-gui > wms_gui.log # collect logs from streamlit service
+                        run(f'journalctl -u wms-gui > {st.session_state.logfile_dir}/wms_gui.log', shell=True)
 
                         # tar cvzf {st.session_state.logfile_name} {st.session_state.logfile_dir}
                         with pushd('/tmp'):

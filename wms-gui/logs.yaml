@@ -1,0 +1,33 @@
+# YAML file describing how to collect logs
+k8s:
+  command:
+  - "systemctl status kubelet"
+  - "journalctl -xeu kubelet"
+  - "minikube status"
+  - "kubectl get pod -A -o wide"
+  - "kubectl get nodes"
+  - "kubectl cluster-info"
+  - "kubectl cluster-info dump"
+  - "kubectl get pods -A"
+  - "kubectl get services -A"
+  - "kubectl get ingress -n home-weka-io"
+  - "kubectl describe ingress -n home-weka-io"
+  - "helm ls -n home-weka-io"
+  - "kubectl get services -n home-weka-io"
+  - "kubectl get services -n ingress-nginx"
+  - "kubectl get services -n kube-system"
+  - "kubectl get services -n kubernetes-dashboard"
+  - "kubectl describe homewekaio-main-db"
+  - "kubectl logs homewekaio-main-db"
+  - "minikube logs"
+  for_each: "kubectl get pods --all-namespaces -l app.kubernetes.io/instance=homewekaio --no-headers | awk '{print $2}'"
+  for_each_command: "kubectl logs -n home-weka-io {each} --all-containers=true --timestamps=true --prefix=true"
+WEKAmon:
+  directory: /opt/weka-mon
+  for_each: export,quota-export,grafana,prometheus,alertmanager,loki,snaptool
+  command: "docker compose logs -t --until -2m {each}"
+journalctl:
+  command: "journalctl -u"
+  services: wms-gui
+general:
+  files: /var/log/messages
