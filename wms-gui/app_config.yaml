@@ -1,0 +1,9 @@
+config_files:
+  passwords_file: passwd.yaml
+  lwh_config_file: /root/.config/wekahome/config.yaml
+  lwh_dir: /opt/local-weka-home
+  clusters_config_file: clusters.yaml
+  weka_mon_dir: /opt/weka-mon
+  export_config_file: /opt/weka-mon/export.yml
+  quota_export_config_file: /opt/weka-mon/quota-export.yml
+  snaptool_config_file: /opt/weka-mon/snaptool.yml

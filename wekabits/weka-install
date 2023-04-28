@@ -8,14 +8,14 @@ tar xvf wekabits/local-weka-home.tgz
 tar xvf wekabits/weka-mon.tgz
 tar xvf wekabits/snaptool.tgz
 tar xvf wekabits/tools.tgz
-tar xvf wekabits/gui.tgz
-pushd gui
-chmod +x start_gui
-tar xvf venv.tgz
-popd
+tar xvf wekabits/wms-gui.tgz
+#pushd gui
+#chmod +x start_gui
+#tar xvf venv.tgz
+#popd
 
-cp /opt/wekabits/weka-gui.service /etc/systemd/system
-systemctl enable --now weka-gui.service
+cp /opt/wekabits/wms-gui.service /etc/systemd/system
+systemctl enable --now wms-gui.service
 
 # install weka-mon
 pushd weka-mon
