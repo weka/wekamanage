@@ -7,3 +7,4 @@ config_files:
   export_config_file: /opt/weka-mon/export.yml
   quota_export_config_file: /opt/weka-mon/quota-export.yml
   snaptool_config_file: /opt/weka-mon/snaptool.yml
+  email_settings: email_settings.yaml

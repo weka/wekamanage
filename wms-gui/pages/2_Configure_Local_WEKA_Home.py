@@ -86,30 +86,30 @@ def config_lwh():
         st.write()
         st.markdown("### Email Alert Configuration:")
 
-        smtp_user_data = config['smtp_user_data']
+        #smtp_user_data = config['smtp_user_data']
 
-        smtp_user_data['sender_email_name'] = st.text_input("Email From Name", max_chars=30,
-                                                            value=smtp_user_data['sender_email_name'])
-        smtp_user_data['sender_email'] = st.text_input("Email From Address", max_chars=30,
-                                                       value=smtp_user_data['sender_email'])
-        smtp_user_data['smtp_host'] = st.text_input("Email Relay Host", max_chars=30, on_change=check_valid_host_ip,
-                                                    value=smtp_user_data['smtp_host'])
+        #smtp_user_data['sender_email_name'] = st.text_input("Email From Name", max_chars=30,
+        #                                                    value=smtp_user_data['sender_email_name'])
+        #smtp_user_data['sender_email'] = st.text_input("Email From Address", max_chars=30,
+        #                                               value=smtp_user_data['sender_email'])
+        #smtp_user_data['smtp_host'] = st.text_input("Email Relay Host", max_chars=30, on_change=check_valid_host_ip,
+        #                                            value=smtp_user_data['smtp_host'])
 
-        smtp_port_no = 25 if smtp_user_data['smtp_port'] == '' else int(smtp_user_data['smtp_port'])
+        #smtp_port_no = 25 if smtp_user_data['smtp_port'] == '' else int(smtp_user_data['smtp_port'])
 
-        smtp_port_no = st.number_input("Email Relay Port", step=1, min_value=25, max_value=99999, value=smtp_port_no)
+        #smtp_port_no = st.number_input("Email Relay Port", step=1, min_value=25, max_value=99999, value=smtp_port_no)
 
-        smtp_user_data['smtp_port'] = str(smtp_port_no)
+        #smtp_user_data['smtp_port'] = str(smtp_port_no)
 
-        smtp_user_data['smtp_username'] = st.text_input("Email Relay Username", max_chars=30,
-                                                        on_change=check_valid_user_pass,
-                                                        value=smtp_user_data['smtp_username'])
-        smtp_user_data['smtp_password'] = st.text_input("Email Relay Password", max_chars=30,
-                                                        on_change=check_valid_user_pass,
-                                                        value=smtp_user_data['smtp_password'])
+        #smtp_user_data['smtp_username'] = st.text_input("Email Relay Username", max_chars=30,
+        #                                                on_change=check_valid_user_pass,
+        #                                                value=smtp_user_data['smtp_username'])
+        #smtp_user_data['smtp_password'] = st.text_input("Email Relay Password", max_chars=30,
+        #                                                on_change=check_valid_user_pass,
+        #                                                value=smtp_user_data['smtp_password'])
 
-        smtp_user_data['smtp_insecure_tls'] = st.checkbox("Allow Insecure TLS with SMTP Relay",
-                                                          value=smtp_user_data['smtp_insecure_tls'])
+        #smtp_user_data['smtp_insecure_tls'] = st.checkbox("Allow Insecure TLS with SMTP Relay",
+        #                                                  value=smtp_user_data['smtp_insecure_tls'])
 
         st.write()
         st.markdown("### Web Server TLS Cert Configuration:")
