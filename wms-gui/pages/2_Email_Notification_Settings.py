@@ -121,6 +121,7 @@ if st.session_state["authentication_status"]:
                 st.error(f'Auth Error connecting to {smtp_user_data["smtp_host"]}: {str(exc.args[1])}')
                 st.stop()
             except Exception as exc:
+
                 st.error(f'Error connecting to {smtp_user_data["smtp_host"]}: {exc}')
                 st.stop()
             st.info("Settings validated")

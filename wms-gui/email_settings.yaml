@@ -6,3 +6,4 @@ smtp_password: ''
 smtp_port: '465'
 smtp_username: vincetest9999@gmail.com
 validated: true
+enable_lwh_email: false
