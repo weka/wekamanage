@@ -84,7 +84,7 @@ def config_lwh():
             value=config['alertdispatcher'][
                 'email_link_domain_name'])
         st.write()
-        st.markdown("### Email Alert Configuration:")
+        #st.markdown("### Email Alert Configuration:")
 
         #smtp_user_data = config['smtp_user_data']
 
