@@ -1,6 +1,6 @@
 import streamlit as st
 
-#from Landing_Page import authenticator
+# from Landing_Page import authenticator
 from apps import LocalWekaHome, NotInstalled, MiniKube, state_text
 from streamlit_common import add_logo, switch_to_login_page
 
@@ -84,32 +84,6 @@ def config_lwh():
             value=config['alertdispatcher'][
                 'email_link_domain_name'])
         st.write()
-        #st.markdown("### Email Alert Configuration:")
-
-        #smtp_user_data = config['smtp_user_data']
-
-        #smtp_user_data['sender_email_name'] = st.text_input("Email From Name", max_chars=30,
-        #                                                    value=smtp_user_data['sender_email_name'])
-        #smtp_user_data['sender_email'] = st.text_input("Email From Address", max_chars=30,
-        #                                               value=smtp_user_data['sender_email'])
-        #smtp_user_data['smtp_host'] = st.text_input("Email Relay Host", max_chars=30, on_change=check_valid_host_ip,
-        #                                            value=smtp_user_data['smtp_host'])
-
-        #smtp_port_no = 25 if smtp_user_data['smtp_port'] == '' else int(smtp_user_data['smtp_port'])
-
-        #smtp_port_no = st.number_input("Email Relay Port", step=1, min_value=25, max_value=99999, value=smtp_port_no)
-
-        #smtp_user_data['smtp_port'] = str(smtp_port_no)
-
-        #smtp_user_data['smtp_username'] = st.text_input("Email Relay Username", max_chars=30,
-        #                                                on_change=check_valid_user_pass,
-        #                                                value=smtp_user_data['smtp_username'])
-        #smtp_user_data['smtp_password'] = st.text_input("Email Relay Password", max_chars=30,
-        #                                                on_change=check_valid_user_pass,
-        #                                                value=smtp_user_data['smtp_password'])
-
-        #smtp_user_data['smtp_insecure_tls'] = st.checkbox("Allow Insecure TLS with SMTP Relay",
-        #                                                  value=smtp_user_data['smtp_insecure_tls'])
 
         st.write()
         st.markdown("### Web Server TLS Cert Configuration:")
@@ -119,8 +93,33 @@ def config_lwh():
                                      value=tls['enabled'])
         tls['cert'] = st.text_area("TLS Cert:", value=tls['cert'])
         tls['key'] = st.text_area("TLS Key:", value=tls['key'])
+        st.write()
+
+        st.markdown("### Email Alert Configuration:")
+        st.session_state.app_config.smtp_config['enable_lwh_email'] = \
+            st.checkbox("Enable email notifications?",
+                        value=st.session_state.app_config.smtp_config['enable_lwh_email'])
 
         if st.button("Save"):
+            # bool from above checkbox
+            if st.session_state.app_config.smtp_config['enable_lwh_email']:
+                # if the config is not validated, error
+                if st.session_state.app_config.smtp_config['validated']:
+                    smtp_config = st.session_state.app_config.smtp_config
+                    lwh_smtp_user_data = config['smtp_user_data']
+                    lwh_smtp_user_data['sender_email'] = smtp_config['sender_email']
+                    lwh_smtp_user_data['sender_email_name'] = smtp_config['sender_email_name']
+                    lwh_smtp_user_data['smtp_host'] = smtp_config['smtp_host']
+                    lwh_smtp_user_data['smtp_port'] = smtp_config['smtp_port']
+                    lwh_smtp_user_data['smtp_username'] = smtp_config['smtp_username']
+                    lwh_smtp_user_data['smtp_password'] = smtp_config['smtp_password']
+                    lwh_smtp_user_data['smtp_insecure_tls'] = smtp_config['smtp_insecure_tls']
+                else:
+                    st.error("Invalid SMTP configuration - go to Email Notification Settings page to configure")
+                    st.session_state.app_config.smtp_config.enable_lwh_email = False
+                    # stop, or continue?
+                    st.stop()
+
             st.session_state['app_config'].save_lwh_config()
             st.success('Configuration saved')
             if 'minikube_app' not in st.session_state:

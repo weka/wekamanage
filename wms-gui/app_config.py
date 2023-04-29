@@ -1,6 +1,5 @@
 import glob
 import json
-import logging
 import os
 
 import yaml
@@ -59,6 +58,13 @@ class AppConfig(object):
         self.export_config = None
         self.quota_export_config = None
         self.snaptool_config = None
+        self.smtp_config = None
+        self.enable_export = None
+        self.enable_quota = None
+        self.enable_snaptool = None
+        self.enable_loki = None
+        self.compose_file = None
+        self.compose_dir = None
 
     def load_configs(self):
         try:
@@ -78,6 +84,15 @@ class AppConfig(object):
                     self.snaptool_config = yaml.safe_load(f)
                 with open(config_files['email_settings_file'], 'r') as f:
                     self.smtp_config = yaml.safe_load(f)
+                self.enable_export = config_files['enable_export']
+                self.enable_quota = config_files['enable_quota']
+                self.enable_snaptool = config_files['enable_snaptool']
+                self.enable_loki = config_files['enable_loki']
+                #with open(config_files['compose_file'], 'r') as f:
+                #    self.compose_file = yaml.safe_load(f)
+                self.compose_file = config_files['compose_file']
+                self.compose_dir = config_files['compose_dir']
+
                 self.configs_loaded = True
         except Exception as exc:
             print(f"load_configs: raising exception {exc}")
@@ -116,9 +131,6 @@ class AppConfig(object):
         self.update_export()
         self.update_quota_export()
         self.update_snaptool()
-        #self.update_config(config_files['export_config_file'], self.export_config)
-        #self.update_config(config_files['quota_export_config_file'], self.quota_export_config)
-        #self.update_config(config_files['snaptool_config_file'], self.snaptool_config)
 
         print('writing security tokens')
         self.save_auth_tokens(os.path.dirname(config_files['export_config_file']))
@@ -158,11 +170,15 @@ class AppConfig(object):
     def update_cluster_dict(self, config):
         hosts = self.api.get_hosts()
         hostnames = list()
-        for host in hosts['data']:
+        for host in hosts['data'][:3]:  # only the first 3
             hostnames.append(str(host['name']))
         config['cluster']['hosts'] = hostnames
 
     def update_export(self):
+        if self.enable_loki:
+            self.export_config['exporter']['loki_host'] = 'loki'
+        else:
+            self.export_config['exporter']['loki_host'] = ''
         self.update_config(self.app_config['config_files']['export_config_file'], self.export_config)
 
     def update_quota_export(self):
@@ -171,3 +187,39 @@ class AppConfig(object):
     def update_snaptool(self):
         self.update_config(self.app_config['config_files']['snaptool_config_file'], self.snaptool_config)
 
+    def configure_compose(self):
+        # build docker-compose configuration file
+        compose_config = {'version': "3", 'services': dict()}
+        services = compose_config['services']
+
+        add_grafana = False
+        add_prometheus = False
+        add_alertmanager = False
+
+        def load_config(services, name):
+            with open(f'{self.compose_dir}/{name}.yml') as f:
+                services[name] = yaml.safe_load(f)
+
+        if self.enable_export:
+            load_config(services, "export")
+            add_grafana = True
+            add_prometheus = True
+            add_alertmanager = True     # maybe...
+        if self.enable_quota:
+            load_config(services, "quota")
+            add_prometheus = True
+            add_alertmanager = True
+            if self.enable_loki:
+                load_config(services, "loki")
+        if self.enable_snaptool:
+            load_config(services, "snaptool")
+
+        if add_grafana:
+            load_config(services, "grafana")
+        if add_prometheus:
+            load_config(services, "prometheus")
+        if add_alertmanager:
+            load_config(services, "alertmanager")
+
+        with open(self.compose_file, "w") as f:
+            yaml.dump(compose_config, f, default_flow_style=False)

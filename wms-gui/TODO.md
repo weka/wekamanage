@@ -6,9 +6,6 @@
 3. customize right menu
 4. Add configuration of WEKAmon alertmanager
 5. Add a postfix or sendmail config so LWH/WEKAmon have a local relay?
-6. hosts added to config files - limit the number of hosts listed - large clusters could be a problem.
-   1. Maybe randomly pick just a few (3-5?)
-   2. ensure they're all backends
 7. Enhance log collection with a configuration file that has the log collection commands in it and a framework for "executing" it.
    1. add support for LWH/k8s logs, syslog, and the like
 8. Separate SMTP configuration from LWH config - it applies to both WEKAmon and LWH.  Update the config of both tools

@@ -7,7 +7,7 @@ from streamlit_javascript import st_javascript
 
 from apps import Running, LocalWekaHome, WEKAmon
 from streamlit_common import add_logo, open_in_new_tab
-from utils import AppConfig
+from app_config import AppConfig
 
 if 'authentication_status' not in st.session_state or not st.session_state['authentication_status']:
     sidebar_state = st.session_state["sidebar_state"] = 'collapsed'
