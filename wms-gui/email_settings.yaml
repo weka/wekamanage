@@ -1,0 +1,8 @@
+sender_email: vince@weka.io
+sender_email_name: Vince test
+smtp_host: smtp.gmail.com
+smtp_insecure_tls: false
+smtp_password: ''
+smtp_port: '465'
+smtp_username: vincetest9999@gmail.com
+validated: true

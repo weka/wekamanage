@@ -76,10 +76,17 @@ class AppConfig(object):
                     self.quota_export_config = yaml.safe_load(f)
                 with open(config_files['snaptool_config_file'], 'r') as f:
                     self.snaptool_config = yaml.safe_load(f)
+                with open(config_files['email_settings_file'], 'r') as f:
+                    self.smtp_config = yaml.safe_load(f)
                 self.configs_loaded = True
         except Exception as exc:
             print(f"load_configs: raising exception {exc}")
             raise
+
+    def save_smtp(self):
+        config_files = self.app_config['config_files']
+        with open(config_files['email_settings_file'], 'w') as file:
+            return yaml.dump(self.smtp_config, file, default_flow_style=False)
 
     def save_passwords(self):
         config_files = self.app_config['config_files']
