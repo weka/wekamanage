@@ -10,8 +10,12 @@ from apps import WEKAmon, NotInstalled, state_text
 from streamlit_common import add_logo, switch_to_login_page
 from weka_restapi import WekaAPIClient
 
-st.set_page_config(page_title="WEKA Management Station Config", page_icon='favicon.ico',
-                   layout="wide", menu_items=None)
+menu_items = {
+    'get help': 'https://docs.weka.io',
+    'About': 'WEKA Management Station v1.0.0\nwww.weka.io'
+}
+st.set_page_config(page_title="WMS Email Configuration", page_icon='favicon.ico',
+                   layout="wide", menu_items=menu_items)
 # log = logging.getLogger(__name__)
 add_logo("WEKA_Logo_Color_RGB.png")
 st.image("WEKA_Logo_Color_RGB.png", width=200)

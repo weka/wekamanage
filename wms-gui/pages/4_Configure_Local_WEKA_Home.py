@@ -4,9 +4,13 @@ import streamlit as st
 from apps import LocalWekaHome, NotInstalled, MiniKube, state_text
 from streamlit_common import add_logo, switch_to_login_page
 
-# log = logging.getLogger(__name__)
-st.set_page_config(page_title="WEKA Management Station Config", page_icon='favicon.ico',
-                   layout="wide", menu_items=None)
+menu_items = {
+    'get help': 'https://docs.weka.io',
+    'About': 'WEKA Management Station v1.0.0  \nwww.weka.io  \nCopyright 2023 WekaIO Inc.  All rights reserved'
+}
+
+st.set_page_config(page_title="WMS LWH Config", page_icon='favicon.ico',
+                   layout="wide", menu_items=menu_items)
 
 
 def config_lwh():

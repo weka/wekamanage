@@ -2,12 +2,18 @@ import streamlit as st
 from streamlit_common import add_logo, switch_to_login_page
 from apps import WEKAmon, NotInstalled, state_text
 
-st.set_page_config(page_title="WEKA Management Station Config", page_icon='favicon.ico',
-                   layout="wide", menu_items=None)
-# log = logging.getLogger(__name__)
+menu_items = {
+    'get help': 'https://docs.weka.io',
+    'About': 'WEKA Management Station v1.0.0  \nwww.weka.io  \nCopyright 2023 WekaIO Inc.  All rights reserved'
+}
+
+st.set_page_config(page_title="WMS Services Control", page_icon='favicon.ico',
+                   layout="wide", menu_items=menu_items)
+
 add_logo("WEKA_Logo_Color_RGB.png")
 st.image("WEKA_Logo_Color_RGB.png", width=200)
 st.markdown("# WEKA Management Station")
+
 
 if "authentication_status" not in st.session_state:
     st.session_state["authentication_status"] = None
@@ -20,6 +26,9 @@ if st.session_state["authentication_status"]:
 
 
 
+    """
+    Not Implemented
+    """
 
 
 
