@@ -8,10 +8,10 @@ config_files:
   quota_export_config_file: /opt/weka-mon/quota-export.yml
   snaptool_config_file: /opt/weka-mon/snaptool.yml
   email_settings_file: email_settings.yaml
-  enable_export: true
+  enable_export: false
   enable_alerts: false
-  enable_quota: true
-  enable_snaptool: true
+  enable_quota: false
+  enable_snaptool: false
   enable_loki: false
   compose_file: /opt/weka-mon/docker-compose.yml
   compose_dir: compose
