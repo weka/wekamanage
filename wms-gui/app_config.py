@@ -3,13 +3,15 @@ import json
 import os
 
 import yaml
+import streamlit as st
+
 
 # import subprocess
 
 lwh_config_read = False
 clusters_read = False
 # log = logging.getLogger(__name__)
-# log = st.session_state.log
+log = st.session_state.log
 
 """
 PASSWD_CMD = '/usr/bin/passwd'
@@ -60,6 +62,7 @@ class AppConfig(object):
         self.snaptool_config = None
         self.smtp_config = None
         self.enable_export = None
+        self.enable_alerts = None
         self.enable_quota = None
         self.enable_snaptool = None
         self.enable_loki = None
@@ -85,6 +88,7 @@ class AppConfig(object):
                 with open(config_files['email_settings_file'], 'r') as f:
                     self.smtp_config = yaml.safe_load(f)
                 self.enable_export = config_files['enable_export']
+                self.enable_alerts = config_files['enable_alerts']
                 self.enable_quota = config_files['enable_quota']
                 self.enable_snaptool = config_files['enable_snaptool']
                 self.enable_loki = config_files['enable_loki']
@@ -97,6 +101,18 @@ class AppConfig(object):
         except Exception as exc:
             print(f"load_configs: raising exception {exc}")
             raise
+
+    def save_configs(self):
+        # don't save if we haven't loaded yet!
+        if self.configs_loaded:
+            config_files = self.app_config['config_files']
+            config_files['enable_export'] = self.enable_export
+            config_files['enable_alerts'] = self.enable_alerts
+            config_files['enable_quota'] = self.enable_quota
+            config_files['enable_snaptool'] = self.enable_snaptool
+            config_files['enable_loki'] = self.enable_loki
+            with open(self.config_file, 'w') as f:
+                yaml.dump(self.app_config, f, default_flow_style=False, sort_keys=False)
 
     def save_smtp(self):
         config_files = self.app_config['config_files']
@@ -111,7 +127,7 @@ class AppConfig(object):
     def save_lwh_config(self):
         config_files = self.app_config['config_files']
         with open(config_files['lwh_config_file'], 'w') as file:
-            return yaml.dump(self.lwh_config, file, default_flow_style=False)
+            return yaml.dump(self.lwh_config, file, default_flow_style=False, sort_keys=False)
 
     def update_tokens(self, weka_api, tokens):
         self.api = weka_api
@@ -192,6 +208,8 @@ class AppConfig(object):
         compose_config = {'version': "3", 'services': dict()}
         services = compose_config['services']
 
+        log.info('Generating compose configuration')
+
         add_grafana = False
         add_prometheus = False
         add_alertmanager = False
@@ -201,25 +219,36 @@ class AppConfig(object):
                 services[name] = yaml.safe_load(f)
 
         if self.enable_export:
+            log.info('enabling export')
             load_config(services, "export")
             add_grafana = True
             add_prometheus = True
+        if self.enable_alerts:
             add_alertmanager = True     # maybe...
+        if self.enable_loki:
+            log.info('enabling loki')
+            load_config(services, "loki")
+            add_prometheus = True
         if self.enable_quota:
+            log.info('enabling quota')
             load_config(services, "quota")
             add_prometheus = True
             add_alertmanager = True
-            if self.enable_loki:
-                load_config(services, "loki")
         if self.enable_snaptool:
+            log.info('enabling snaptool')
             load_config(services, "snaptool")
 
         if add_grafana:
+            log.info('enabling grafana')
             load_config(services, "grafana")
         if add_prometheus:
+            log.info('enabling prometheus')
             load_config(services, "prometheus")
         if add_alertmanager:
+            log.info('enabling alertmanager')
             load_config(services, "alertmanager")
 
         with open(self.compose_file, "w") as f:
-            yaml.dump(compose_config, f, default_flow_style=False)
+            yaml.dump(compose_config, f, default_flow_style=False, sort_keys=False)
+        # Save the settings
+        self.save_configs()

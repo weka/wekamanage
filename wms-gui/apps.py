@@ -270,8 +270,8 @@ class WEKAmon(AppBase):
         log.debug(result)
 
         # make sure there are 3 wekasolutions containers (export, quota-export, and snaptool)
-        #if len(result.stdout.splitlines()) != 3:
-        #    return NotInstalled
+        if len(result.stdout.splitlines()) != 3:
+            return NotInstalled
 
         log.info("running docker compose ps")
         cmd = ['/usr/bin/docker', 'compose', 'ps']

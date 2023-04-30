@@ -42,16 +42,19 @@ if st.session_state["authentication_status"]:
     col1, col2 = st.columns(2)
     with col1:
         # export implies export, prometheus, and grafana containers
-        st.session_state.app_config.enable_export = st.checkbox("Enable Metrics Exporter & Grafana?",
+        st.session_state.app_config.enable_export = st.checkbox("Enable Metrics Exporter & Grafana",
                                                                 value=st.session_state.app_config.enable_export)
+        if st.session_state.app_config.enable_export:
+            st.session_state.app_config.enable_alerts = st.checkbox("Enable Alert Notifications",
+                                                                    value=st.session_state.app_config.enable_alerts)
         # quota implies quota-export, prometheus, and alertmanager containers, and valid email config
-        st.session_state.app_config.enable_quota = st.checkbox("Enable Quota Exporter & Notifications?",
+        st.session_state.app_config.enable_quota = st.checkbox("Enable Quota Exporter & Notifications",
                                                                value=st.session_state.app_config.enable_quota)
         # snaptool implies snaptool container
-        st.session_state.app_config.enable_snaptool = st.checkbox("Enable Snaptool?",
+        st.session_state.app_config.enable_snaptool = st.checkbox("Enable Snaptool",
                                                                   value=st.session_state.app_config.enable_snaptool)
         # loki implies loki container
-        st.session_state.app_config.enable_loki = st.checkbox("Enable WEKAmon Log storage?",
+        st.session_state.app_config.enable_loki = st.checkbox("Enable WEKAmon Log storage",
                                                               value=st.session_state.app_config.enable_loki)
 
         # if any of the above are True, then we need to authenticate with the cluster
@@ -83,10 +86,10 @@ if st.session_state["authentication_status"]:
                 with col1:
                     st.error(f'Unexpected error logging into API: {exc.args[0]}')
                     st.stop()
-            if tokens is not None:
+            if tokens is not None:  # was the cluster login successful?
                 with col1:
                     log.info(f"Successfully logged into WEKA cluster {clusterdata['hostname-ip']}")
-                    st.success('Login successful')
+                    st.success('Successfully logged into cluster')
                 st.session_state.app_config.update_tokens(weka_api, tokens)
 
                 # so instead of the next line, we'll need to assemble the docker-compose.yml with the
@@ -96,7 +99,7 @@ if st.session_state["authentication_status"]:
 
                 # success!
                 with col1:
-                    log.info('Successfully update WEKAmon config files')
+                    log.info('Successfully updated WEKAmon config files')
                     st.success('Successfully updated config files')
 
                 # we may want to put this on another screen or after another button... start/stop services
@@ -120,11 +123,10 @@ if st.session_state["authentication_status"]:
                             log.info("WEKAmon successfully restarted.")
                             st.success("WEKAmon successfully restarted.")
 
-        else:
-            # disable WEKAmon completely
-            wekamon = st.session_state['wekamon_app']
-            wekamon.stop()  # does this prevent start on reboot?
-            pass
+            else:
+                # cluster login failed.  disable WEKAmon completely because we don't have valid credentials
+                wekamon = st.session_state['wekamon_app']
+                wekamon.stop()  # does this prevent start on reboot?
 
     # update cluster url
     if 'hostname-ip' in clusterdata:
