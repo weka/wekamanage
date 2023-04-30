@@ -1,0 +1,14 @@
+image: wekasolutions/export:latest
+volumes:
+  - /dev/log:/dev/log
+  - /opt/weka-mon/.weka:/weka/.weka
+  - /etc/hosts:/etc/hosts
+  - /opt/weka-mon/export.yml:/weka/export.yml
+command: -vvv
+restart: always
+ports:
+  - "8001:8001"
+logging:
+  options:
+    max-file: "5"
+    max-size: "15m"

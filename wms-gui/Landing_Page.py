@@ -7,16 +7,20 @@ from streamlit_javascript import st_javascript
 
 from apps import Running, LocalWekaHome, WEKAmon
 from streamlit_common import add_logo, open_in_new_tab
-from utils import AppConfig
+from app_config import AppConfig
 
 if 'authentication_status' not in st.session_state or not st.session_state['authentication_status']:
     sidebar_state = st.session_state["sidebar_state"] = 'collapsed'
 else:
     sidebar_state = st.session_state["sidebar_state"] = 'expanded'
 
+menu_items = {
+    'get help': 'https://docs.weka.io',
+    'About': 'WEKA Management Station v1.0.0  \nwww.weka.io  \nCopyright 2023 WekaIO Inc.  All rights reserved'
+}
+
 st.set_page_config(page_title="WEKA Management Station Config", page_icon='favicon.ico',
-                   layout="wide",
-                   initial_sidebar_state=sidebar_state, menu_items=None)
+                   layout="wide", initial_sidebar_state=sidebar_state, menu_items=menu_items)
 
 if "log" not in st.session_state:
     log = logger.get_logger('root')
