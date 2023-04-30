@@ -14,9 +14,13 @@ if 'authentication_status' not in st.session_state or not st.session_state['auth
 else:
     sidebar_state = st.session_state["sidebar_state"] = 'expanded'
 
+menu_items = {
+    'get help': 'https://docs.weka.io',
+    'About': 'WEKA Management Station v1.0.0  \nwww.weka.io  \nCopyright 2023 WekaIO Inc.  All rights reserved'
+}
+
 st.set_page_config(page_title="WEKA Management Station Config", page_icon='favicon.ico',
-                   layout="wide",
-                   initial_sidebar_state=sidebar_state, menu_items=None)
+                   layout="wide", initial_sidebar_state=sidebar_state, menu_items=menu_items)
 
 if "log" not in st.session_state:
     log = logger.get_logger('root')
