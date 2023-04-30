@@ -1,15 +1,15 @@
 import streamlit as st
 
 from streamlit_common import add_logo, switch_to_login_page
-#from Landing_Page import authenticator
 
-# if "log" not in st.session_state:
-#    logging.basicConfig()
-#    log = logging.getLogger(__name__)
-#    st.session_state['log'] = log
-st.set_page_config(page_title="WEKA Management Station Password Change", page_icon='favicon.ico',
-                   layout="wide", menu_items=None)
-
+menu_items = {
+    'get help': 'https://docs.weka.io',
+    'About': 'WEKA Management Station v1.0.0  \nwww.weka.io  \nCopyright 2023 WekaIO Inc.  All rights reserved'
+}
+print(menu_items)
+st.set_page_config(page_title="WMS Password Change", page_icon='favicon.ico',
+                   layout="wide", menu_items=menu_items)
+print(menu_items)
 add_logo("WEKA_Logo_Color_RGB.png")
 st.image("WEKA_Logo_Color_RGB.png", width=200)
 st.markdown("# WEKA Management Station")
