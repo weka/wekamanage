@@ -99,8 +99,15 @@ if st.session_state["authentication_status"]:
 
                 # so instead of the next line, we'll need to assemble the docker-compose.yml with the
                 # services selected, then save the config files for the services selected only.
+                wekamon = st.session_state.wekamon_app
+                status = wekamon.status()
+                if status != NotInstalled:
+                    # stop compose before changing the config file in case we remove something...
+                    wekamon.stop()
                 st.session_state.app_config.save_clusters()
                 st.session_state.app_config.configure_compose()
+                if status != NotInstalled:
+                    wekamon.start()
 
                 # success!
                 with col1:
@@ -108,7 +115,6 @@ if st.session_state["authentication_status"]:
                     st.success('Successfully updated config files')
 
                 # we may want to put this on another screen or after another button... start/stop services
-                wekamon = st.session_state['wekamon_app']
                 if wekamon.status() == NotInstalled:
                     with st.spinner("Installing WEKAmon.   Please wait..."):
                         log.info("Installing WEKAmon")
