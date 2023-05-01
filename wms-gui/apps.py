@@ -312,6 +312,10 @@ class WEKAmon(AppBase):
         result = self.run(cmd, timeout=10)
         log.debug(result)
 
+    def is_running(self, container):
+        result = self.run(f'docker compose ps --filter status=running | grep {container}', shell=True, check=False)
+        return True if result.returncode == 0 else False
+
     def run(self, cmd, *args, capture_output=True, check=True, text=True, timeout=5, **kwargs):
         # print(f'WEKAmon: Running {cmd}: {kwargs}')
         if 'cwd' not in kwargs:
