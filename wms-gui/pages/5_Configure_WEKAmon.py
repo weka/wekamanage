@@ -25,7 +25,7 @@ if st.session_state["authentication_status"]:
     log = st.session_state.log
     authenticator = st.session_state['authenticator']
     authenticator.logout('Logout', 'sidebar', key="cluster_logout")
-    st.title('WEKA Cluster Logins')
+    st.title('WEKAmon Services Configuration')
 
     # app_config = st.session_state.app_config
     clusterdata = st.session_state.app_config.clusters_config
