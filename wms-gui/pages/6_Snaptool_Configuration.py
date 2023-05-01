@@ -4,6 +4,8 @@ import yaml
 
 #from Landing_Page import authenticator
 from streamlit_common import add_logo, switch_to_login_page
+from apps import WEKAmon, NotInstalled, state_text
+
 
 menu_items = {
     'get help': 'https://docs.weka.io',
@@ -33,23 +35,28 @@ if st.session_state["authentication_status"]:
 
     st.markdown(f"### Snaptool Configuration Editor")
     st.write()
+    # initialize the wekamon app object
+    if 'wekamon_app' not in st.session_state:
+        try:
+            st.session_state['wekamon_app'] = WEKAmon()
+        except Exception as exc:
+            st.error(exc)
+            st.stop()
 
     result = streamlit_monaco_yaml.monaco_editor(
         st.session_state.initial_text,
-        # schema=json_schema,
-        # height=1000,
-        # a unique key avoids to reload the editor each time the content changed
         key=f"monaco_editor",
     )
 
     # returns None on the initial load
     if result is not None:
-        # print(yaml.safe_load(result['text']))
-
         if st.button("Save"):
             st.session_state.app_config.snaptool_config = yaml.safe_load(result['text'])
             st.session_state.app_config.update_snaptool()
             st.session_state['initial_text'] = yaml.dump(st.session_state.app_config.snaptool_config)
+            st.success("Snaptool configuration saved")
+            if not st.session_state.wekamon_app.is_running('wekasolutions/snaptool'):
+                st.info('Snaptool is not runnning/enabled.  Visit the Configure WEKAmon page to enable it.')
 
 elif st.session_state["authentication_status"] is False:
     st.error('Username/password is incorrect')

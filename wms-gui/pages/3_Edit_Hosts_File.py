@@ -23,7 +23,7 @@ if st.session_state["authentication_status"]:
     log = st.session_state.log
     authenticator = st.session_state['authenticator']
     authenticator.logout('Logout', 'sidebar', key="snaptool_logout")
-    st.title('Snaptool Configuration')
+    st.title('Edit /etc/hosts')
 
     if 'etc_hosts' not in st.session_state:
         with open('/etc/hosts', 'r') as f:
