@@ -31,15 +31,6 @@ def config_lwh():
             return True
         pass
 
-    def check_valid_email():
-        pass
-
-    def check_valid_host_ip():
-        pass
-
-    def check_valid_user_pass():
-        pass
-
     log.info('starting LWH configuration')
     if 'app_config' not in st.session_state:
         st.error("app configuration not loaded")
@@ -101,7 +92,7 @@ def config_lwh():
 
         st.markdown("### Email Alert Configuration:")
         st.session_state.app_config.smtp_config['enable_lwh_email'] = \
-            st.checkbox("Enable email notifications?",
+            st.checkbox("Enable email notifications (configure in the Email Notification Settings page)",
                         value=st.session_state.app_config.smtp_config['enable_lwh_email'])
 
         if st.button("Save"):
@@ -130,7 +121,9 @@ def config_lwh():
                 st.session_state['minikube_app'] = MiniKube()
             if st.session_state.minikube_app.status() == NotInstalled:
                 log.info("minikube not installed, attempting installation")
-                with st.spinner('Installing minikube, please wait (this can take several minutes)'):
+                with st.spinner(
+                        'Installing minikube, please wait (this can take several minutes)' +
+                        ' Do not navigate away until complete.'):
                     try:
                         st.session_state.minikube_app.install()
                         st.success("Minikube installed")
@@ -141,7 +134,8 @@ def config_lwh():
                 st.session_state['lwh_app'] = LocalWekaHome()
             if st.session_state.lwh_app.status() == NotInstalled:
                 log.info("lwh not installed, attempting installation")
-                with st.spinner('Installing Local Weka Home, please wait (this can take several minutes)'):
+                with st.spinner('Installing Local Weka Home, please wait (this can take several minutes)' +
+                                ' Do not navigate away until complete.'):
                     if not st.session_state.lwh_app.install():
                         log.error('Error installing/updating LWH')
                         st.error('Error installing/updating LWH')
@@ -149,7 +143,7 @@ def config_lwh():
                         log.info("Local Weka Home installed")
                         st.success("Local Weka Home installed")
             else:
-                with st.spinner('Updating Local Weka Home, please wait (this can take several minutes'):
+                with st.spinner('Updating Local Weka Home, please wait (this can take several minutes)'):
                     if not st.session_state.lwh_app.start():
                         log.error('Error starting LWH')
                         st.error('Error starting LWH')
