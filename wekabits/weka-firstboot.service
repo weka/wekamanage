@@ -2,6 +2,7 @@
 Description="Install Weka"
 After=docker.service network-online.target
 Wants=network-online.target
+Before=console-getty.service wms-gui.service
 
 [Service]
 User=root
