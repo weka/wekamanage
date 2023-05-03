@@ -1,0 +1,1 @@
+watch aws ec2 describe-import-image-tasks --import-task-ids $1

@@ -1,0 +1,10 @@
+[
+  {
+    "Description": "WMS VMDK",
+    "Format": "vmdk",
+    "UserBucket": {
+        "S3Bucket": "wekarepo",
+        "S3Key": "wms-beta6.vmdk"
+    }
+  }
+]
