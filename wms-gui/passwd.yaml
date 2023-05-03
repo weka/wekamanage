@@ -1,0 +1,17 @@
+cookie:
+  expiry_days: 0
+  key: wms_auth_secret
+  name: wms_auth
+credentials:
+  usernames:
+    admin:
+      email: dummy1@weka.io
+      name: WEKA Admin Login
+      password: $2b$12$U03wUkNiU8e.XMIjfa0k/.1eFYjU5ShXmfO6qdP8nkdbZyxajM40S
+    service:
+      email: dummy2@weka.io
+      name: Weka Service Login
+      password: $2b$12$/5rIeHr2KhKrLZqflt.Uk.T8.7uKOOIEDFWLrmC2WHSxRjozceqo6
+preauthorized:
+  emails:
+  - vince@weka.io
