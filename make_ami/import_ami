@@ -1,0 +1,1 @@
+aws --profile pm ec2 import-image --region us-west-2 --description "WMS beta6" --disk-containers="file:///root/iso/beta6/wekamanage/containers.json"
