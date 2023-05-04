@@ -2,14 +2,19 @@
 
 # install our software in /opt
 SYSIMAGE=/mnt/sysimage
-pushd $SYSIMAGE/opt
 REPO=/run/install/repo
 
+
+# move to /opt
+pushd $SYSIMAGE/opt
+
+# unpack tarballs
 tar xvf $REPO/tarballs/local-weka-home.tgz
 tar xvf $REPO/tarballs/weka-mon.tgz
 tar xvf $REPO/tarballs/tools.tgz
 tar xvf $REPO/tarballs/wms-gui.tgz
 
+# copy systemd units, etc.
 cp -r $REPO/wekabits $SYSIMAGE/opt
 
 # prep weka-mon
@@ -30,21 +35,19 @@ popd
 
 # install our gui
 cp $REPO/wekabits/wms-gui.service $SYSIMAGE/etc/systemd/system
+cp $REPO/wekabits/weka-firstboot.service $SYSIMAGE/etc/systemd/system
 
 # enable docker, cockpit and gui services
 chroot $SYSIMAGE systemctl enable docker.socket
 chroot $SYSIMAGE systemctl enable cockpit.socket
 chroot $SYSIMAGE systemctl enable wms-gui.service
+chroot $SYSIMAGE systemctl enable weka-firstboot.service
 
 # install our local modifications to the usr filesystem
 pushd $REPO/wekabits
 cp -r usr $SYSIMAGE
 cp motd $SYSIMAGE/etc
 popd
-
-# setup Weka firstboot env
-cp $REPO/wekabits/weka-firstboot.service $SYSIMAGE/etc/systemd/system
-chroot $SYSIMAGE systemctl enable weka-firstboot.service
 
 cp REPO/wekabits/i2c_i801.conf $SYSIMAGE/etc/modprobe.d/
 
