@@ -1,0 +1,16 @@
+image: prom/alertmanager:latest
+volumes:
+  - /dev/log:/dev/log
+  - /opt/weka-mon/etc_alertmanager:/etc/alertmanager
+command:
+  - "--config.file=/etc/alertmanager/alertmanager.yml"
+  - "--log.level=debug"
+  - "--web.external-url=http://buckaroo:9093/"
+  #- "--web.external-url=http://hostname-here:9093/"    # SET THIS SO ALERT EMAILS HAVE A LINK TO IT
+restart: always
+ports:
+  - "9093:9093"
+logging:
+  options:
+    max-file: "5"
+    max-size: "15m"

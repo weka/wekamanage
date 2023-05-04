@@ -1,12 +1,16 @@
 import streamlit as st
 
-#from Landing_Page import authenticator
+# from Landing_Page import authenticator
 from apps import LocalWekaHome, NotInstalled, MiniKube, state_text
 from streamlit_common import add_logo, switch_to_login_page
 
-# log = logging.getLogger(__name__)
-st.set_page_config(page_title="WEKA Management Station Config", page_icon='favicon.ico',
-                   layout="wide", menu_items=None)
+menu_items = {
+    'get help': 'https://docs.weka.io',
+    'About': 'WEKA Management Station v1.0.0  \nwww.weka.io  \nCopyright 2023 WekaIO Inc.  All rights reserved'
+}
+
+st.set_page_config(page_title="WMS LWH Config", page_icon='favicon.ico',
+                   layout="wide", menu_items=menu_items)
 
 
 def config_lwh():
@@ -25,15 +29,6 @@ def config_lwh():
             return False
         else:
             return True
-        pass
-
-    def check_valid_email():
-        pass
-
-    def check_valid_host_ip():
-        pass
-
-    def check_valid_user_pass():
         pass
 
     log.info('starting LWH configuration')
@@ -84,32 +79,6 @@ def config_lwh():
             value=config['alertdispatcher'][
                 'email_link_domain_name'])
         st.write()
-        st.markdown("### Email Alert Configuration:")
-
-        smtp_user_data = config['smtp_user_data']
-
-        smtp_user_data['sender_email_name'] = st.text_input("Email From Name", max_chars=30,
-                                                            value=smtp_user_data['sender_email_name'])
-        smtp_user_data['sender_email'] = st.text_input("Email From Address", max_chars=30,
-                                                       value=smtp_user_data['sender_email'])
-        smtp_user_data['smtp_host'] = st.text_input("Email Relay Host", max_chars=30, on_change=check_valid_host_ip,
-                                                    value=smtp_user_data['smtp_host'])
-
-        smtp_port_no = 25 if smtp_user_data['smtp_port'] == '' else int(smtp_user_data['smtp_port'])
-
-        smtp_port_no = st.number_input("Email Relay Port", step=1, min_value=25, max_value=99999, value=smtp_port_no)
-
-        smtp_user_data['smtp_port'] = str(smtp_port_no)
-
-        smtp_user_data['smtp_username'] = st.text_input("Email Relay Username", max_chars=30,
-                                                        on_change=check_valid_user_pass,
-                                                        value=smtp_user_data['smtp_username'])
-        smtp_user_data['smtp_password'] = st.text_input("Email Relay Password", max_chars=30,
-                                                        on_change=check_valid_user_pass,
-                                                        value=smtp_user_data['smtp_password'])
-
-        smtp_user_data['smtp_insecure_tls'] = st.checkbox("Allow Insecure TLS with SMTP Relay",
-                                                          value=smtp_user_data['smtp_insecure_tls'])
 
         st.write()
         st.markdown("### Web Server TLS Cert Configuration:")
@@ -119,15 +88,42 @@ def config_lwh():
                                      value=tls['enabled'])
         tls['cert'] = st.text_area("TLS Cert:", value=tls['cert'])
         tls['key'] = st.text_area("TLS Key:", value=tls['key'])
+        st.write()
+
+        st.markdown("### Email Alert Configuration:")
+        st.session_state.app_config.smtp_config['enable_lwh_email'] = \
+            st.checkbox("Enable email notifications (configure in the Email Notification Settings page)",
+                        value=st.session_state.app_config.smtp_config['enable_lwh_email'])
 
         if st.button("Save"):
+            # bool from above checkbox
+            if st.session_state.app_config.smtp_config['enable_lwh_email']:
+                # if the config is not validated, error
+                if st.session_state.app_config.smtp_config['validated']:
+                    smtp_config = st.session_state.app_config.smtp_config
+                    lwh_smtp_user_data = config['smtp_user_data']
+                    lwh_smtp_user_data['sender_email'] = smtp_config['sender_email']
+                    lwh_smtp_user_data['sender_email_name'] = smtp_config['sender_email_name']
+                    lwh_smtp_user_data['smtp_host'] = smtp_config['smtp_host']
+                    lwh_smtp_user_data['smtp_port'] = smtp_config['smtp_port']
+                    lwh_smtp_user_data['smtp_username'] = smtp_config['smtp_username']
+                    lwh_smtp_user_data['smtp_password'] = smtp_config['smtp_password']
+                    lwh_smtp_user_data['smtp_insecure_tls'] = smtp_config['smtp_insecure_tls']
+                else:
+                    st.error("Invalid SMTP configuration - go to Email Notification Settings page to configure")
+                    st.session_state.app_config.smtp_config.enable_lwh_email = False
+                    # stop, or continue?
+                    st.stop()
+
             st.session_state['app_config'].save_lwh_config()
             st.success('Configuration saved')
             if 'minikube_app' not in st.session_state:
                 st.session_state['minikube_app'] = MiniKube()
             if st.session_state.minikube_app.status() == NotInstalled:
                 log.info("minikube not installed, attempting installation")
-                with st.spinner('Installing minikube, please wait (this can take several minutes)'):
+                with st.spinner(
+                        'Installing minikube, please wait (this can take several minutes)' +
+                        ' Do not navigate away until complete.'):
                     try:
                         st.session_state.minikube_app.install()
                         st.success("Minikube installed")
@@ -138,7 +134,8 @@ def config_lwh():
                 st.session_state['lwh_app'] = LocalWekaHome()
             if st.session_state.lwh_app.status() == NotInstalled:
                 log.info("lwh not installed, attempting installation")
-                with st.spinner('Installing Local Weka Home, please wait (this can take several minutes)'):
+                with st.spinner('Installing Local Weka Home, please wait (this can take several minutes)' +
+                                ' Do not navigate away until complete.'):
                     if not st.session_state.lwh_app.install():
                         log.error('Error installing/updating LWH')
                         st.error('Error installing/updating LWH')
@@ -146,7 +143,7 @@ def config_lwh():
                         log.info("Local Weka Home installed")
                         st.success("Local Weka Home installed")
             else:
-                with st.spinner('Updating Local Weka Home, please wait (this can take several minutes'):
+                with st.spinner('Updating Local Weka Home, please wait (this can take several minutes)'):
                     if not st.session_state.lwh_app.start():
                         log.error('Error starting LWH')
                         st.error('Error starting LWH')
