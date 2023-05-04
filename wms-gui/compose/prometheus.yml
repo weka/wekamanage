@@ -1,0 +1,12 @@
+image: prom/prometheus:latest
+volumes:
+  - /dev/log:/dev/log
+  - /etc/hosts:/etc/hosts
+  - /opt/weka-mon/etc_prometheus:/etc/prometheus
+  - /opt/weka-mon/prometheus_data:/prometheus
+command: --storage.tsdb.retention.size=20GB --config.file=/etc/prometheus/prometheus.yml
+restart: always
+logging:
+  options:
+    max-file: "5"
+    max-size: "15m"

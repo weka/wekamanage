@@ -1,0 +1,13 @@
+image: wekasolutions/quota-export:latest
+volumes:
+  - /dev/log:/dev/log
+  - /opt/weka-mon/.weka:/weka/.weka
+  - /etc/hosts:/etc/hosts
+  - /opt/weka-mon/quota-export.yml:/weka/quota-export.yml
+restart: always
+ports:
+  - "8101:8101"
+logging:
+  options:
+    max-file: "5"
+    max-size: "15m"

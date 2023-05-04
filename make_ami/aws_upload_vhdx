@@ -1,0 +1,6 @@
+
+upload() {
+    aws --profile pm s3 cp $1 s3://weka-repo-test/$1
+}
+
+upload $1

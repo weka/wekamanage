@@ -1,12 +1,11 @@
 
-.PHONY: all clean Makefile Linux-full/BaseOS Linux-full/AppStream Weka wekabits/wms-gui.tgz
+.PHONY: all clean Makefile Linux-full/BaseOS Linux-full/AppStream Weka tarballs/wms-gui.tgz
 .DEFAULT_GOAL:=all
 
 # to do: download iso from http://dl.rockylinux.org/vault/rocky/8.6/isos/x86_64/Rocky-8.6-x86_64-dvd1.iso rather than expecting it to be there
-SOURCEISO=../Rocky-8.6-LTS/Rocky-8.6-LTS-beta.iso
-#SOURCEISO=../Rocky-8.6-LTS/Rocky-8.6-LTS-dvd1.iso
+SOURCEISO=../Rocky-8.6-LTS/Rocky-8.6-LTS-beta6.iso
 
-SUFFIX=-beta6.1
+SUFFIX=-beta6
 
 LABEL := $(shell file ${SOURCEISO} | cut -d\' -f2)
 #WEKAVERSIONS=$(wildcard weka-*.tar)
@@ -28,41 +27,42 @@ ${ISO}: ${DIR}
 		-no-emul-boot -graft-points -V ${LABEL} $<
 	implantisomd5 $@
 
-${DIR}: docker-ce ${SOURCEISO} wekabits/tools.tgz wekabits/weka-mon.tgz wekabits/local-weka-home.tgz wekabits/wms-gui.tgz
+${DIR}: docker-ce ${SOURCEISO} tarballs/tools.tgz tarballs/weka-mon.tgz tarballs/local-weka-home.tgz tarballs/wms-gui.tgz
 	@echo Creating build directory for $@ 
 	mkdir -p source_iso
 	mount ${SOURCEISO} source_iso
 	cp -r source_iso $@
 	umount source_iso
 	cp -r wekabits $@
-	#cp -r Weka $@	- now has weka on it already
+	cp -r tarballs $@
 	cp -r docker-ce $@
-	#cp datafiles/ks.cfg $@
 	cp datafiles/partmap $@
 	cp datafiles/ks-* $@
-	#cp datafiles/ks-local-repos $@
-	#cp datafiles/ks-postinstall $@
 	cp -r python-wheels $@
 	echo Install kickstart
-	cp datafiles/grub.cfg $@/EFI/BOOT/grub.cfg
+	sed -i 's/WEKA/WEKA Management Station/' $@/EFI/BOOT/grub.cfg
+	# run this twice so we get the first 2 occurences only
+	sed -i "0,/quiet/{s/quiet/inst.ks=hd:LABEL=${LABEL}/}" $@/EFI/BOOT/grub.cfg
+	sed -i "0,/quiet/{s/quiet/inst.ks=hd:LABEL=${LABEL}/}" $@/EFI/BOOT/grub.cfg
+	cp datafiles/isolinux.cfg $@/isolinux/isolinux.cfg
 	cp datafiles/grub.conf $@/isolinux/grub.conf
 	cp datafiles/isolinux.cfg $@/isolinux/isolinux.cfg
 	cp README.md $@/wekabits
 	touch $@
 	date > $@/.weka-buildstamp
 
-wekabits/tools.tgz:
+tarballs/tools.tgz:
 	./repack_tools
 
-wekabits/weka-mon.tgz:
-	cd wekabits; curl -LO https://weka-repo-test.s3.us-west-2.amazonaws.com/weka-mon.tgz
+tarballs/weka-mon.tgz:
+	cd tarballs; curl -LO https://weka-repo-test.s3.us-west-2.amazonaws.com/weka-mon.tgz
 
-wekabits/wms-gui.tgz: 
+tarballs/wms-gui.tgz: 
 	$(MAKE) -C wms-gui
 	tar cvzf $@ wms-gui
 
-wekabits/local-weka-home.tgz:
-	cd wekabits; curl -LO https://weka-repo-test.s3.us-west-2.amazonaws.com/local-weka-home.tgz
+tarballs/local-weka-home.tgz:
+	cd tarballs; curl -LO https://weka-repo-test.s3.us-west-2.amazonaws.com/local-weka-home.tgz
 
 clean:
 	@echo making clean

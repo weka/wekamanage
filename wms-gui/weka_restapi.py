@@ -33,6 +33,7 @@ class WekaAPIClient:
         return auth
 
     def get_hosts(self):
+        # not sure if this returns clients also...
         method = "/hosts" if self.api_vers == 1 else "/servers"
         url = self.base_url + method
         headers = {"Authorization": f"{self.token_type} {self.api_key}"}
