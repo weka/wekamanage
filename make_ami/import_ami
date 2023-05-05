@@ -1,1 +1,2 @@
-aws --profile pm ec2 import-image --region us-west-2 --description "WMS beta6" --disk-containers="file:///root/iso/beta6/wekamanage/containers.json"
+#aws --profile pm ec2 import-image --region us-west-2 --description "WMS beta6" --disk-containers="file:///root/iso/beta6/wekamanage/containers.json"
+aws --profile pm ec2 import-image --region us-west-2 --description "WMS beta6-2" --disk-containers="file:///root/iso/beta6/wekamanage/make_ami/containers.json"
