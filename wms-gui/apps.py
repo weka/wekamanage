@@ -264,7 +264,7 @@ class WEKAmon(AppBase):
         log.info("running docker image list...")
         cmd = '/usr/bin/docker image list | grep wekasolutions'
         try:
-            result = self.run(cmd, shell=True)
+            result = self.run(cmd, shell=True, timeout=30)
         except CalledProcessError:
             return NotInstalled  # grep will return 1 if no matches
         log.debug(result)

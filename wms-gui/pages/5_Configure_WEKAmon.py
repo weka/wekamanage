@@ -144,9 +144,9 @@ if st.session_state["authentication_status"]:
         st.session_state['cluster_url'] = f"http://{clusterdata['hostname-ip']}:14000"
 
     # put into a pandas frame?
-    compose_out = st.session_state.wekamon_app.compose_ps()
-    for line in compose_out.split('\n'):
-        st.write(line)
+    #compose_out = st.session_state.wekamon_app.compose_ps()
+    #for line in compose_out.split('\n'):
+    #    st.write(line)
 
 
 

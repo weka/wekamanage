@@ -157,16 +157,19 @@ if st.session_state.authentication_status:
                 st.stop()
         st.markdown("## Application Status")
         st.write()
-        if st.session_state.lwh_app.status() != Running:
-            lwh_emoji = ':thumbsdown:'
-        else:
-            lwh_emoji = ':thumbsup:'
-        if st.session_state.wekamon_app.status() != Running:
-            wekamon_emoji = ':thumbsdown:'
-        else:
-            wekamon_emoji = ':thumbsup:'
-        st.markdown(f"### Local Weka Home:  {lwh_emoji}")
-        st.markdown(f"### WEKAmon:  {wekamon_emoji}")
+        try:
+            if st.session_state.lwh_app.status() != Running:
+                lwh_emoji = ':thumbsdown:'
+            else:
+                lwh_emoji = ':thumbsup:'
+            if st.session_state.wekamon_app.status() != Running:
+                wekamon_emoji = ':thumbsdown:'
+            else:
+                wekamon_emoji = ':thumbsup:'
+            st.markdown(f"### Local Weka Home:  {lwh_emoji}")
+            st.markdown(f"### WEKAmon:  {wekamon_emoji}")
+        except:
+            pass    # sometimes on initial load, this pukes with a timeout...
 
 
 elif st.session_state.authentication_status is False:
