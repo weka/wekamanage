@@ -112,7 +112,7 @@ class MiniKube(AppBase):
 
         with pushd(self.MINIKUBE_DIR):
             cmd = self.MINIKUBE_DIR + '/minikube-offline_install.sh'
-            result = self.run(cmd, shell=True, cwd=self.MINIKUBE_DIR, timeout=120)
+            result = self.run(cmd, shell=True, cwd=self.MINIKUBE_DIR, timeout=5*60)
             # we should log this or something
             return result
 
@@ -227,7 +227,7 @@ class LocalWekaHome(AppBase):
         # remove grafana?
         self.run(self.RM_KUBE_GRAFANA, timeout=30)
 
-        self.run(self.CHECK_UP, timeout=30)
+        self.run(self.CHECK_UP, timeout=90)
 
         return True
 
