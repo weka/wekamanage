@@ -1,7 +1,8 @@
 
 .PHONY: all 
 .DEFAULT_GOAL:=all
+PYTHON=/usr/bin/python3.11
 
 all:
-	pip3 download -r ../requirements.txt
+	${PYTHON} -m pip download -r ../requirements.txt
 
