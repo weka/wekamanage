@@ -227,7 +227,7 @@ class LocalWekaHome(AppBase):
         # remove grafana?
         self.run(self.RM_KUBE_GRAFANA, timeout=30)
 
-        self.run(self.CHECK_UP, timeout=30)
+        self.run(self.CHECK_UP, timeout=90)
 
         return True
 
