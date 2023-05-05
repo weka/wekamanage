@@ -1,10 +1,10 @@
 [
   {
-    "Description": "WMS VMDK",
-    "Format": "vmdk",
+    "Description": "WMS VHDX",
+    "Format": "vhdx",
     "UserBucket": {
-        "S3Bucket": "wekarepo",
-        "S3Key": "wms-beta6.vmdk"
+        "S3Bucket": "weka-repo-test",
+        "S3Key": "wms-beta-export.vhdx"
     }
   }
 ]
