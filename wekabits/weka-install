@@ -3,32 +3,28 @@
 # weka-install - install weka on bootup of a new server, and configure misc items that can't be done in kickstart
 # working dir should be /opt/wekabits   (if put in /opt/weka, it would be removed with wekawhacker)
 
-pushd ..
-tar xvf wekabits/local-weka-home.tgz
-tar xvf wekabits/weka-mon.tgz
-tar xvf wekabits/snaptool.tgz
-tar xvf wekabits/tools.tgz
-tar xvf wekabits/wms-gui.tgz
-#pushd gui
-#chmod +x start_gui
-#tar xvf venv.tgz
-#popd
+#pushd ..
+#tar xvf wekabits/local-weka-home.tgz
+#tar xvf wekabits/weka-mon.tgz
+#tar xvf wekabits/snaptool.tgz
+#tar xvf wekabits/tools.tgz
+#tar xvf wekabits/wms-gui.tgz
 
-cp /opt/wekabits/wms-gui.service /etc/systemd/system
-systemctl enable --now wms-gui.service
+#cp /opt/wekabits/wms-gui.service /etc/systemd/system
+#systemctl enable --now wms-gui.service
 
 # install weka-mon
-pushd weka-mon
-./install.sh
-sed -i 's,${PWD},/opt/weka-mon,' docker-compose.yml
-popd
+#pushd weka-mon
+#./install.sh
+#sed -i 's,${PWD},/opt/weka-mon,' docker-compose.yml
+#popd
 
 # prep local weka home
-pushd local-weka-home/wekahome_offline
-./update_config.sh
-popd
+#pushd local-weka-home/wekahome_offline
+#./update_config.sh
+#popd
 
-popd
+#popd
 
 ### other weka installation items
 
@@ -60,16 +56,16 @@ echo 'exclude=kernel* rocky-release*' >> /etc/dnf/dnf.conf
 systemctl disable weka-firstboot.service
 
 # start cockpit
-systemctl enable --now cockpit.socket
+#systemctl enable --now cockpit.socket
 
 # Turn off account management in Cockpit (so it's more secure)
 #cp override.json /usr/share/cockpit/users/
 # copy our local filesystem overrides into place..
-cp -r usr /
+#cp -r usr /
 
 # install motd (for betas, it's a warning, otherwise a welcome message)
-cp motd /etc/
+#cp motd /etc/
 
-firewall-cmd --add-port 3000/tcp --add-port 8151/tcp --add-port 8090/tcp --add-port 445/tcp --add-port 80/tcp -permenant
+firewall-cmd --add-port 3000/tcp --add-port 8151/tcp --add-port 8090/tcp --add-port 443/tcp --add-port 80/tcp -permenant
 firewall-cmd --remove-port=14000-15000/tcp
 
