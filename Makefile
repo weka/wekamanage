@@ -31,14 +31,15 @@ ${DIR}: docker-ce ${SOURCEISO} tarballs/tools.tgz tarballs/weka-mon.tgz tarballs
 	@echo Creating build directory for $@ 
 	mkdir -p source_iso
 	mount ${SOURCEISO} source_iso
-	cp -r source_iso $@
+	#cp -rf source_iso $@
+	rsync -a --info=progress2 --delete source_iso/ $@
 	umount source_iso
-	cp -r wekabits $@
-	cp -r tarballs $@
-	cp -r docker-ce $@
+	cp -rf wekabits $@
+	cp -rf tarballs $@
+	cp -rf docker-ce $@
 	cp datafiles/partmap $@
 	cp datafiles/ks-* $@
-	cp -r python-wheels $@
+	cp -rf python-wheels $@
 	echo Install kickstart
 	sed -i 's/WEKA/WEKA Management Station/' $@/EFI/BOOT/grub.cfg
 	# run this twice so we get the first 2 occurences only
