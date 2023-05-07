@@ -60,6 +60,7 @@ class AppConfig(object):
         self.export_config = None
         self.quota_export_config = None
         self.snaptool_config = None
+        self.alertmanager_config = None
         self.smtp_config = None
         self.enable_export = None
         self.enable_alerts = None
@@ -85,6 +86,8 @@ class AppConfig(object):
                     self.quota_export_config = yaml.safe_load(f)
                 with open(config_files['snaptool_config_file'], 'r') as f:
                     self.snaptool_config = yaml.safe_load(f)
+                with open(config_files['alertmanager_config_file'], 'r') as f:
+                    self.alertmanager_config = yaml.safe_load(f)
                 with open(config_files['email_settings_file'], 'r') as f:
                     self.smtp_config = yaml.safe_load(f)
                 self.enable_export = config_files['enable_export']
@@ -202,6 +205,9 @@ class AppConfig(object):
 
     def update_snaptool(self):
         self.update_config(self.app_config['config_files']['snaptool_config_file'], self.snaptool_config)
+
+    def update_alertmanager(self):
+        self.update_config(self.app_config['config_files']['alertmanager_config_file'], self.alertmanager_config)
 
     def configure_compose(self):
         # build docker-compose configuration file
