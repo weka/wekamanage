@@ -1,0 +1,8 @@
+weka-4.1.0.77-beta6.dir/**
+wekamanage-beta6.dir/**
+Rocky-8.6-LTS-beta6.dir/**
+*.iso
+ROCKY/*.iso
+Linux-full/**
+weka-*.tar
+tarballs/weka-*.tar
