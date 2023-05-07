@@ -3,10 +3,12 @@
 
 Take the ISO and install it on a VM on KVM/Rocky Virt.
 
+BE SURE TO use BIOS boot method, until we figure out how to tell AWS that it's UEFI
+
 Shutdown the VM
 Note the qcow2 filename
 Copy .qcow2 file here (~9GB)
-Convert it with the provided script to .vhdx with provided script.   (from, to filenames needed)
+Convert it with the provided script to .vhdx format.   (from, to filenames needed)
 Upload to aws bucket
 edit the containers.json to reflect the new .vhdx filename
 run 'import_ami'
