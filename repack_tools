@@ -15,5 +15,5 @@ mv $DIRNAME tools
 tar cvzf tools.tgz tools
 
 popd
-cp $TMPDIR/tools.tgz wekabits
+cp $TMPDIR/tools.tgz tarballs
 rm -rf $TMPDIR

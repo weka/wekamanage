@@ -112,7 +112,7 @@ class MiniKube(AppBase):
 
         with pushd(self.MINIKUBE_DIR):
             cmd = self.MINIKUBE_DIR + '/minikube-offline_install.sh'
-            result = self.run(cmd, shell=True, cwd=self.MINIKUBE_DIR, timeout=120)
+            result = self.run(cmd, shell=True, cwd=self.MINIKUBE_DIR, timeout=5*60)
             # we should log this or something
             return result
 
@@ -227,7 +227,7 @@ class LocalWekaHome(AppBase):
         # remove grafana?
         self.run(self.RM_KUBE_GRAFANA, timeout=30)
 
-        self.run(self.CHECK_UP, timeout=30)
+        self.run(self.CHECK_UP, timeout=90)
 
         return True
 
@@ -264,7 +264,7 @@ class WEKAmon(AppBase):
         log.info("running docker image list...")
         cmd = '/usr/bin/docker image list | grep wekasolutions'
         try:
-            result = self.run(cmd, shell=True)
+            result = self.run(cmd, shell=True, timeout=30)
         except CalledProcessError:
             return NotInstalled  # grep will return 1 if no matches
         log.debug(result)
@@ -295,26 +295,30 @@ class WEKAmon(AppBase):
 
         log.info("running docker load")
         cmd = ['/usr/bin/docker', 'load', '-i', 'wekamon-containers.tar.gz']
-        result = self.run(cmd, timeout=30)
+        result = self.run(cmd, timeout=60)
         log.info(result)
 
     def start(self):
         # start the app
         log.info("running docker compose up")
         cmd = ['/usr/bin/docker', 'compose', 'up', '-d']
-        result = self.run(cmd, timeout=20)
+        result = self.run(cmd, timeout=60)
         log.debug(result)
 
     def stop(self):
         # stop the app
         log.info("running docker compose down")
         cmd = ['/usr/bin/docker', 'compose', 'down']
-        result = self.run(cmd, timeout=10)
+        result = self.run(cmd, timeout=60)
         log.debug(result)
 
     def is_running(self, container):
         result = self.run(f'docker compose ps --filter status=running | grep {container}', shell=True, check=False)
         return True if result.returncode == 0 else False
+
+    def compose_ps(self):
+        result = self.run('docker compose ps', shell=True, check=False)
+        return result.stdout
 
     def run(self, cmd, *args, capture_output=True, check=True, text=True, timeout=5, **kwargs):
         # print(f'WEKAmon: Running {cmd}: {kwargs}')

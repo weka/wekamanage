@@ -1,0 +1,1 @@
+qemu-img convert -p -f qcow2 -O vhdx $1 $2
