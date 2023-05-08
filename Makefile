@@ -27,18 +27,19 @@ ${ISO}: ${DIR}
 		-no-emul-boot -graft-points -V ${LABEL} $<
 	implantisomd5 $@
 
-${DIR}: docker-ce ${SOURCEISO} tarballs/tools.tgz tarballs/weka-mon.tgz tarballs/local-weka-home.tgz tarballs/wms-gui.tgz
+${DIR}: docker-ce ${SOURCEISO} tarballs/ansible-install.tgz tarballs/tools.tgz tarballs/weka-mon.tgz tarballs/local-weka-home.tgz tarballs/wms-gui.tgz
 	@echo Creating build directory for $@ 
 	mkdir -p source_iso
 	mount ${SOURCEISO} source_iso
-	cp -r source_iso $@
+	#cp -rf source_iso $@
+	rsync -a --info=progress2 --delete source_iso/ $@
 	umount source_iso
-	cp -r wekabits $@
-	cp -r tarballs $@
-	cp -r docker-ce $@
+	cp -rf wekabits $@
+	cp -rf tarballs $@
+	cp -rf docker-ce $@
 	cp datafiles/partmap $@
 	cp datafiles/ks-* $@
-	cp -r python-wheels $@
+	cp -rf python-wheels $@
 	echo Install kickstart
 	sed -i 's/WEKA/WEKA Management Station/' $@/EFI/BOOT/grub.cfg
 	# run this twice so we get the first 2 occurences only
@@ -53,6 +54,9 @@ ${DIR}: docker-ce ${SOURCEISO} tarballs/tools.tgz tarballs/weka-mon.tgz tarballs
 
 tarballs/tools.tgz:
 	./repack_tools
+
+tarballs/ansible-install.tgz:
+	cd tarballs; curl -LO https://weka-repo-test.s3.us-west-2.amazonaws.com/ansible-install.tgz
 
 tarballs/weka-mon.tgz:
 	cd tarballs; curl -LO https://weka-repo-test.s3.us-west-2.amazonaws.com/weka-mon.tgz
