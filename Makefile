@@ -27,7 +27,7 @@ ${ISO}: ${DIR}
 		-no-emul-boot -graft-points -V ${LABEL} $<
 	implantisomd5 $@
 
-${DIR}: docker-ce ${SOURCEISO} tarballs/tools.tgz tarballs/weka-mon.tgz tarballs/local-weka-home.tgz tarballs/wms-gui.tgz
+${DIR}: docker-ce ${SOURCEISO} tarballs/ansible-install.tgz tarballs/tools.tgz tarballs/weka-mon.tgz tarballs/local-weka-home.tgz tarballs/wms-gui.tgz
 	@echo Creating build directory for $@ 
 	mkdir -p source_iso
 	mount ${SOURCEISO} source_iso
@@ -54,6 +54,9 @@ ${DIR}: docker-ce ${SOURCEISO} tarballs/tools.tgz tarballs/weka-mon.tgz tarballs
 
 tarballs/tools.tgz:
 	./repack_tools
+
+tarballs/ansible-install.tgz:
+	cd tarballs; curl -LO https://weka-repo-test.s3.us-west-2.amazonaws.com/ansible-install.tgz
 
 tarballs/weka-mon.tgz:
 	cd tarballs; curl -LO https://weka-repo-test.s3.us-west-2.amazonaws.com/weka-mon.tgz
