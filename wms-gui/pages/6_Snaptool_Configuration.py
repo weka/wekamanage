@@ -30,8 +30,8 @@ if st.session_state["authentication_status"]:
 
     snaptool_config = st.session_state.app_config.snaptool_config
 
-    if 'initial_text' not in st.session_state:
-        st.session_state['initial_text'] = yaml.dump(snaptool_config)
+    if 'snaptool_initial_text' not in st.session_state:
+        st.session_state['snaptool_initial_text'] = yaml.dump(snaptool_config)
 
     st.markdown(f"### Snaptool Configuration Editor")
     st.write()
@@ -44,7 +44,7 @@ if st.session_state["authentication_status"]:
             st.stop()
 
     result = streamlit_monaco_yaml.monaco_editor(
-        st.session_state.initial_text,
+        st.session_state.snaptool_initial_text,
         key=f"monaco_editor",
     )
 
@@ -53,7 +53,7 @@ if st.session_state["authentication_status"]:
         if st.button("Save"):
             st.session_state.app_config.snaptool_config = yaml.safe_load(result['text'])
             st.session_state.app_config.update_snaptool()
-            st.session_state['initial_text'] = yaml.dump(st.session_state.app_config.snaptool_config)
+            st.session_state['snaptool_initial_text'] = yaml.dump(st.session_state.app_config.snaptool_config)
             st.success("Snaptool configuration saved")
             if not st.session_state.wekamon_app.is_running('wekasolutions/snaptool'):
                 st.info('Snaptool is not runnning/enabled.  Visit the Configure WEKAmon page to enable it.')
