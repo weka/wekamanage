@@ -13,6 +13,7 @@ tar xvf $REPO/tarballs/local-weka-home.tgz
 tar xvf $REPO/tarballs/weka-mon.tgz
 tar xvf $REPO/tarballs/tools.tgz
 tar xvf $REPO/tarballs/wms-gui.tgz
+tar xvf $REPO/tarballs/ansible-install.tgz
 
 # copy systemd units, etc.
 cp -r $REPO/wekabits $SYSIMAGE/opt

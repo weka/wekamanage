@@ -6,3 +6,4 @@ ROCKY/*.iso
 Linux-full/**
 weka-*.tar
 tarballs/weka-*.tar
+tarballs/*.tgz
