@@ -1,9 +1,4 @@
-<<<<<<< HEAD
-%pre  --logfile=/tmp/ks-pre2.log
-
-=======
 %pre --logfile=/tmp/ks-pre2.log
->>>>>>> 07686cc2f8959ae11eb0ca3881486f64d12c06d0
 TYPEINCLUDE=/tmp/typeinclude
 NETINCLUDE=/tmp/netinclude
 
@@ -18,8 +13,4 @@ echo "network --bootproto=dhcp --device=link --hostname=WekaMgmtServer --activat
 #
 mountedbase="/run/install/repo"
 echo "url --url \"file://$mountedbase\" " > $TYPEINCLUDE
-<<<<<<< HEAD
-
-=======
->>>>>>> 07686cc2f8959ae11eb0ca3881486f64d12c06d0
 %end
