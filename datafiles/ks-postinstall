@@ -38,10 +38,14 @@ popd
 cp $REPO/wekabits/wms-gui.service $SYSIMAGE/etc/systemd/system
 cp $REPO/wekabits/weka-firstboot.service $SYSIMAGE/etc/systemd/system
 
+# install ansible install stuff
+cp $REPO/wekabits/ansible-gui.service $SYSIMAGE/etc/systemd/system
+
 # enable docker, cockpit and gui services
 chroot $SYSIMAGE systemctl enable docker.socket
 chroot $SYSIMAGE systemctl enable cockpit.socket
 chroot $SYSIMAGE systemctl enable wms-gui.service
+chroot $SYSIMAGE systemctl enable ansible-gui.service
 chroot $SYSIMAGE systemctl enable weka-firstboot.service
 
 # install our local modifications to the usr filesystem
