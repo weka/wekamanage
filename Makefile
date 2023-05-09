@@ -37,18 +37,18 @@ ${DIR}: docker-ce ${SOURCEISO} tarballs/ansible-install.tgz tarballs/tools.tgz t
 	cp -rf wekabits $@
 	cp -rf tarballs $@
 	cp -rf docker-ce $@
-	cp datafiles/partmap $@
-	cp datafiles/ks-* $@
+	cp -f datafiles/partmap $@
+	cp -f datafiles/ks-* $@
 	cp -rf python-wheels $@
 	echo Install kickstart
 	sed -i 's/WEKA/WEKA Management Station/' $@/EFI/BOOT/grub.cfg
 	# run this twice so we get the first 2 occurences only
 	sed -i "0,/quiet/{s/quiet/inst.ks=hd:LABEL=${LABEL}/}" $@/EFI/BOOT/grub.cfg
 	sed -i "0,/quiet/{s/quiet/inst.ks=hd:LABEL=${LABEL}/}" $@/EFI/BOOT/grub.cfg
-	cp datafiles/isolinux.cfg $@/isolinux/isolinux.cfg
-	cp datafiles/grub.conf $@/isolinux/grub.conf
-	cp datafiles/isolinux.cfg $@/isolinux/isolinux.cfg
-	cp README.md $@/wekabits
+	cp -f datafiles/isolinux.cfg $@/isolinux/isolinux.cfg
+	cp -f datafiles/grub.conf $@/isolinux/grub.conf
+	cp -f datafiles/isolinux.cfg $@/isolinux/isolinux.cfg
+	cp -f README.md $@/wekabits
 	touch $@
 	date > $@/.weka-buildstamp
 
