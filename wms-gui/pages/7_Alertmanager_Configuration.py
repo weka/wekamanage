@@ -30,8 +30,8 @@ if st.session_state["authentication_status"]:
 
     alertmanager_config = st.session_state.app_config.alertmanager_config
 
-    if 'initial_text' not in st.session_state:
-        st.session_state['initial_text'] = yaml.dump(alertmanager_config)
+    if 'alertmanager_initial_text' not in st.session_state:
+        st.session_state['alertmanager_initial_text'] = yaml.dump(alertmanager_config)
 
     st.markdown(f"### Alertmanager Configuration Editor")
     st.write()
@@ -44,8 +44,8 @@ if st.session_state["authentication_status"]:
             st.stop()
 
     result = streamlit_monaco_yaml.monaco_editor(
-        st.session_state.initial_text,
-        key=f"monaco_editor",
+        st.session_state.alertmanager_initial_text,
+        key=f"alertmanager_monaco_editor",
     )
 
     # returns None on the initial load
@@ -53,7 +53,7 @@ if st.session_state["authentication_status"]:
         if st.button("Save"):
             st.session_state.app_config.alertmanager_config = yaml.safe_load(result['text'])
             st.session_state.app_config.update_alertmanager()
-            st.session_state['initial_text'] = yaml.dump(st.session_state.app_config.alertmanager_config)
+            st.session_state['alertmanager_initial_text'] = yaml.dump(st.session_state.app_config.alertmanager_config)
             st.success("Alertmanager configuration saved")
             if not st.session_state.wekamon_app.is_running('prom/alertmanager'):
                 st.info('Alertmanager is not runnning/enabled.  Visit the Configure WEKAmon page to enable it.')
