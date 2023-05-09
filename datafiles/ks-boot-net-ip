@@ -1,0 +1,25 @@
+<<<<<<< HEAD
+%pre  --logfile=/tmp/ks-pre2.log
+
+=======
+%pre --logfile=/tmp/ks-pre2.log
+>>>>>>> 07686cc2f8959ae11eb0ca3881486f64d12c06d0
+TYPEINCLUDE=/tmp/typeinclude
+NETINCLUDE=/tmp/netinclude
+
+#
+# set default network line for net include in main kickstart section 
+#
+
+echo "network --bootproto=dhcp --device=link --hostname=WekaMgmtServer --activate --onboot=yes" > $NETINCLUDE
+
+#
+# set generic url install type - should work for cdrom or iso-over-network
+#
+mountedbase="/run/install/repo"
+echo "url --url \"file://$mountedbase\" " > $TYPEINCLUDE
+<<<<<<< HEAD
+
+=======
+>>>>>>> 07686cc2f8959ae11eb0ca3881486f64d12c06d0
+%end
