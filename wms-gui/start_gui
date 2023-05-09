@@ -11,3 +11,15 @@ else
 fi
 
 streamlit run Landing_Page.py
+
+deactivate
+
+cwd="${PWD}"
+cd /opt/ansible-install
+source activate.sh
+
+./run.sh
+
+deactivate
+cd $cwd
+
