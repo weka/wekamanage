@@ -1,0 +1,14 @@
+[Unit]
+Description="WEKA Management Station Ansible GUI"
+After=docker.service network-online.target cockpit.service weka-firstboot.service
+Wants=network-online.target cockpit.service
+Before=console-getty.service
+
+[Service]
+User=root
+WorkingDirectory=/opt/ansible-install
+ExecStart=/opt/ansible-install/start_gui
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
