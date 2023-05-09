@@ -1,3 +1,4 @@
+%pre
 TYPEINCLUDE=/tmp/typeinclude
 NETINCLUDE=/tmp/netinclude
 
@@ -12,4 +13,4 @@ echo "network --bootproto=dhcp --device=link --hostname=WekaMgmtServer --activat
 #
 mountedbase="/run/install/repo"
 echo "url --url \"file://$mountedbase\" " > $TYPEINCLUDE
-
+%end
