@@ -1,4 +1,4 @@
-%pre
+%pre --logfile=/tmp/ks-pre2.log
 TYPEINCLUDE=/tmp/typeinclude
 NETINCLUDE=/tmp/netinclude
 
