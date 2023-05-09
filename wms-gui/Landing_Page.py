@@ -118,6 +118,9 @@ if st.session_state.authentication_status:
     if "cockpit_url" not in st.session_state:
         st.session_state['cockpit_url'] = st.session_state['lwh_url'] + ":9090"
 
+    if "ansible_url" not in st.session_state:
+        st.session_state['ansible_url'] = st.session_state['lwh_url'] + ":7860"
+
     with col1:
         if st.button("WMS Linux Admin GUI"):
             log.info(f'opening {st.session_state.cockpit_url}')
@@ -134,6 +137,10 @@ if st.session_state.authentication_status:
         if st.button("Open Snaptool in new tab"):
             log.info(f'opening {st.session_state.snaptool_url}')
             open_in_new_tab(st.session_state.snaptool_url)
+
+        if st.button("Deploy a WEKA Cluster"):
+            log.info(f'opening {st.session_state.ansible_url}')
+            open_in_new_tab(st.session_state.ansible_url)
 
         if "cluster_url" in st.session_state:
             if st.button("Open cluster GUI in new tab"):
