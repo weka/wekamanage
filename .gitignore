@@ -7,3 +7,4 @@ Linux-full/**
 weka-*.tar
 tarballs/weka-*.tar
 tarballs/*.tgz
+wms-gui/local_wheels/*.whl
