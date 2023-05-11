@@ -206,10 +206,10 @@ class AppConfig(object):
                 json.dump(self.tokens, f, indent=4)
 
     def update_cluster_dict(self, config):
-        hosts = self.api.get_hosts()
+        hosts = self.api.get_base_containers()
         hostnames = list()
         for host in hosts['data'][:3]:  # only the first 3
-            hostnames.append(str(host['name']))
+            hostnames.append(str(host['hostname']))
         config['cluster']['hosts'] = hostnames
 
     def update_export(self):
