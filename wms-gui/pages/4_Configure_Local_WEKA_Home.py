@@ -155,9 +155,6 @@ def config_lwh():
                 st.write(f"Grafana Password is {st.session_state.lwh_app.grafana_password()}")
 
 
-add_logo("WEKA_Logo_Color_RGB.png")
-st.image("WEKA_Logo_Color_RGB.png", width=200)
-st.markdown("# WEKA Management Station Configuration")
 
 if "authentication_status" not in st.session_state or \
         st.session_state["authentication_status"] is None or \
@@ -166,4 +163,7 @@ if "authentication_status" not in st.session_state or \
 elif st.session_state["authentication_status"]:
     authenticator = st.session_state['authenticator']
     authenticator.logout('Logout', 'sidebar', key="lwh_logout")
+    add_logo("WEKA_Logo_Color_RGB.png")
+    st.image("WEKA_Logo_Color_RGB.png", width=200)
+    st.markdown("# WEKA Management Station Configuration")
     config_lwh()
