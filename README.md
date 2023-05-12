@@ -13,18 +13,10 @@ An attempt of a management station for weka
 2. installation is unattended
 3. If using a VM, note that you'll need a minimum of 100G disk to install it
 
+## post-installation
+1. port 8501 is the wms-gui - default login is admin/admin
+2. port 9090 is Cockpit web Linux administration, if you need to change any settings (if not set by DHCP), reviewing logs, etc without having to log into the WMS
 
-## Configure Local Weka Home
-1. LWH is in /opt/local-weka-home
-2. follow directions here (https://docs.weka.io/support/the-wekaio-support-cloud/local-weka-home-deployment), but start from section 4.2
-
-## Configure weka-mon
-1. weka-mon is in /opt/weka-mon
-2. run the install.sh
-3. copy an auth-token.json to /opt/weka-mon/.weka
-4. run `docker compose up -d`
-
-
-
-
-
+### in the wms-gui
+1. general workflow is from top to bottom in the left menu
+2. when done configuring, you can go back to the landing page and there are buttons to open new tabs for all the applications
