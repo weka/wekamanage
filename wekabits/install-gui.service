@@ -8,7 +8,8 @@ Before=console-getty.service
 User=root
 WorkingDirectory=/opt/ansible-install
 ExecStart=/opt/ansible-install/start_gui
-Restart=always
+#Restart=always
+Type=forking
 
 [Install]
 WantedBy=multi-user.target

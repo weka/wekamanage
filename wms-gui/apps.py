@@ -294,7 +294,7 @@ class WEKAmon(AppBase):
         log.info(result)
 
         log.info("running docker load")
-        cmd = ['/usr/bin/docker', 'load', '-i', 'wekamon-containers.tar.gz']
+        cmd = ['/usr/bin/docker', 'load', '-i', 'wekamon-containers.tgz']
         result = self.run(cmd, timeout=60)
         log.info(result)
 
