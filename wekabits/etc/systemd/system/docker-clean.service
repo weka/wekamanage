@@ -1,0 +1,14 @@
+[Unit]
+Description="Docker Cleanup Service"
+After=docker.service network-online.target
+Wants=network-online.target
+Before=console-getty.service wms-gui.service
+
+[Service]
+User=root
+WorkingDirectory=/opt/wekabits
+ExecStart=/opt/wekabits/docker-clean
+Type=oneshot
+
+[Install]
+WantedBy=timers.target
