@@ -34,21 +34,26 @@ EOF
 popd
 
 # install our gui
-cp $REPO/wekabits/wms-gui.service $SYSIMAGE/etc/systemd/system
-cp $REPO/wekabits/weka-firstboot.service $SYSIMAGE/etc/systemd/system
+#cp $REPO/wekabits/wms-gui.service $SYSIMAGE/etc/systemd/system
+#cp $REPO/wekabits/weka-firstboot.service $SYSIMAGE/etc/systemd/system
+# ^^ now copied from wekabits/etc below
+
+# install our local modifications to /usr and /etc
+pushd $REPO/wekabits
+cp -r usr $SYSIMAGE
+cp -r etc $SYSIMAGE
+cp motd $SYSIMAGE/etc
+popd
 
 # enable docker, cockpit and gui services
 chroot $SYSIMAGE systemctl enable docker.socket
 chroot $SYSIMAGE systemctl enable cockpit.socket
 chroot $SYSIMAGE systemctl enable wms-gui.service
 chroot $SYSIMAGE systemctl enable weka-firstboot.service
+chroot $SYSIMAGE systemctl enable docker-clean.timer
+chroot $SYSIMAGE systemctl enable docker-clean.service
 
-# install our local modifications to the usr filesystem
-pushd $REPO/wekabits
-cp -r usr $SYSIMAGE
-cp motd $SYSIMAGE/etc
-popd
-
-cp REPO/wekabits/i2c_i801.conf $SYSIMAGE/etc/modprobe.d/
+# below is now also in wekabits/etc
+# cp REPO/wekabits/i2c_i801.conf $SYSIMAGE/etc/modprobe.d/
 
 # That's all folks!
