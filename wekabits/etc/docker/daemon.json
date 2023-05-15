@@ -1,0 +1,6 @@
+{
+    "log-opts": {
+        "max-size": "8m",
+        "max-file": "5"
+    }
+}
