@@ -49,12 +49,16 @@ if st.session_state["authentication_status"]:
         # export implies export, prometheus, and grafana containers
         st.session_state.app_config.enable_export = st.checkbox("Enable Metrics Exporter & Grafana",
                                                                 value=st.session_state.app_config.enable_export)
-        if st.session_state.app_config.enable_export:
-            st.session_state.app_config.enable_alerts = st.checkbox("Enable Alert Notifications",
-                                                                    value=st.session_state.app_config.enable_alerts)
+        #if st.session_state.app_config.enable_export:
+        #    st.session_state.app_config.enable_alerts = st.checkbox("Enable Alert Notifications",
+        #                                                            value=st.session_state.app_config.enable_alerts)
+
         # quota implies quota-export, prometheus, and alertmanager containers, and valid email config
         st.session_state.app_config.enable_quota = st.checkbox("Enable Quota Exporter & Notifications",
                                                                value=st.session_state.app_config.enable_quota)
+        if st.session_state.app_config.enable_quota:
+            st.session_state.app_config['enable_alerts'] = True
+
         # snaptool implies snaptool container
         st.session_state.app_config.enable_snaptool = st.checkbox("Enable Snaptool",
                                                                   value=st.session_state.app_config.enable_snaptool)

@@ -248,15 +248,15 @@ class AppConfig(object):
             load_config(services, "export")
             add_grafana = True
             add_prometheus = True
-        if self.enable_alerts:
-            add_alertmanager = True     # maybe...
+        #if self.enable_alerts:
+        #    add_alertmanager = True     # maybe...
         if self.enable_loki:
             log.info('enabling loki')
             load_config(services, "loki")
             add_prometheus = True
         if self.enable_quota:
             log.info('enabling quota')
-            load_config(services, "quota")
+            load_config(services, "quota-export")
             add_prometheus = True
             add_alertmanager = True
         if self.enable_snaptool:
