@@ -105,6 +105,7 @@ if st.session_state["authentication_status"]:
                     # stop compose before changing the config file in case we remove something...
                     wekamon.stop()
                 st.session_state.app_config.save_clusters()
+                # Generate the compose.yml config file
                 st.session_state.app_config.configure_compose()
                 if status != NotInstalled:
                     wekamon.start()

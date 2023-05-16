@@ -106,6 +106,8 @@ if st.session_state.authentication_status:
 
         if "grafana_url" not in st.session_state:
             st.session_state['grafana_url'] = st.session_state['lwh_url'] + ":3000"
+            st.session_state['prometheus_url'] = st.session_state['lwh_url'] + ":9091"
+            st.session_state['alertmanager_url'] = st.session_state['lwh_url'] + ":9093"
 
         if "snaptool_url" not in st.session_state:
             st.session_state['snaptool_url'] = st.session_state['lwh_url'] + ":8090"
@@ -122,22 +124,36 @@ if st.session_state.authentication_status:
             st.session_state['ansible_url'] = st.session_state['lwh_url'] + ":7860"
 
         with col1:
+            st.markdown('### Applications')
+            st.write('WMS OS management')
             if st.button("WMS Linux Admin GUI"):
                 log.info(f'opening {st.session_state.cockpit_url}')
                 open_in_new_tab(st.session_state.cockpit_url)
 
-            if st.button("Open Local WEKA Home in new tab"):
+            st.write('Local Weka Home')
+            if st.button("Local WEKA Home"):
                 log.info(f'opening {st.session_state.lwh_url}')
                 open_in_new_tab(st.session_state.lwh_url)
 
-            if st.button("Open WEKAmon in new tab"):
+            st.write('WEKAmon')
+            if st.button("Grafana"):
                 log.info(f'opening {st.session_state.grafana_url}')
                 open_in_new_tab(st.session_state.grafana_url)
 
+            if st.button("Prometheus"):
+                log.info(f'opening {st.session_state.prometheus_url}')
+                open_in_new_tab(st.session_state.prometheus_url)
+
+            if st.button("Alertmanager"):
+                log.info(f'opening {st.session_state.alertmanager_url}')
+                open_in_new_tab(st.session_state.alertmanager_url)
+
+            st.write('Snaptool')
             if st.button("Open Snaptool in new tab"):
                 log.info(f'opening {st.session_state.snaptool_url}')
                 open_in_new_tab(st.session_state.snaptool_url)
 
+            st.write('Deploy WEKA Clusters')
             if st.button("Deploy a WEKA Cluster"):
                 log.info(f'opening {st.session_state.ansible_url}')
                 open_in_new_tab(st.session_state.ansible_url)

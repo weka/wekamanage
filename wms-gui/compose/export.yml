@@ -4,7 +4,7 @@ volumes:
   - /opt/weka-mon/.weka:/weka/.weka
   - /etc/hosts:/etc/hosts
   - /opt/weka-mon/export.yml:/weka/export.yml
-command: -vvv
+command: -v
 restart: always
 ports:
   - "8001:8001"

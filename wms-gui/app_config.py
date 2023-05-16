@@ -135,7 +135,7 @@ class AppConfig(object):
         alertmanager_smtp['smtp_auth_username'] = self.smtp_config['smtp_username']
         alertmanager_smtp['smtp_auth_identity'] = self.smtp_config['smtp_username']
         alertmanager_smtp['smtp_auth_password'] = self.smtp_config['smtp_password']
-        alertmanager_smtp['require_tls'] = not self.smtp_config['smtp_insecure_tls']
+        alertmanager_smtp['smtp_require_tls'] = not self.smtp_config['smtp_insecure_tls']
         self.update_alertmanager()
 
         with open(config_files['email_settings_file'], 'w') as file:
@@ -272,6 +272,8 @@ class AppConfig(object):
         if add_alertmanager:
             log.info('enabling alertmanager')
             load_config(services, "alertmanager")
+            # should probably set --web.external-url=<our url>:9093 - it's similar to LWH email link thing
+            # should also have some setting of alertmanager notifiers similar to this model
 
         with open(self.compose_file, "w") as f:
             yaml.dump(compose_config, f, default_flow_style=False, sort_keys=False)
