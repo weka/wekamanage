@@ -52,8 +52,6 @@ if 'authenticator' not in st.session_state:
 else:
     authenticator = st.session_state['authenticator']
 
-col1, col2, col3 = st.columns(3)
-with col1:
     # Get the URL used to get to this app
     # do this twice - it usually fails the first time. (actually, now it works?)
     # do it again after login
@@ -65,10 +63,12 @@ with col1:
 
     # actually get their user/pass
 
-    add_logo("WEKA_Logo_Color_RGB.png")
-    st.image("WEKA_Logo_Color_RGB.png", width=200)
-    st.markdown("# WEKA Management Station")
-    st.markdown("## Landing Page")
+add_logo("WEKA_Logo_Color_RGB.png")
+st.image("WEKA_Logo_Color_RGB.png", width=200)
+st.markdown("# WEKA Management Station")
+col1, col2, col3 = st.columns(3)
+with col1:
+    st.markdown("## Applications")
     if 'authentication_status' not in st.session_state or not st.session_state['authentication_status']:
         authenticator.login('Login', 'main')
         if len(st.session_state.username) != 0:
@@ -149,7 +149,7 @@ if st.session_state.authentication_status:
                 open_in_new_tab(st.session_state.alertmanager_url)
 
             st.write('Snaptool')
-            if st.button("Open Snaptool in new tab"):
+            if st.button("Snaptool"):
                 log.info(f'opening {st.session_state.snaptool_url}')
                 open_in_new_tab(st.session_state.snaptool_url)
 
@@ -158,8 +158,9 @@ if st.session_state.authentication_status:
                 log.info(f'opening {st.session_state.ansible_url}')
                 open_in_new_tab(st.session_state.ansible_url)
 
+            st.write('Manage your WEKA Cluster')
             if "cluster_url" in st.session_state:
-                if st.button("Open cluster GUI in new tab"):
+                if st.button("Open cluster GUI"):
                     log.info(f"opening {st.session_state.cluster_url}")
                     open_in_new_tab(st.session_state.cluster_url)
 
