@@ -7,7 +7,7 @@ Before=console-getty.service
 [Service]
 User=root
 WorkingDirectory=/opt/ansible-install
-ExecStart=/opt/ansible-install/start_gui
+ExecStart=/opt/ansible-install/installer_gui
 #Restart=always
 Type=forking
 
