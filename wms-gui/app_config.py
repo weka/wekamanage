@@ -95,8 +95,6 @@ class AppConfig(object):
                 self.enable_quota = config_files['enable_quota']
                 self.enable_snaptool = config_files['enable_snaptool']
                 self.enable_loki = config_files['enable_loki']
-                #with open(config_files['compose_file'], 'r') as f:
-                #    self.compose_file = yaml.safe_load(f)
                 self.compose_file = config_files['compose_file']
                 self.compose_dir = config_files['compose_dir']
 
@@ -178,15 +176,6 @@ class AppConfig(object):
         print('save complete')
 
     def update_config(self, filename, config):
-        # expanded = expand_directory(directory)
-        # self.save_auth_tokens(expanded)
-        # config_file = os.path.join(expanded, filename)
-        # config = None
-        # with open(filename, 'r') as f:
-        #    config = yaml.load(f, Loader=SafeLoader)
-        # if config is None:
-        #    raise Exception(f"Failed to open {filename}")
-        # self.update_cluster_dict(config)
         if len(config) == 0:
             print('config is zero length!')
             return
