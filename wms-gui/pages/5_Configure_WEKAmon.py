@@ -56,9 +56,6 @@ if st.session_state["authentication_status"]:
         # quota implies quota-export, prometheus, and alertmanager containers, and valid email config
         st.session_state.app_config.enable_quota = st.checkbox("Enable Quota Exporter & Notifications",
                                                                value=st.session_state.app_config.enable_quota)
-        if st.session_state.app_config.enable_quota:
-            st.session_state.app_config['enable_alerts'] = True
-
         # snaptool implies snaptool container
         st.session_state.app_config.enable_snaptool = st.checkbox("Enable Snaptool",
                                                                   value=st.session_state.app_config.enable_snaptool)
