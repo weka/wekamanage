@@ -121,14 +121,14 @@ class AppConfig(object):
         lwh_smtp = self.lwh_config['smtp_user_data']
         lwh_smtp['sender_email'] = self.smtp_config['sender_email']
         lwh_smtp['sender_email_name'] = self.smtp_config['sender_email_name']
-        lwh_smtp['smtp_host'] = self.smtp_config['smtp_host']
+        lwh_smtp['smtp_host'] = self.smtp_config['smtp_host'] + ':' + self.smtp_config['smtp_port']
         lwh_smtp['smtp_insecure_tls'] = self.smtp_config['smtp_insecure_tls']
         lwh_smtp['smtp_password'] = self.smtp_config['smtp_password']
         lwh_smtp['smtp_username'] = self.smtp_config['smtp_username']
         self.save_lwh_config()
 
         alertmanager_smtp = self.alertmanager_config['global']
-        alertmanager_smtp['smtp_smarthost'] = self.smtp_config['smtp_host']
+        alertmanager_smtp['smtp_smarthost'] = self.smtp_config['smtp_host'] + self.smtp_config['smtp_port']
         alertmanager_smtp['smtp_from'] = self.smtp_config['sender_email']
         alertmanager_smtp['smtp_auth_username'] = self.smtp_config['smtp_username']
         alertmanager_smtp['smtp_auth_identity'] = self.smtp_config['smtp_username']
