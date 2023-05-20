@@ -1,3 +1,5 @@
+import os
+
 import streamlit as st
 import streamlit_monaco_yaml
 import yaml
@@ -20,8 +22,10 @@ if "authentication_status" not in st.session_state:
     st.session_state["authentication_status"] = None
 
 if st.session_state["authentication_status"]:
-    add_logo("WEKA_Logo_Color_RGB.png")
-    st.image("WEKA_Logo_Color_RGB.png", width=200)
+    #if 'logo' not in st.session_state:
+    #    st.session_state['logo'] = os.getcwd() + '/WEKA_Logo_Color_RGB.png'
+    add_logo(st.session_state.logo)
+    st.image(st.session_state.logo, width=200)
     st.markdown("# WEKA Management Station")
     log = st.session_state.log
     authenticator = st.session_state['authenticator']
