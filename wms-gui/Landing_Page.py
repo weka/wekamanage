@@ -1,3 +1,4 @@
+import os
 from logging.handlers import SysLogHandler
 
 import streamlit as st
@@ -29,9 +30,11 @@ if "log" not in st.session_state:
 else:
     log = st.session_state.log
 
+if 'wms_gui_dir' not in st.session_state:
+    st.session_state['wms_gui_dir'] = os.getcwd()
 
 if 'app_config' not in st.session_state:
-    st.session_state['app_config'] = AppConfig('./app_config.yaml')
+    st.session_state['app_config'] = AppConfig(st.session_state.wms_gui_dir + '/app_config.yaml')
     try:
         st.session_state['app_config'].load_configs()
     except Exception as exc:
@@ -63,8 +66,10 @@ else:
 
     # actually get their user/pass
 
-add_logo("WEKA_Logo_Color_RGB.png")
-st.image("WEKA_Logo_Color_RGB.png", width=200)
+if 'logo' not in st.session_state:
+    st.session_state['logo'] = os.getcwd() + '/WEKA_Logo_Color_RGB.png'
+add_logo(st.session_state['logo'])
+st.image(st.session_state.logo, width=200)
 st.markdown("# WEKA Management Station")
 col1, col2, col3 = st.columns(3)
 with col1:

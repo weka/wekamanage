@@ -5,5 +5,6 @@ smtp_host: smtp.gmail.com
 smtp_insecure_tls: false
 smtp_password: mppzifjblxpmxrud
 smtp_port: '465'
+smtp_tls: true
 smtp_username: vincetest9999@gmail.com
 validated: true

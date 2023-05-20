@@ -1,3 +1,5 @@
+import os
+
 import requests
 import streamlit as st
 
@@ -19,8 +21,10 @@ if "authentication_status" not in st.session_state:
     st.session_state["authentication_status"] = None
 
 if st.session_state["authentication_status"]:
-    add_logo("WEKA_Logo_Color_RGB.png")
-    st.image("WEKA_Logo_Color_RGB.png", width=200)
+    # if 'logo' not in st.session_state:
+    #    st.session_state['logo'] = os.getcwd() + '/WEKA_Logo_Color_RGB.png'
+    add_logo(st.session_state.logo)
+    st.image(st.session_state.logo, width=200)
     st.markdown("# WEKA Management Station")
     log = st.session_state.log
     authenticator = st.session_state['authenticator']
@@ -28,7 +32,7 @@ if st.session_state["authentication_status"]:
     st.title('WEKAmon Services Configuration')
 
     # app_config = st.session_state.app_config
-    clusterdata = st.session_state.app_config.clusters_config
+    st.session_state.app_config.clusters_config = st.session_state.app_config.clusters_config
 
     # initialize the wekamon app object
     if 'wekamon_app' not in st.session_state:
@@ -49,7 +53,7 @@ if st.session_state["authentication_status"]:
         # export implies export, prometheus, and grafana containers
         st.session_state.app_config.enable_export = st.checkbox("Enable Metrics Exporter & Grafana",
                                                                 value=st.session_state.app_config.enable_export)
-        #if st.session_state.app_config.enable_export:
+        # if st.session_state.app_config.enable_export:
         #    st.session_state.app_config.enable_alerts = st.checkbox("Enable Alert Notifications",
         #                                                            value=st.session_state.app_config.enable_alerts)
 
@@ -68,22 +72,31 @@ if st.session_state["authentication_status"]:
                 st.session_state.app_config.enable_quota or \
                 st.session_state.app_config.enable_snaptool or \
                 st.session_state.app_config.enable_loki:
-            clusterdata['hostname-ip'] = st.text_input("Cluster Location (hostname or IP addr)", max_chars=30,
-                                                       value=clusterdata[
-                                                           'hostname-ip'] if 'hostname-ip' in clusterdata else '')
-            clusterdata['user'] = st.text_input("Username", max_chars=30,
-                                                value=clusterdata['user'] if 'user' in clusterdata else '')
-            clusterdata['password'] = st.text_input("Password", max_chars=30, type='password',
-                                                    value=clusterdata['password'] if 'password' in clusterdata else '')
+            st.session_state.app_config.clusters_config['hostname-ip'] = st.text_input(
+                "Cluster Location (hostname or IP addr)", max_chars=30,
+                value=st.session_state.app_config.clusters_config[
+                    'hostname-ip'] if 'hostname-ip' in st.session_state.app_config.clusters_config else '')
+            st.session_state.app_config.clusters_config['user'] = \
+                st.text_input("Username", max_chars=30,
+                              value= st.session_state.app_config.clusters_config[
+                                  'user'] if 'user' in st.session_state.app_config.clusters_config else '')
+            st.session_state.app_config.clusters_config['password'] = \
+                st.text_input("Password", max_chars=30, type='password',
+                              value=st.session_state.app_config.clusters_config[
+                                  'password'] if 'password' in st.session_state.app_config.clusters_config else '')
 
         if st.button('Save', key='clusters_save'):
             tokens = None
-            weka_api = WekaAPIClient(clusterdata['hostname-ip'])
+            print(os.getcwd())
+            if 'weka_api' not in st.session_state:
+                st.session_state['weka_api'] = WekaAPIClient(st.session_state.app_config.clusters_config['hostname-ip'])
             try:
-                tokens = weka_api.login(clusterdata['user'], clusterdata['password'])
+                tokens = st.session_state.weka_api.login(st.session_state.app_config.clusters_config['user'],
+                                                         st.session_state.app_config.clusters_config['password'])
             except requests.exceptions.ConnectionError as exc:
                 with col1:
-                    st.error(f'Error connecting to {clusterdata["hostname-ip"]}:\n{exc.args[0]}')
+                    st.error(
+                        f'Error connecting to {st.session_state.app_config.clusters_config["hostname-ip"]}:\n{exc.args[0]}')
                     st.error("Make sure you have DNS configured or have edited /etc/hosts")
                     st.error("See the OS Web Admin GUI on the Landing Page to configure DNS")
                     st.error("See the Edit Hosts File page to edit the hosts file")
@@ -94,22 +107,25 @@ if st.session_state["authentication_status"]:
                     st.stop()
             if tokens is not None:  # was the cluster login successful?
                 with col1:
-                    log.info(f"Successfully logged into WEKA cluster {clusterdata['hostname-ip']}")
+                    log.info(
+                        f"Successfully logged into WEKA cluster {st.session_state.app_config.clusters_config['hostname-ip']}")
                     st.success('Successfully logged into cluster')
-                st.session_state.app_config.update_tokens(weka_api, tokens)
+                st.session_state.app_config.update_tokens(st.session_state.weka_api, tokens)
 
                 # so instead of the next line, we'll need to assemble the docker-compose.yml with the
                 # services selected, then save the config files for the services selected only.
-                wekamon = st.session_state.wekamon_app
-                status = wekamon.status()
-                if status != NotInstalled:
-                    # stop compose before changing the config file in case we remove something...
-                    wekamon.stop()
+                # wekamon = st.session_state.wekamon_app
+                # status = wekamon.status()
+                # if status != NotInstalled:
+                #    # stop compose before changing the config file in case we remove something...
+                #    wekamon.stop()
+                st.session_state.wekamon_app.stop()
                 st.session_state.app_config.save_clusters()
                 # Generate the compose.yml config file
                 st.session_state.app_config.configure_compose()
-                if status != NotInstalled:
-                    wekamon.start()
+                # if status != NotInstalled:
+                #    wekamon.start()
+                st.session_state.wekamon_app.start()
 
                 # success!
                 with col1:
@@ -117,37 +133,37 @@ if st.session_state["authentication_status"]:
                     st.success('Successfully updated config files')
 
                 # we may want to put this on another screen or after another button... start/stop services
-                if wekamon.status() == NotInstalled:
+                if st.session_state.wekamon_app.status() == NotInstalled:
                     with st.spinner("Installing WEKAmon.   Please wait..."):
                         log.info("Installing WEKAmon")
-                        wekamon.install()
+                        st.session_state.wekamon_app.install()
                         with col1:
                             log.info("WEKAmon successfully installed.")
                             st.success("WEKAmon successfully installed.")
-                        wekamon.start()
+                        st.session_state.wekamon_app.start()
                         with col1:
                             log.info("WEKAmon successfully started.")
                             st.success("WEKAmon successfully started.")
                 else:
                     with st.spinner("Restarting WEKAmon.   Please wait..."):
                         log.info("Restarting WEKAmon")
-                        wekamon.restart()
+                        st.session_state.wekamon_app.restart()
                         with col1:
                             log.info("WEKAmon successfully restarted.")
                             st.success("WEKAmon successfully restarted.")
 
             else:
                 # cluster login failed.  disable WEKAmon completely because we don't have valid credentials
-                wekamon = st.session_state['wekamon_app']
-                wekamon.stop()  # does this prevent start on reboot?
+                # wekamon = st.session_state['wekamon_app']
+                st.session_state.wekamon_app.stop()  # does this prevent start on reboot?
 
     # update cluster url
-    if 'hostname-ip' in clusterdata:
-        st.session_state['cluster_url'] = f"http://{clusterdata['hostname-ip']}:14000"
+    if 'hostname-ip' in st.session_state.app_config.clusters_config:
+        st.session_state['cluster_url'] = f"http://{st.session_state.app_config.clusters_config['hostname-ip']}:14000"
 
     # put into a pandas frame?
-    #compose_out = st.session_state.wekamon_app.compose_ps()
-    #for line in compose_out.split('\n'):
+    # compose_out = st.session_state.wekamon_app.compose_ps()
+    # for line in compose_out.split('\n'):
     #    st.write(line)
 
 
@@ -156,3 +172,4 @@ elif st.session_state["authentication_status"] is False:
     st.error('Username/password is incorrect')
 elif st.session_state["authentication_status"] is None:
     switch_to_login_page()
+    pass

@@ -8,8 +8,6 @@ import streamlit as st
 
 # import subprocess
 
-lwh_config_read = False
-clusters_read = False
 # log = logging.getLogger(__name__)
 log = st.session_state.log
 
@@ -36,7 +34,6 @@ def set_password(user, password):
                            '`passwd` process did not terminate.')
     if p.returncode != 0:
         raise RuntimeError('`passwd` failed: %d' % p.returncode)
-"""
 
 
 def expand_directory(directory):
@@ -44,6 +41,7 @@ def expand_directory(directory):
     if len(dir_list) != 1:
         raise Exception(f"ERROR searching for {directory} directory.  {dir_list}")
     return dir_list[0]
+"""
 
 
 class AppConfig(object):
@@ -230,6 +228,7 @@ class AppConfig(object):
         add_alertmanager = False
 
         def load_config(services, name):
+            print(f'loading config from dir {os.getcwd()}')
             with open(f'{self.compose_dir}/{name}.yml') as f:
                 services[name] = yaml.safe_load(f)
 

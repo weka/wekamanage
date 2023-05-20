@@ -39,10 +39,12 @@ def state_text(state):
 def pushd(new_dir):
     """A Python context to move in and out of directories"""
     previous_dir = os.getcwd()
+    print(f"pushd: prev: {previous_dir} new: {new_dir}")
     os.chdir(new_dir)
     try:
         yield
     finally:
+        print(f"pushd: popping back to prev: {previous_dir} new: {new_dir}")
         os.chdir(previous_dir)
 
 
@@ -101,8 +103,10 @@ class MiniKube(AppBase):
         result = self.run(self.KUBECTL + ' get pods --namespace kube-system | grep Running', shell=True)
 
         if len(result.stdout.splitlines()) == 9:  # should we just say >0?
+            log.info("returning minikube Running")
             return Running
         else:
+            log.info(f"returning minikube NotRunning.  Lines={len(result.stdout.splitlines())}")
             return NotRunning
 
     def install(self):
@@ -269,7 +273,7 @@ class WEKAmon(AppBase):
             return NotInstalled  # grep will return 1 if no matches
         log.debug(result)
 
-        # make sure there are 3 wekasolutions containers (export, quota-export, and snaptool)
+        # make sure there are 3 wekasolutions container images (export, quota-export, and snaptool)
         if len(result.stdout.splitlines()) != 3:
             return NotInstalled
 
@@ -324,8 +328,9 @@ class WEKAmon(AppBase):
         # print(f'WEKAmon: Running {cmd}: {kwargs}')
         if 'cwd' not in kwargs:
             kwargs['cwd'] = self.WEKAMON_DIR
-        with pushd(self.WEKAMON_DIR):
-            return super().run(cmd, *args, capture_output=capture_output, check=check, text=text, timeout=timeout,
+        #with pushd(self.WEKAMON_DIR):
+        #    return super().run(cmd, *args, capture_output=capture_output, check=check, text=text, timeout=timeout,
+        return super().run(cmd, *args, capture_output=capture_output, check=check, text=text, timeout=timeout,
                                **kwargs)
         # print(result)
         # return result

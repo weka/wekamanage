@@ -1,3 +1,4 @@
+import os
 import smtplib
 import socket
 import ssl
@@ -22,8 +23,11 @@ if "authentication_status" not in st.session_state:
     st.session_state["authentication_status"] = None
 
 if st.session_state["authentication_status"]:
-    add_logo("WEKA_Logo_Color_RGB.png")
-    st.image("WEKA_Logo_Color_RGB.png", width=200)
+    #if 'logo' not in st.session_state:
+    #    st.session_state['logo'] = os.getcwd() + '/WEKA_Logo_Color_RGB.png'
+    add_logo(st.session_state.logo)
+    st.image(st.session_state.logo, width=200)
+
     st.markdown("# WEKA Management Station")
     log = st.session_state.log
     authenticator = st.session_state['authenticator']
@@ -55,11 +59,11 @@ if st.session_state["authentication_status"]:
     with col1:
         smtp_user_data = st.session_state.app_config.smtp_config
 
-        smtp_user_data['sender_email_name'] = st.text_input("Email From Name", max_chars=30,
+        smtp_user_data['sender_email_name'] = st.text_input("Email From Name", max_chars=50,
                                                             value=smtp_user_data['sender_email_name'])
-        smtp_user_data['sender_email'] = st.text_input("Email From Address", max_chars=30,
+        smtp_user_data['sender_email'] = st.text_input("Email From Address", max_chars=50,
                                                        value=smtp_user_data['sender_email'])
-        smtp_user_data['smtp_host'] = st.text_input("Email Relay Host", max_chars=30,  # on_change=check_valid_host_ip,
+        smtp_user_data['smtp_host'] = st.text_input("Email Relay Host", max_chars=50,  # on_change=check_valid_host_ip,
                                                     value=smtp_user_data['smtp_host'])
 
         smtp_port_no = 25 if smtp_user_data['smtp_port'] == '' else int(smtp_user_data['smtp_port'])
@@ -68,15 +72,18 @@ if st.session_state["authentication_status"]:
 
         smtp_user_data['smtp_port'] = str(smtp_port_no)
 
-        smtp_user_data['smtp_username'] = st.text_input("Email Relay Username", max_chars=30,
+        smtp_user_data['smtp_tls'] = st.checkbox("SMTP Relay allows/requires TLS",
+                                                          value=smtp_user_data['smtp_tls'])
+        smtp_user_data['smtp_username'] = st.text_input("Email Relay Username", max_chars=50,
                                                         # on_change=check_valid_user_pass,
                                                         value=smtp_user_data['smtp_username'])
-        smtp_user_data['smtp_password'] = st.text_input("Email Relay Password", max_chars=30,
+        smtp_user_data['smtp_password'] = st.text_input("Email Relay Password", max_chars=50,
                                                         type='password',
                                                         value=smtp_user_data['smtp_password'])
 
-        smtp_user_data['smtp_insecure_tls'] = st.checkbox("Allow Insecure TLS with SMTP Relay",
-                                                          value=smtp_user_data['smtp_insecure_tls'])
+        if smtp_user_data['smtp_tls']:
+            smtp_user_data['smtp_insecure_tls'] = st.checkbox("Allow Insecure TLS with SMTP Relay",
+                                                              value=smtp_user_data['smtp_insecure_tls'])
 
         st.write()
 
@@ -97,10 +104,17 @@ if st.session_state["authentication_status"]:
         with col1:
             st.info("Validating configuration")
             try:
-                with smtplib.SMTP_SSL(host=smtp_user_data['smtp_host'], port=int(smtp_user_data['smtp_port']),
-                                      timeout=5, context=context) as server:
+                if smtp_user_data['smtp_tls']:
+                    server = smtplib.SMTP_SSL(host=smtp_user_data['smtp_host'], port=int(smtp_user_data['smtp_port']),
+                                              timeout=5, context=context)
+                else:
+                    server = smtplib.SMTP(host=smtp_user_data['smtp_host'], port=int(smtp_user_data['smtp_port']),
+                                              timeout=5)
+
+                with server:
                     server.ehlo('WMS')
-                    server.login(smtp_user_data['smtp_username'], smtp_user_data['smtp_password'])
+                    if len(smtp_user_data['smtp_username']) != 0:
+                        server.login(smtp_user_data['smtp_username'], smtp_user_data['smtp_password'])
             except socket.gaierror as exc:
                 st.error(f'Received error connecting to {smtp_user_data["smtp_host"]}: {exc.strerror}')
                 st.error("Please verify the Email Relay Host is correct and verify DNS or /etc/hosts settings.")
