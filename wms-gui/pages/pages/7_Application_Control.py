@@ -22,17 +22,18 @@ if st.session_state["authentication_status"]:
     authenticator.logout('Logout', 'sidebar', key="cluster_logout")
     st.title('WMS Services Control')
 
-    st.session_state.app_config.enable_export = st.checkbox("Enable Metrics Exporter & Grafana",
+    # checkboxes?  Buttons?   How to start/stop services?  install/remove?
+    st.session_state.app_config.enable_export = st.checkbox("Run WEKAmon Metrics Exporter & Grafana",
                                                             value=st.session_state.app_config.enable_export)
 
     # quota implies quota-export, prometheus, and alertmanager containers, and valid email config
-    st.session_state.app_config.enable_quota = st.checkbox("Enable Quota Exporter & Notifications",
+    st.session_state.app_config.enable_quota = st.checkbox("Run WEKAmon Quota Exporter & Notifications",
                                                            value=st.session_state.app_config.enable_quota)
     # snaptool implies snaptool container
-    st.session_state.app_config.enable_snaptool = st.checkbox("Enable Snaptool",
+    st.session_state.app_config.enable_snaptool = st.checkbox("Run Snaptool",
                                                               value=st.session_state.app_config.enable_snaptool)
     # LWH
-    st.session_state.app_config.enable_LWH = st.checkbox("Enable Local Weka Home",
+    st.session_state.app_config.enable_LWH = st.checkbox("Run Local Weka Home",
                                                               value=st.session_state.app_config.enable_LWH)
 
     """
