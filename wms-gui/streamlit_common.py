@@ -39,9 +39,10 @@ def build_markup_for_logo(
 
 
 def add_logo(png_file):
-    logo_markup = build_markup_for_logo(png_file)
+    if 'logo_markup' not in st.session_state:
+        st.session_state['logo_markup'] = build_markup_for_logo(png_file)
     st.markdown(
-        logo_markup,
+        st.session_state.logo_markup,
         unsafe_allow_html=True,
     )
 

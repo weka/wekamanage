@@ -10,24 +10,37 @@ menu_items = {
 st.set_page_config(page_title="WMS Services Control", page_icon='favicon.ico',
                    layout="wide", menu_items=menu_items)
 
-add_logo("WEKA_Logo_Color_RGB.png")
-st.image("WEKA_Logo_Color_RGB.png", width=200)
-st.markdown("# WEKA Management Station")
-
-
 if "authentication_status" not in st.session_state:
     st.session_state["authentication_status"] = None
 
 if st.session_state["authentication_status"]:
+    add_logo(st.session_state.logo)
+    st.image(st.session_state.logo, width=200)
+    st.markdown("# WEKA Management Station")
     log = st.session_state.log
     authenticator = st.session_state['authenticator']
     authenticator.logout('Logout', 'sidebar', key="cluster_logout")
     st.title('WMS Services Control')
 
+    # checkboxes?  Buttons?   How to start/stop services?  install/remove?
+    st.session_state.app_config.enable_export = st.checkbox("Run WEKAmon Metrics Exporter & Grafana",
+                                                            value=st.session_state.app_config.enable_export)
 
+    # quota implies quota-export, prometheus, and alertmanager containers, and valid email config
+    st.session_state.app_config.enable_quota = st.checkbox("Run WEKAmon Quota Exporter & Notifications",
+                                                           value=st.session_state.app_config.enable_quota)
+    # snaptool implies snaptool container
+    st.session_state.app_config.enable_snaptool = st.checkbox("Run Snaptool",
+                                                              value=st.session_state.app_config.enable_snaptool)
+    # LWH
+    st.session_state.app_config.enable_LWH = st.checkbox("Run Local Weka Home",
+                                                              value=st.session_state.app_config.enable_LWH)
 
     """
     Not Implemented
+    
+    get status of LWH, WEKAmon, snaptool, etc.
+    Show status with checkboxes? Allow user to change checkboxes to up/down services?
     """
 
 

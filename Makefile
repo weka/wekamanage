@@ -27,32 +27,36 @@ ${ISO}: ${DIR}
 		-no-emul-boot -graft-points -V ${LABEL} $<
 	implantisomd5 $@
 
-${DIR}: docker-ce ${SOURCEISO} tarballs/tools.tgz tarballs/weka-mon.tgz tarballs/local-weka-home.tgz tarballs/wms-gui.tgz
+${DIR}: docker-ce ${SOURCEISO} tarballs/ansible-install.tgz tarballs/tools.tgz tarballs/weka-mon.tgz tarballs/local-weka-home.tgz tarballs/wms-gui.tgz
 	@echo Creating build directory for $@ 
 	mkdir -p source_iso
 	mount ${SOURCEISO} source_iso
-	cp -r source_iso $@
+	#cp -rf source_iso $@
+	rsync -a --info=progress2 --delete source_iso/ $@
 	umount source_iso
-	cp -r wekabits $@
-	cp -r tarballs $@
-	cp -r docker-ce $@
-	cp datafiles/partmap $@
-	cp datafiles/ks-* $@
-	cp -r python-wheels $@
+	cp -rf wekabits $@
+	cp -rf tarballs $@
+	cp -rf docker-ce $@
+	cp -f datafiles/partmap $@
+	cp -f datafiles/ks-* $@
+	cp -rf python-wheels $@
 	echo Install kickstart
 	sed -i 's/WEKA/WEKA Management Station/' $@/EFI/BOOT/grub.cfg
 	# run this twice so we get the first 2 occurences only
 	sed -i "0,/quiet/{s/quiet/inst.ks=hd:LABEL=${LABEL}/}" $@/EFI/BOOT/grub.cfg
 	sed -i "0,/quiet/{s/quiet/inst.ks=hd:LABEL=${LABEL}/}" $@/EFI/BOOT/grub.cfg
-	cp datafiles/isolinux.cfg $@/isolinux/isolinux.cfg
-	cp datafiles/grub.conf $@/isolinux/grub.conf
-	cp datafiles/isolinux.cfg $@/isolinux/isolinux.cfg
-	cp README.md $@/wekabits
+	cp -f datafiles/isolinux.cfg $@/isolinux/isolinux.cfg
+	cp -f datafiles/grub.conf $@/isolinux/grub.conf
+	cp -f datafiles/isolinux.cfg $@/isolinux/isolinux.cfg
+	cp -f README.md $@/wekabits
 	touch $@
 	date > $@/.weka-buildstamp
 
 tarballs/tools.tgz:
 	./repack_tools
+
+tarballs/ansible-install.tgz:
+	cd tarballs; curl -LO https://weka-repo-test.s3.us-west-2.amazonaws.com/ansible-install.tgz
 
 tarballs/weka-mon.tgz:
 	cd tarballs; curl -LO https://weka-repo-test.s3.us-west-2.amazonaws.com/weka-mon.tgz

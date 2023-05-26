@@ -1,3 +1,4 @@
+import os
 from logging.handlers import SysLogHandler
 
 import streamlit as st
@@ -29,14 +30,11 @@ if "log" not in st.session_state:
 else:
     log = st.session_state.log
 
-add_logo("WEKA_Logo_Color_RGB.png")
-st.image("WEKA_Logo_Color_RGB.png", width=200)
-# st.markdown("# Welcome to")
-st.markdown("# WEKA Management Station")
-st.markdown("## Landing Page")
+if 'wms_gui_dir' not in st.session_state:
+    st.session_state['wms_gui_dir'] = os.getcwd()
 
 if 'app_config' not in st.session_state:
-    st.session_state['app_config'] = AppConfig('./app_config.yaml')
+    st.session_state['app_config'] = AppConfig(st.session_state.wms_gui_dir + '/app_config.yaml')
     try:
         st.session_state['app_config'].load_configs()
     except Exception as exc:
@@ -57,19 +55,25 @@ if 'authenticator' not in st.session_state:
 else:
     authenticator = st.session_state['authenticator']
 
-col1, col2, col3 = st.columns(3)
-with col1:
     # Get the URL used to get to this app
     # do this twice - it usually fails the first time. (actually, now it works?)
     # do it again after login
-    if "wms_url" not in st.session_state:
-        url = st_javascript("await fetch('').then(r => window.parent.location.href)")
-        if type(url) is not int:
-            st.session_state['wms_url'] = url
+    #if "wms_url" not in st.session_state:
+    #    url = st_javascript("await fetch('').then(r => window.parent.location.href)")
+    #    if type(url) is not int:
+    #        st.session_state['wms_url'] = url
             # print(f'got it FIRST time! {url}')
 
     # actually get their user/pass
 
+if 'logo' not in st.session_state:
+    st.session_state['logo'] = os.getcwd() + '/WEKA_Logo_Color_RGB.png'
+add_logo(st.session_state['logo'])
+st.image(st.session_state.logo, width=200)
+st.markdown("# WEKA Management Station")
+col1, col2, col3 = st.columns(3)
+with col1:
+    st.markdown("## Applications")
     if 'authentication_status' not in st.session_state or not st.session_state['authentication_status']:
         authenticator.login('Login', 'main')
         if len(st.session_state.username) != 0:
@@ -94,82 +98,107 @@ if st.session_state.authentication_status:
             st.session_state['wms_url'] = url
             log.error('second try succeeded')
 
-    # print(st.session_state['wms_url'])
-    # figure out the URLs to LWH, WEKAmon, and Snaptool
-    if "lwh_url" not in st.session_state:
-        tempvar1 = st.session_state.wms_url.split(':')  # should be 3; 'http', '//<hostname/ip>' and port #
-        st.session_state['lwh_url'] = f"{tempvar1[0]}:{tempvar1[1]}"  # leave off port: should be port 80 by default
-        # st.markdown(f'<a href="{st.session_state.lwh_url}" target="_self">Open Local WEKA Home </a>', unsafe_allow_html=True)
+    if "wms_url" in st.session_state:
+        # print(st.session_state['wms_url'])
+        # figure out the URLs to LWH, WEKAmon, and Snaptool
+        if "lwh_url" not in st.session_state:
+            tempvar1 = st.session_state.wms_url.split(':')  # should be 3; 'http', '//<hostname/ip>' and port #
+            st.session_state['lwh_url'] = f"{tempvar1[0]}:{tempvar1[1]}"  # leave off port: should be port 80 by default
+            # st.markdown(f'<a href="{st.session_state.lwh_url}" target="_self">Open Local WEKA Home </a>', unsafe_allow_html=True)
 
-    if "domain" not in st.session_state:
-        st.session_state['domain'] = st.session_state['lwh_url'][7:]
+        if "domain" not in st.session_state:
+            st.session_state['domain'] = st.session_state['lwh_url'][7:]
 
-    if "grafana_url" not in st.session_state:
-        st.session_state['grafana_url'] = st.session_state['lwh_url'] + ":3000"
+        if "grafana_url" not in st.session_state:
+            st.session_state['grafana_url'] = st.session_state['lwh_url'] + ":3000"
+            st.session_state['prometheus_url'] = st.session_state['lwh_url'] + ":9091"
+            st.session_state['alertmanager_url'] = st.session_state['lwh_url'] + ":9093"
 
-    if "snaptool_url" not in st.session_state:
-        st.session_state['snaptool_url'] = st.session_state['lwh_url'] + ":8090"
+        if "snaptool_url" not in st.session_state:
+            st.session_state['snaptool_url'] = st.session_state['lwh_url'] + ":8090"
 
-    if 'app_config' in st.session_state and 'cluster_url' not in st.session_state:
-        clusterip = st.session_state.app_config.clusters_config['hostname-ip']
-        if clusterip is not None and len(clusterip) > 0:
-            st.session_state['cluster_url'] = f'https://{clusterip}:14000'
+        if 'app_config' in st.session_state and 'cluster_url' not in st.session_state:
+            clusterip = st.session_state.app_config.clusters_config['hostname-ip']
+            if clusterip is not None and len(clusterip) > 0:
+                st.session_state['cluster_url'] = f'https://{clusterip}:14000'
 
-    if "cockpit_url" not in st.session_state:
-        st.session_state['cockpit_url'] = st.session_state['lwh_url'] + ":9090"
+        if "cockpit_url" not in st.session_state:
+            st.session_state['cockpit_url'] = st.session_state['lwh_url'] + ":9090"
 
-    with col1:
-        if st.button("WMS Linux Admin GUI"):
-            log.info(f'opening {st.session_state.cockpit_url}')
-            open_in_new_tab(st.session_state.cockpit_url)
+        if "ansible_url" not in st.session_state:
+            st.session_state['ansible_url'] = st.session_state['lwh_url'] + ":7860"
 
-        if st.button("Open Local WEKA Home in new tab"):
-            log.info(f'opening {st.session_state.lwh_url}')
-            open_in_new_tab(st.session_state.lwh_url)
+        with col1:
+            st.markdown('### Applications')
+            st.write('WMS OS management')
+            if st.button("WMS Linux Admin GUI"):
+                log.info(f'opening {st.session_state.cockpit_url}')
+                open_in_new_tab(st.session_state.cockpit_url)
 
-        if st.button("Open WEKAmon in new tab"):
-            log.info(f'opening {st.session_state.grafana_url}')
-            open_in_new_tab(st.session_state.grafana_url)
+            st.write('Local Weka Home')
+            if st.button("Local WEKA Home"):
+                log.info(f'opening {st.session_state.lwh_url}')
+                open_in_new_tab(st.session_state.lwh_url)
 
-        if st.button("Open Snaptool in new tab"):
-            log.info(f'opening {st.session_state.snaptool_url}')
-            open_in_new_tab(st.session_state.snaptool_url)
+            st.write('WEKAmon')
+            if st.button("Grafana"):
+                log.info(f'opening {st.session_state.grafana_url}')
+                open_in_new_tab(st.session_state.grafana_url)
 
-        if "cluster_url" in st.session_state:
-            if st.button("Open cluster GUI in new tab"):
-                log.info(f"opening {st.session_state.cluster_url}")
-                open_in_new_tab(st.session_state.cluster_url)
+            if st.button("Prometheus"):
+                log.info(f'opening {st.session_state.prometheus_url}')
+                open_in_new_tab(st.session_state.prometheus_url)
 
-    with col2:
-        # initialize the lwh app object
-        if 'lwh_app' not in st.session_state:
+            if st.button("Alertmanager"):
+                log.info(f'opening {st.session_state.alertmanager_url}')
+                open_in_new_tab(st.session_state.alertmanager_url)
+
+            st.write('Snaptool')
+            if st.button("Snaptool"):
+                log.info(f'opening {st.session_state.snaptool_url}')
+                open_in_new_tab(st.session_state.snaptool_url)
+
+            st.write('Deploy WEKA Clusters')
+            if st.button("Deploy a WEKA Cluster"):
+                log.info(f'opening {st.session_state.ansible_url}')
+                open_in_new_tab(st.session_state.ansible_url)
+
+            st.write('Manage your WEKA Cluster')
+            if "cluster_url" in st.session_state:
+                if st.button("Open cluster GUI"):
+                    log.info(f"opening {st.session_state.cluster_url}")
+                    open_in_new_tab(st.session_state.cluster_url)
+
+        with col2:
+            # initialize the lwh app object
+            if 'lwh_app' not in st.session_state:
+                try:
+                    st.session_state['lwh_app'] = LocalWekaHome()
+                except Exception as exc:
+                    st.error(exc)
+                    st.stop()
+            # initialize the wekamon app object
+            if 'wekamon_app' not in st.session_state:
+                try:
+                    st.session_state['wekamon_app'] = WEKAmon()
+                except Exception as exc:
+                    st.error(exc)
+                    st.stop()
+            st.markdown("## Application Status")
+            st.write()
             try:
-                st.session_state['lwh_app'] = LocalWekaHome()
-            except Exception as exc:
-                st.error(exc)
-                st.stop()
-        # initialize the wekamon app object
-        if 'wekamon_app' not in st.session_state:
-            try:
-                st.session_state['wekamon_app'] = WEKAmon()
-            except Exception as exc:
-                st.error(exc)
-                st.stop()
-        st.markdown("## Application Status")
-        st.write()
-        try:
-            if st.session_state.lwh_app.status() != Running:
-                lwh_emoji = ':thumbsdown:'
-            else:
-                lwh_emoji = ':thumbsup:'
-            if st.session_state.wekamon_app.status() != Running:
-                wekamon_emoji = ':thumbsdown:'
-            else:
-                wekamon_emoji = ':thumbsup:'
-            st.markdown(f"### Local Weka Home:  {lwh_emoji}")
-            st.markdown(f"### WEKAmon:  {wekamon_emoji}")
-        except:
-            pass    # sometimes on initial load, this pukes with a timeout...
+                if st.session_state.lwh_app.status() != Running:
+                    lwh_emoji = ':thumbsdown:'
+                else:
+                    lwh_emoji = ':thumbsup:'
+                if st.session_state.wekamon_app.status() != Running:
+                    wekamon_emoji = ':thumbsdown:'
+                else:
+                    wekamon_emoji = ':thumbsup:'
+                st.markdown(f"### Local Weka Home:  {lwh_emoji}")
+                st.markdown(f"### WEKAmon:  {wekamon_emoji}")
+            except:
+                pass    # sometimes on initial load, this pukes with a timeout...
 
 
 elif st.session_state.authentication_status is False:

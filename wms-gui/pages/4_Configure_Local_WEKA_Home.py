@@ -1,3 +1,5 @@
+import os
+
 import streamlit as st
 
 # from Landing_Page import authenticator
@@ -155,9 +157,6 @@ def config_lwh():
                 st.write(f"Grafana Password is {st.session_state.lwh_app.grafana_password()}")
 
 
-add_logo("WEKA_Logo_Color_RGB.png")
-st.image("WEKA_Logo_Color_RGB.png", width=200)
-st.markdown("# WEKA Management Station Configuration")
 
 if "authentication_status" not in st.session_state or \
         st.session_state["authentication_status"] is None or \
@@ -166,4 +165,9 @@ if "authentication_status" not in st.session_state or \
 elif st.session_state["authentication_status"]:
     authenticator = st.session_state['authenticator']
     authenticator.logout('Logout', 'sidebar', key="lwh_logout")
+    #if 'logo' not in st.session_state:
+    #    st.session_state['logo'] = os.getcwd() + '/WEKA_Logo_Color_RGB.png'
+    add_logo(st.session_state.logo)
+    st.image(st.session_state.logo, width=200)
+    st.markdown("# WEKA Management Station Configuration")
     config_lwh()

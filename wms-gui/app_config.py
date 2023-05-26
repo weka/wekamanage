@@ -8,8 +8,6 @@ import streamlit as st
 
 # import subprocess
 
-lwh_config_read = False
-clusters_read = False
 # log = logging.getLogger(__name__)
 log = st.session_state.log
 
@@ -36,7 +34,6 @@ def set_password(user, password):
                            '`passwd` process did not terminate.')
     if p.returncode != 0:
         raise RuntimeError('`passwd` failed: %d' % p.returncode)
-"""
 
 
 def expand_directory(directory):
@@ -44,6 +41,7 @@ def expand_directory(directory):
     if len(dir_list) != 1:
         raise Exception(f"ERROR searching for {directory} directory.  {dir_list}")
     return dir_list[0]
+"""
 
 
 class AppConfig(object):
@@ -60,6 +58,7 @@ class AppConfig(object):
         self.export_config = None
         self.quota_export_config = None
         self.snaptool_config = None
+        self.alertmanager_config = None
         self.smtp_config = None
         self.enable_export = None
         self.enable_alerts = None
@@ -85,6 +84,8 @@ class AppConfig(object):
                     self.quota_export_config = yaml.safe_load(f)
                 with open(config_files['snaptool_config_file'], 'r') as f:
                     self.snaptool_config = yaml.safe_load(f)
+                with open(config_files['alertmanager_config_file'], 'r') as f:
+                    self.alertmanager_config = yaml.safe_load(f)
                 with open(config_files['email_settings_file'], 'r') as f:
                     self.smtp_config = yaml.safe_load(f)
                 self.enable_export = config_files['enable_export']
@@ -92,8 +93,6 @@ class AppConfig(object):
                 self.enable_quota = config_files['enable_quota']
                 self.enable_snaptool = config_files['enable_snaptool']
                 self.enable_loki = config_files['enable_loki']
-                #with open(config_files['compose_file'], 'r') as f:
-                #    self.compose_file = yaml.safe_load(f)
                 self.compose_file = config_files['compose_file']
                 self.compose_dir = config_files['compose_dir']
 
@@ -116,6 +115,26 @@ class AppConfig(object):
 
     def save_smtp(self):
         config_files = self.app_config['config_files']
+        # update the lwh and alertmanager config files?
+        lwh_smtp = self.lwh_config['smtp_user_data']
+        lwh_smtp['sender_email'] = self.smtp_config['sender_email']
+        lwh_smtp['sender_email_name'] = self.smtp_config['sender_email_name']
+        lwh_smtp['smtp_host'] = self.smtp_config['smtp_host']
+        lwh_smtp['smtp_port'] = self.smtp_config['smtp_port']
+        lwh_smtp['smtp_insecure_tls'] = self.smtp_config['smtp_insecure_tls']
+        lwh_smtp['smtp_password'] = self.smtp_config['smtp_password']
+        lwh_smtp['smtp_username'] = self.smtp_config['smtp_username']
+        self.save_lwh_config()
+
+        alertmanager_smtp = self.alertmanager_config['global']
+        alertmanager_smtp['smtp_smarthost'] = self.smtp_config['smtp_host'] + self.smtp_config['smtp_port']
+        alertmanager_smtp['smtp_from'] = self.smtp_config['sender_email']
+        alertmanager_smtp['smtp_auth_username'] = self.smtp_config['smtp_username']
+        alertmanager_smtp['smtp_auth_identity'] = self.smtp_config['smtp_username']
+        alertmanager_smtp['smtp_auth_password'] = self.smtp_config['smtp_password']
+        alertmanager_smtp['smtp_require_tls'] = not self.smtp_config['smtp_insecure_tls']
+        self.update_alertmanager()
+
         with open(config_files['email_settings_file'], 'w') as file:
             return yaml.dump(self.smtp_config, file, default_flow_style=False)
 
@@ -156,15 +175,6 @@ class AppConfig(object):
         print('save complete')
 
     def update_config(self, filename, config):
-        # expanded = expand_directory(directory)
-        # self.save_auth_tokens(expanded)
-        # config_file = os.path.join(expanded, filename)
-        # config = None
-        # with open(filename, 'r') as f:
-        #    config = yaml.load(f, Loader=SafeLoader)
-        # if config is None:
-        #    raise Exception(f"Failed to open {filename}")
-        # self.update_cluster_dict(config)
         if len(config) == 0:
             print('config is zero length!')
             return
@@ -184,10 +194,10 @@ class AppConfig(object):
                 json.dump(self.tokens, f, indent=4)
 
     def update_cluster_dict(self, config):
-        hosts = self.api.get_hosts()
+        hosts = self.api.get_base_containers()
         hostnames = list()
-        for host in hosts['data'][:3]:  # only the first 3
-            hostnames.append(str(host['name']))
+        for host in hosts[:3]:  # only the first 3
+            hostnames.append(str(host['hostname']))
         config['cluster']['hosts'] = hostnames
 
     def update_export(self):
@@ -203,6 +213,9 @@ class AppConfig(object):
     def update_snaptool(self):
         self.update_config(self.app_config['config_files']['snaptool_config_file'], self.snaptool_config)
 
+    def update_alertmanager(self):
+        self.update_config(self.app_config['config_files']['alertmanager_config_file'], self.alertmanager_config)
+
     def configure_compose(self):
         # build docker-compose configuration file
         compose_config = {'version': "3", 'services': dict()}
@@ -215,6 +228,7 @@ class AppConfig(object):
         add_alertmanager = False
 
         def load_config(services, name):
+            print(f'loading config from dir {os.getcwd()}')
             with open(f'{self.compose_dir}/{name}.yml') as f:
                 services[name] = yaml.safe_load(f)
 
@@ -223,15 +237,15 @@ class AppConfig(object):
             load_config(services, "export")
             add_grafana = True
             add_prometheus = True
-        if self.enable_alerts:
-            add_alertmanager = True     # maybe...
+        #if self.enable_alerts:
+        #    add_alertmanager = True     # maybe...
         if self.enable_loki:
             log.info('enabling loki')
             load_config(services, "loki")
             add_prometheus = True
         if self.enable_quota:
             log.info('enabling quota')
-            load_config(services, "quota")
+            load_config(services, "quota-export")
             add_prometheus = True
             add_alertmanager = True
         if self.enable_snaptool:
@@ -247,6 +261,8 @@ class AppConfig(object):
         if add_alertmanager:
             log.info('enabling alertmanager')
             load_config(services, "alertmanager")
+            # should probably set --web.external-url=<our url>:9093 - it's similar to LWH email link thing
+            # should also have some setting of alertmanager notifiers similar to this model
 
         with open(self.compose_file, "w") as f:
             yaml.dump(compose_config, f, default_flow_style=False, sort_keys=False)
