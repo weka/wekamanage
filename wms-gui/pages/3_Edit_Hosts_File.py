@@ -1,3 +1,5 @@
+import os
+
 import streamlit as st
 import streamlit_monaco_yaml
 
@@ -12,14 +14,16 @@ menu_items = {
 st.set_page_config(page_title="WMS Edit Hosts File", page_icon='favicon.ico',
                    layout="wide", menu_items=menu_items)
 
-add_logo("WEKA_Logo_Color_RGB.png")
-st.image("WEKA_Logo_Color_RGB.png", width=200)
-st.markdown("# WEKA Management Station")
 
 if "authentication_status" not in st.session_state:
     st.session_state["authentication_status"] = None
 
 if st.session_state["authentication_status"]:
+    #if 'logo' not in st.session_state:
+    #    st.session_state['logo'] = os.getcwd() + '/WEKA_Logo_Color_RGB.png'
+    add_logo(st.session_state.logo)
+    st.image(st.session_state.logo, width=200)
+    st.markdown("# WEKA Management Station")
     log = st.session_state.log
     authenticator = st.session_state['authenticator']
     authenticator.logout('Logout', 'sidebar', key="snaptool_logout")

@@ -10,6 +10,7 @@ class WekaAPIClient:
         self.token_type = None
         self.base_url = f"http://{self.hostname}:14000/api/v2"
         self.weka_version = None
+        self.mcb = False
 
     def login(self, user, password):
         """ returns auth-tokens """
@@ -34,7 +35,7 @@ class WekaAPIClient:
 
     def get_hosts(self):
         # not sure if this returns clients also...
-        method = "/hosts" if self.api_vers == 1 else "/servers"
+        method = "/hosts"
         url = self.base_url + method
         headers = {"Authorization": f"{self.token_type} {self.api_key}"}
         response = requests.get(url, headers=headers)
@@ -42,8 +43,24 @@ class WekaAPIClient:
             raise Exception(f"ERROR {response.status_code} connecting to cluster")
         return response.json()
 
-    def get_servers(self):
-        return self.get_hosts()
+    # add this method to return a list of hosts/base containers
+    def get_base_containers(self):
+        hosts = self.get_hosts()
+        hostlist = hosts['data']
+        for host in hostlist:
+            # get rid of clients and down hosts
+            # print(f"host = {host['hostname']}, mode= {host['mode']}, state={host['state']}, status={host['status']}")
+            if host['mode'] != 'backend' or host["state"] != "ACTIVE" or host["status"] != "UP":
+                # print(f"   removing {host['hostname']}")
+                hostlist.remove(host)
+            else:
+                # it's online, but not the container we want
+                if host["mgmt_port"] != 14000:
+                    self.mcb = True     # if there are containers not on 14000, it's MCB
+                    hostlist.remove(host)  # we only want one per server
+        # print(hostlist)
+        return hostlist
+
 
     def get_cluster(self):
         url = self.base_url + "/cluster"

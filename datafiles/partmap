@@ -2,6 +2,6 @@
 raid boot /boot xfs 300	--asprimary
 raid bootefi /boot/efi efi 300
 raid root / xfs 50000
-raid var /var xfs 20000
+raid var /var xfs 30000
 raid home /home xfs 20000
 raid opt /opt xfs 20000 --grow

@@ -5,7 +5,7 @@ volumes:
 command:
   - "--config.file=/etc/alertmanager/alertmanager.yml"
   - "--log.level=debug"
-  - "--web.external-url=http://buckaroo:9093/"
+  #- "--web.external-url=http://buckaroo:9093/"
   #- "--web.external-url=http://hostname-here:9093/"    # SET THIS SO ALERT EMAILS HAVE A LINK TO IT
 restart: always
 ports:

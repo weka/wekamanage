@@ -1,0 +1,13 @@
+# timer for docker-clean.service
+[Unit]
+Description="Docker Cleanup Timer"
+Wants=network-online.target
+
+[Timer]
+OnBootSec=10min
+OnUnitInactiveSec=1h
+RandomizedDelaySec=60m
+Unit=docker-clean.service
+
+[Install]
+WantedBy=timers.target

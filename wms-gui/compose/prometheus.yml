@@ -6,6 +6,8 @@ volumes:
   - /opt/weka-mon/prometheus_data:/prometheus
 command: --storage.tsdb.retention.size=20GB --config.file=/etc/prometheus/prometheus.yml
 restart: always
+ports:
+  - "9091:9090"
 logging:
   options:
     max-file: "5"
