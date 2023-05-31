@@ -1,6 +1,6 @@
 @core
 @base
-@performance
+#@performance
 @network-tools
 @hardware-monitoring
 bind-utils
