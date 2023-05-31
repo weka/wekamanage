@@ -3,11 +3,11 @@
 .DEFAULT_GOAL:=all
 
 # to do: download iso from http://dl.rockylinux.org/vault/rocky/8.6/isos/x86_64/Rocky-8.6-x86_64-dvd1.iso rather than expecting it to be there
-SOURCEISO=../Rocky-8.6-LTS/Rocky-8.6-LTS-beta6.iso
 
 BRANCH := $(shell git rev-parse --abbrev-ref HEAD)
 
 SUFFIX=-${BRANCH}
+SOURCEISO=../Rocky-8.6-LTS/Rocky-8.6-LTS${SUFFIX}.iso
 
 LABEL := $(shell file ${SOURCEISO} | cut -d\' -f2)
 #WEKAVERSIONS=$(wildcard weka-*.tar)
@@ -85,6 +85,11 @@ docker-ce:
 upload:
 	./aws_upload_iso ${ISO}
 
-dist:
+dist:	dist-7 dist-whorfin
+
+dist-7:
 	scp ${ISO} zweka07:/opt
+
+dist-whorfin:
 	scp ${ISO} whorfin:/sns/samba_share
+
