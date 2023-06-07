@@ -328,9 +328,9 @@ class WEKAmon(AppBase):
         # print(f'WEKAmon: Running {cmd}: {kwargs}')
         if 'cwd' not in kwargs:
             kwargs['cwd'] = self.WEKAMON_DIR
-        #with pushd(self.WEKAMON_DIR):
-        #    return super().run(cmd, *args, capture_output=capture_output, check=check, text=text, timeout=timeout,
-        return super().run(cmd, *args, capture_output=capture_output, check=check, text=text, timeout=timeout,
+        with pushd(self.WEKAMON_DIR):
+            return super().run(cmd, *args, capture_output=capture_output, check=check, text=text, timeout=timeout,
                                **kwargs)
-        # print(result)
+        #return super().run(cmd, *args, capture_output=capture_output, check=check, text=text, timeout=timeout,
+        print(result)
         # return result
