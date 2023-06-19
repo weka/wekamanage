@@ -3,11 +3,11 @@
 .DEFAULT_GOAL:=all
 
 # to do: download iso from http://dl.rockylinux.org/vault/rocky/8.6/isos/x86_64/Rocky-8.6-x86_64-dvd1.iso rather than expecting it to be there
-SOURCEISO=../Rocky-8.6-LTS/Rocky-8.6-LTS-beta6.iso
 
 BRANCH := $(shell git rev-parse --abbrev-ref HEAD)
 
 SUFFIX=-${BRANCH}
+SOURCEISO=../Rocky-8.6-LTS/Rocky-8.6-LTS${SUFFIX}.iso
 
 LABEL := $(shell file ${SOURCEISO} | cut -d\' -f2)
 #WEKAVERSIONS=$(wildcard weka-*.tar)
@@ -58,17 +58,24 @@ tarballs/tools.tgz:
 	./repack_tools
 
 tarballs/ansible-install.tgz:
-	cd tarballs; curl -LO https://weka-repo-test.s3.us-west-2.amazonaws.com/ansible-install.tgz
+	cd tarballs; curl -LO https://weka-repo.s3.amazonaws.com/ansible-install.tgz
 
 tarballs/weka-mon.tgz:
-	cd tarballs; curl -LO https://weka-repo-test.s3.us-west-2.amazonaws.com/weka-mon.tgz
+	cd tarballs; curl -LO https://weka-repo.s3.amazonaws.com/weka-mon.tgz
 
 tarballs/wms-gui.tgz: 
 	$(MAKE) -C wms-gui
 	tar cvzf $@ wms-gui
 
 tarballs/local-weka-home.tgz:
-	cd tarballs; curl -LO https://weka-repo-test.s3.us-west-2.amazonaws.com/local-weka-home.tgz
+	mkdir -p /tmp/local-weka-home
+	cd /tmp/local-weka-home; curl -OL https://home-weka-io-offline-packages-dev.s3.eu-west-1.amazonaws.com/weka_minikube.tar.gz
+	cd /tmp/local-weka-home; tar xvf weka_minikube.tar.gz; rm weka_minikube.tar.gz
+	cd /tmp/local-weka-home; curl -OL https://home-weka-io-offline-packages-dev.s3.eu-west-1.amazonaws.com/wekahome-vm-docker-images.tar.gz
+	cd /tmp/local-weka-home; tar xvf wekahome-vm-docker-images.tar.gz; rm wekahome-vm-docker-images.tar.gz
+	cd /tmp; tar czvf local-weka-home.tgz local-weka-home
+	rm -rf /tmp/local-weka-home
+	mv /tmp/local-weka-home.tgz $@
 
 clean:
 	@echo making clean
@@ -85,6 +92,11 @@ docker-ce:
 upload:
 	./aws_upload_iso ${ISO}
 
-dist:
+dist:	dist-7 dist-whorfin
+
+dist-7:
 	scp ${ISO} zweka07:/opt
+
+dist-whorfin:
 	scp ${ISO} whorfin:/sns/samba_share
+
