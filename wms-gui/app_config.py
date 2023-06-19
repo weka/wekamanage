@@ -5,11 +5,18 @@ import os
 import yaml
 import streamlit as st
 
+from logging import handlers
 
 # import subprocess
 
 # log = logging.getLogger(__name__)
-log = st.session_state.log
+# log = st.session_state.log
+if "log" not in st.session_state:
+    log = st.logger.get_logger('root')
+    log.addHandler(handlers.SysLogHandler('/dev/log'))
+    st.session_state['log'] = log
+else:
+    log = st.session_state.log
 
 """
 PASSWD_CMD = '/usr/bin/passwd'
