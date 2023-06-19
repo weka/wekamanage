@@ -1,7 +1,7 @@
 [Unit]
 Description="WEKA Management Station Ansible GUI"
-After=docker.service network-online.target cockpit.service weka-firstboot.service
-Wants=network-online.target cockpit.service
+After=docker.service network-online.target cockpit.service weka-firstboot.service wms-gui.service
+Wants=network-online.target cockpit.service wms-gui.service
 Before=console-getty.service
 
 [Service]
