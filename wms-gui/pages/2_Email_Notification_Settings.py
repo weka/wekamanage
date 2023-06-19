@@ -129,7 +129,7 @@ if st.session_state["authentication_status"]:
                 st.stop()
             except ssl.SSLError as exc:
                 if exc.args[0] == 1:
-                    st.error("SSL Error: did you specify the correct port?")
+                    st.error(f"SSL Error: {exc}")
                     # should probably try non-ssl...
                     st.stop()
             except TimeoutError as exc:
