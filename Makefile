@@ -58,10 +58,10 @@ tarballs/tools.tgz:
 	./repack_tools
 
 tarballs/ansible-install.tgz:
-	cd tarballs; curl -LO https://weka-repo-test.s3.us-west-2.amazonaws.com/ansible-install.tgz
+	cd tarballs; curl -LO https://weka-repo.s3.amazonaws.com/ansible-install.tgz
 
 tarballs/weka-mon.tgz:
-	cd tarballs; curl -LO https://weka-repo-test.s3.us-west-2.amazonaws.com/weka-mon.tgz
+	cd tarballs; curl -LO https://weka-repo.s3.amazonaws.com/weka-mon.tgz
 
 tarballs/wms-gui.tgz: 
 	$(MAKE) -C wms-gui
@@ -76,7 +76,6 @@ tarballs/local-weka-home.tgz:
 	cd /tmp; tar czvf local-weka-home.tgz local-weka-home
 	rm -rf /tmp/local-weka-home
 	mv /tmp/local-weka-home.tgz $@
-	#cd tarballs; curl -LO https://weka-repo-test.s3.us-west-2.amazonaws.com/local-weka-home.tgz
 
 clean:
 	@echo making clean

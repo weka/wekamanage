@@ -125,7 +125,7 @@ if st.session_state["authentication_status"]:
                 st.session_state.app_config.configure_compose()
                 # if status != NotInstalled:
                 #    wekamon.start()
-                st.session_state.wekamon_app.start()
+                #st.session_state.wekamon_app.start()
 
                 # success!
                 with col1:
