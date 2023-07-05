@@ -134,7 +134,7 @@ class AppConfig(object):
         self.save_lwh_config()
 
         alertmanager_smtp = self.alertmanager_config['global']
-        alertmanager_smtp['smtp_smarthost'] = self.smtp_config['smtp_host'] + self.smtp_config['smtp_port']
+        alertmanager_smtp['smtp_smarthost'] = f"{self.smtp_config['smtp_host']}:{self.smtp_config['smtp_port']}"
         alertmanager_smtp['smtp_from'] = self.smtp_config['sender_email']
         alertmanager_smtp['smtp_auth_username'] = self.smtp_config['smtp_username']
         alertmanager_smtp['smtp_auth_identity'] = self.smtp_config['smtp_username']
