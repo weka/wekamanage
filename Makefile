@@ -53,6 +53,7 @@ ${DIR}: docker-ce ${SOURCEISO} tarballs/ansible-install.tgz tarballs/tools.tgz t
 	cp -f README.md $@/wekabits
 	touch $@
 	date > $@/.weka-buildstamp
+	echo ${BRANCH} >> $@/.wms-version
 
 tarballs/tools.tgz:
 	./repack_tools

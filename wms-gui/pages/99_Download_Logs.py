@@ -48,7 +48,7 @@ if st.session_state["authentication_status"]:
                     # gather lwh logs
                     # gather WEKAmon logs
                     with pushd('/opt/weka-mon'):
-                        docker_logs = 'docker compose logs -t --until -2m '
+                        docker_logs = 'docker compose logs -t --until -10m '
 
                         for service in ['export', 'quota-export', 'grafana', 'prometheus', 'alertmanager', 'loki',
                                         'snaptool']:
@@ -56,6 +56,9 @@ if st.session_state["authentication_status"]:
 
                         # journalctl -u wms-gui > wms_gui.log # collect logs from streamlit service
                         run(f'journalctl -u wms-gui > {st.session_state.logfile_dir}/wms_gui.log', shell=True)
+                        run(f'journalctl -u install-gui > {st.session_state.logfile_dir}/install_gui.log', shell=True)
+
+                        run(f'cp /var/log/messages {st.session_state.logfile_dir}/messages', shell=True)
 
                         # tar cvzf {st.session_state.logfile_name} {st.session_state.logfile_dir}
                         with pushd('/tmp'):
