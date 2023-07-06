@@ -72,3 +72,5 @@ firewall-cmd --remove-port=14000-15000/tcp
 firewall-cmd --add-port 7860/tcp --add-port 8060/tcp
 firewall-cmd --reload
 
+# stupid bug in LWH means we have to make sure there's an /etc/resolv.conf.  Otherwise it won't install
+touch /etc/resolv.conf
