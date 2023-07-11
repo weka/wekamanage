@@ -46,6 +46,9 @@ if st.session_state["authentication_status"]:
                     log.info(f'log tarball is {st.session_state.logfile_name}')
 
                     # gather lwh logs
+                    with pushd('/opt/local-weka-home/wekahome_offline'):
+                        run(f'./dump.sh --full-disk-scan {st.session_state.logfile_dir}/lwh.tgz', shell=True)
+
                     # gather WEKAmon logs
                     with pushd('/opt/weka-mon'):
                         docker_logs = 'docker compose logs -t --until -10m '
@@ -60,12 +63,12 @@ if st.session_state["authentication_status"]:
 
                         run(f'cp /var/log/messages {st.session_state.logfile_dir}/messages', shell=True)
 
-                        # tar cvzf {st.session_state.logfile_name} {st.session_state.logfile_dir}
-                        with pushd('/tmp'):
-                            log.info(f'Creating logfile')
-                            subdir = os.path.basename(st.session_state.logfile_dir)  # just makes code clearer
-                            run(f'tar cvzf {st.session_state.logfile_name} {subdir}', shell=True)
-                        st.session_state['logs_gathered'] = True
+
+                    with pushd('/tmp'):
+                        log.info(f'Creating logfile')
+                        subdir = os.path.basename(st.session_state.logfile_dir)  # just makes code clearer
+                        run(f'tar cvzf {st.session_state.logfile_name} {subdir}', shell=True)
+                    st.session_state['logs_gathered'] = True
 
     with col1:
         if 'logs_gathered' in st.session_state:
