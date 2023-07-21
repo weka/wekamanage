@@ -54,6 +54,7 @@ chroot $SYSIMAGE systemctl enable docker.socket
 chroot $SYSIMAGE systemctl enable cockpit.socket
 chroot $SYSIMAGE systemctl enable wms-gui.service
 chroot $SYSIMAGE systemctl enable install-gui.service
+chroot $SYSIMAGE systemctl enable netissue.service
 chroot $SYSIMAGE systemctl enable weka-firstboot.service
 chroot $SYSIMAGE systemctl enable docker-clean.timer
 chroot $SYSIMAGE systemctl enable docker-clean.service
