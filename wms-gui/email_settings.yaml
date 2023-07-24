@@ -1,10 +1,10 @@
 enable_lwh_email: false
-sender_email: vince@weka.io
-sender_email_name: Vince test
+sender_email: someone@weka.io
+sender_email_name: WEKA Cluster
 smtp_host: smtp.gmail.com
 smtp_insecure_tls: false
-smtp_password: mppzifjblxpmxrud
+smtp_password: secret
 smtp_port: '465'
 smtp_tls: true
-smtp_username: vincetest9999@gmail.com
-validated: true
+smtp_username: my_username@gmail.com
+validated: false
