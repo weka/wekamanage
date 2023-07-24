@@ -10,7 +10,7 @@ from weka_restapi import WekaAPIClient
 
 menu_items = {
     'get help': 'https://docs.weka.io',
-    'About': 'WEKA Management Station v1.0.0  \nwww.weka.io  \nCopyright 2023 WekaIO Inc.  All rights reserved'
+    'About': 'WEKA Management Station v1.0.2  \nwww.weka.io  \nCopyright 2023 WekaIO Inc.  All rights reserved'
 }
 
 st.set_page_config(page_title="WMS Config WEKAmon", page_icon='favicon.ico',
@@ -52,20 +52,24 @@ if st.session_state["authentication_status"]:
     with col1:
         # export implies export, prometheus, and grafana containers
         st.session_state.app_config.enable_export = st.checkbox("Enable Metrics Exporter & Grafana",
-                                                                value=st.session_state.app_config.enable_export)
+                                                                value=st.session_state.app_config.enable_export,
+                                                                help="Enable Grafana performance metrics")
         # if st.session_state.app_config.enable_export:
         #    st.session_state.app_config.enable_alerts = st.checkbox("Enable Alert Notifications",
         #                                                            value=st.session_state.app_config.enable_alerts)
 
         # quota implies quota-export, prometheus, and alertmanager containers, and valid email config
         st.session_state.app_config.enable_quota = st.checkbox("Enable Quota Exporter & Notifications",
-                                                               value=st.session_state.app_config.enable_quota)
+                                                               value=st.session_state.app_config.enable_quota,
+                                                               help="Enable WEKA Quota alerting")
         # snaptool implies snaptool container
         st.session_state.app_config.enable_snaptool = st.checkbox("Enable Snaptool",
-                                                                  value=st.session_state.app_config.enable_snaptool)
+                                                                  value=st.session_state.app_config.enable_snaptool,
+                                                                  help="Enable automatic snapshot scheduling")
         # loki implies loki container
         st.session_state.app_config.enable_loki = st.checkbox("Enable WEKAmon Log storage",
-                                                              value=st.session_state.app_config.enable_loki)
+                                                              value=st.session_state.app_config.enable_loki,
+                                                              help="Enable long-term Event storage")
 
         # if any of the above are True, then we need to authenticate with the cluster
         if st.session_state.app_config.enable_export or \
@@ -75,17 +79,20 @@ if st.session_state["authentication_status"]:
             st.session_state.app_config.clusters_config['hostname-ip'] = st.text_input(
                 "Cluster Location (hostname or IP addr)", max_chars=30,
                 value=st.session_state.app_config.clusters_config[
-                    'hostname-ip'] if 'hostname-ip' in st.session_state.app_config.clusters_config else '')
+                    'hostname-ip'] if 'hostname-ip' in st.session_state.app_config.clusters_config else '',
+                help="The name or IP of one of your WEKA servers")
             st.session_state.app_config.clusters_config['user'] = \
                 st.text_input("Username", max_chars=30,
                               value= st.session_state.app_config.clusters_config[
-                                  'user'] if 'user' in st.session_state.app_config.clusters_config else '')
+                                  'user'] if 'user' in st.session_state.app_config.clusters_config else '',
+                              help="WEKA username for cluster login")
             st.session_state.app_config.clusters_config['password'] = \
                 st.text_input("Password", max_chars=30, type='password',
                               value=st.session_state.app_config.clusters_config[
-                                  'password'] if 'password' in st.session_state.app_config.clusters_config else '')
+                                  'password'] if 'password' in st.session_state.app_config.clusters_config else '',
+                              help="WEKA password for the WEKA username specified above")
 
-        if st.button('Save', key='clusters_save'):
+        if st.button('Save and start selected services', key='clusters_save'):
             tokens = None
             print(os.getcwd())
             if 'weka_api' not in st.session_state:
