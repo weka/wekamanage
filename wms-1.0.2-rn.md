@@ -64,6 +64,5 @@ Initial release
 
 |  Issue | Details |
 |-------------- | -------------- | 
-| :red_circle: VT-59 | **eject virtual crdom after install**<br>The kickstart does not explicitly eject the virtual cdrom after installation, which may cause a reboot loop after installation and continuous re-install on certain hypervisors or BMCs.
-<br>_**Impact:** Never-ending reboot/install cycles_<br>_**Configuration:** Multiple platorms_<br>_**Workaround:** Stop the cycle after the first installation and manually eject the virtual cdrom_ | 
+| :red_circle: VT-59 | **eject virtual crdom after install**<br>The kickstart does not explicitly eject the virtual cdrom after installation, which may cause a reboot loop after installation and continuous re-install on certain hypervisors or BMCs._<br>_**Impact:** Never-ending reboot/install cycles_<br>_**Configuration:** Multiple platorms_<br>_**Workaround:** Stop the cycle after the first installation and manually eject the virtual cdrom_ | 
 
