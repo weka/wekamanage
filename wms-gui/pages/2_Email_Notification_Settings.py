@@ -13,7 +13,7 @@ from weka_restapi import WekaAPIClient
 
 menu_items = {
     'get help': 'https://docs.weka.io',
-    'About': 'WEKA Management Station v1.0.0\nwww.weka.io'
+    'About': 'WEKA Management Station v1.0.2\nwww.weka.io'
 }
 st.set_page_config(page_title="WMS Email Configuration", page_icon='favicon.ico',
                    layout="wide", menu_items=menu_items)
@@ -60,30 +60,38 @@ if st.session_state["authentication_status"]:
         smtp_user_data = st.session_state.app_config.smtp_config
 
         smtp_user_data['sender_email_name'] = st.text_input("Email From Name", max_chars=50,
-                                                            value=smtp_user_data['sender_email_name'])
+                                                            value=smtp_user_data['sender_email_name'],
+                                help="The name ('John Doe', or 'WEKA Cluster') that emails sent by WMS will come FROM")
         smtp_user_data['sender_email'] = st.text_input("Email From Address", max_chars=50,
-                                                       value=smtp_user_data['sender_email'])
+                                                       value=smtp_user_data['sender_email'],
+                               help="The email address ('weka@somewhere.com') that emails sent by WMS will come FROM")
         smtp_user_data['smtp_host'] = st.text_input("Email Relay Host", max_chars=50,  # on_change=check_valid_host_ip,
-                                                    value=smtp_user_data['smtp_host'])
+                                                    value=smtp_user_data['smtp_host'],
+                            help="Aka SmartHost or upstream SMTP server that emails sent from WMS will be sent through")
 
         smtp_port_no = 25 if smtp_user_data['smtp_port'] == '' else int(smtp_user_data['smtp_port'])
 
-        smtp_port_no = st.number_input("Email Relay Port", step=1, min_value=25, max_value=99999, value=smtp_port_no)
+        smtp_port_no = st.number_input("Email Relay Port", step=1, min_value=25, max_value=99999, value=smtp_port_no,
+                                       help="The port number to use on the Relay Host, typically 25, 465, 587, or 2525")
 
         smtp_user_data['smtp_port'] = str(smtp_port_no)
 
         smtp_user_data['smtp_tls'] = st.checkbox("SMTP Relay allows/requires TLS",
-                                                          value=smtp_user_data['smtp_tls'])
+                                                          value=smtp_user_data['smtp_tls'],
+                                                 help="Select if the Relay Host can/should use TLS encryption")
         smtp_user_data['smtp_username'] = st.text_input("Email Relay Username", max_chars=50,
                                                         # on_change=check_valid_user_pass,
-                                                        value=smtp_user_data['smtp_username'])
+                                                        value=smtp_user_data['smtp_username'],
+                                                        help="Username used to login to the Relay Host, if required")
         smtp_user_data['smtp_password'] = st.text_input("Email Relay Password", max_chars=50,
                                                         type='password',
-                                                        value=smtp_user_data['smtp_password'])
+                                                        value=smtp_user_data['smtp_password'],
+                                                        help="Password used to login to the Relay Host, if required")
 
         if smtp_user_data['smtp_tls']:
             smtp_user_data['smtp_insecure_tls'] = st.checkbox("Allow Insecure TLS with SMTP Relay",
-                                                              value=smtp_user_data['smtp_insecure_tls'])
+                                                              value=smtp_user_data['smtp_insecure_tls'],
+                                                              help="Allow TLS to a host with a self-signed certificate")
 
         st.write()
 
