@@ -8,7 +8,7 @@ from streamlit_common import add_logo, switch_to_login_page
 
 menu_items = {
     'get help': 'https://docs.weka.io',
-    'About': 'WEKA Management Station v1.0.0  \nwww.weka.io  \nCopyright 2023 WekaIO Inc.  All rights reserved'
+    'About': 'WEKA Management Station v1.0.2  \nwww.weka.io  \nCopyright 2023 WekaIO Inc.  All rights reserved'
 }
 
 st.set_page_config(page_title="WMS LWH Config", page_icon='favicon.ico',
@@ -63,10 +63,11 @@ def config_lwh():
     col1, col2 = st.columns(2)
     with col1:
         global_config['ingress']['domain'] = st.text_input(
-            "Address/Domain that LWH will listen on.  Use 0.0.0.0 or leave blank to listen on all" +
-            " interfaces, an FDQN, or hostname",
+            "Listen Address/Domain",
             max_chars=30, on_change=check_valid_domain,
-            value=global_config['ingress']['domain'])
+            value=global_config['ingress']['domain'],
+            help="Address/hostname that LWH will listen on.  Leave blank or use 0.0.0.0 to listen on all interfaces," +
+            " or an IP address, hostname, or FQDN as may be required by the TLS certificate")
 
         if config['alertdispatcher']['email_link_domain_name'] is None or \
                 len(config['alertdispatcher']['email_link_domain_name']) == 0:
@@ -87,9 +88,12 @@ def config_lwh():
 
         tls = global_config['ingress']['nginx']['tls']
         tls['enabled'] = st.checkbox("Enable Ingress TLS?",
-                                     value=tls['enabled'])
-        tls['cert'] = st.text_area("TLS Cert:", value=tls['cert'])
-        tls['key'] = st.text_area("TLS Key:", value=tls['key'])
+                                     value=tls['enabled'],
+                                     help="Should TLS be used for all connections?")
+        tls['cert'] = st.text_area("TLS Cert:", value=tls['cert'],
+                                   help="The TLS certificate that should be used")
+        tls['key'] = st.text_area("TLS Key:", value=tls['key'],
+                                  help="The TLS key that matches the certificate above")
         st.write()
 
         st.markdown("### Email Alert Configuration:")
@@ -97,7 +101,7 @@ def config_lwh():
             st.checkbox("Enable email notifications (configure in the Email Notification Settings page)",
                         value=st.session_state.app_config.smtp_config['enable_lwh_email'])
 
-        if st.button("Save"):
+        if st.button("Save and install/start LWH"):
             # bool from above checkbox
             if st.session_state.app_config.smtp_config['enable_lwh_email']:
                 # if the config is not validated, error

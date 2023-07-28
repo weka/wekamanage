@@ -93,10 +93,10 @@ docker-ce:
 upload:
 	./aws_upload_iso ${ISO}
 
-dist:	dist-7 dist-whorfin
+dist:	dist-test dist-whorfin
 
-dist-7:
-	scp ${ISO} zweka07:/opt
+dist-test:
+	cp ${ISO} /space/test_isos
 
 dist-whorfin:
 	scp ${ISO} whorfin:/sns/samba_share

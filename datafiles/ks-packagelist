@@ -35,6 +35,7 @@ ansible-core
 weka-rocky-lts86-release
 weka-rocky-lts86-repos
 rocky-gpg-keys
+jq
 
 # docker
 containerd.io
