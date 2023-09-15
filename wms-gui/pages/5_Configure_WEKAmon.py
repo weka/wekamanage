@@ -77,17 +77,17 @@ if st.session_state["authentication_status"]:
                 st.session_state.app_config.enable_snaptool or \
                 st.session_state.app_config.enable_loki:
             st.session_state.app_config.clusters_config['hostname-ip'] = st.text_input(
-                "Cluster Location (hostname or IP addr)", max_chars=30,
+                "Cluster Location (hostname or IP addr)", max_chars=50,
                 value=st.session_state.app_config.clusters_config[
                     'hostname-ip'] if 'hostname-ip' in st.session_state.app_config.clusters_config else '',
                 help="The name or IP of one of your WEKA servers")
             st.session_state.app_config.clusters_config['user'] = \
-                st.text_input("Username", max_chars=30,
+                st.text_input("Username", max_chars=50,
                               value= st.session_state.app_config.clusters_config[
                                   'user'] if 'user' in st.session_state.app_config.clusters_config else '',
                               help="WEKA username for cluster login")
             st.session_state.app_config.clusters_config['password'] = \
-                st.text_input("Password", max_chars=30, type='password',
+                st.text_input("Password", max_chars=50, type='password',
                               value=st.session_state.app_config.clusters_config[
                                   'password'] if 'password' in st.session_state.app_config.clusters_config else '',
                               help="WEKA password for the WEKA username specified above")
@@ -130,6 +130,7 @@ if st.session_state["authentication_status"]:
                 st.session_state.app_config.save_clusters()
                 # Generate the compose.yml config file
                 st.session_state.app_config.configure_compose()
+                st.session_state.app_config.configure_prometheus()
                 # if status != NotInstalled:
                 #    wekamon.start()
                 #st.session_state.wekamon_app.start()
@@ -180,3 +181,4 @@ elif st.session_state["authentication_status"] is False:
 elif st.session_state["authentication_status"] is None:
     switch_to_login_page()
     pass
+
