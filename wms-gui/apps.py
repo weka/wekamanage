@@ -224,14 +224,14 @@ class LocalWekaHome(AppBase):
         # start the app
 
         try:
-            self.run(self.UPDATE, timeout=90)
+            self.run(self.UPDATE, timeout=5*60)
         except Exception as exc:
             raise Exception(f'Local Weka Home update failed {exc}')
 
         # remove grafana?
         self.run(self.RM_KUBE_GRAFANA, timeout=30)
 
-        self.run(self.CHECK_UP, timeout=90)
+        self.run(self.CHECK_UP, timeout=3*60)
 
         return True
 

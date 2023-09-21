@@ -90,6 +90,18 @@ if st.session_state.authentication_status:
         st.session_state.sidebar_state = "expanded"
         st.experimental_rerun()
 
+    try:
+        if st.session_state.lwh_app.status() != Running:
+            st.session_state['lwh_up'] = False
+        else:
+            st.session_state['lwh_up'] = True
+        if st.session_state.wekamon_app.status() != Running:
+            st.session_state['wekamon_up'] = False
+        else:
+            st.session_state['wekamon_up'] = True
+    except:
+        pass  # sometimes on initial load, this pukes with a timeout...
+
     # Get the URL used to get to this app
     # second time around - usually works like a charm
     if "wms_url" not in st.session_state:
@@ -130,33 +142,35 @@ if st.session_state.authentication_status:
 
         with col1:
             st.markdown('### Applications')
+
+            st.write('WEKAmon')
+            if st.button("Grafana", disabled='wekamon_up' not in st.session_state or not st.session_state['wekamon_up']):
+                log.info(f'opening {st.session_state.grafana_url}')
+                open_in_new_tab(st.session_state.grafana_url)
+
+            st.write('Local Weka Home')
+            if st.button("Local WEKA Home", disabled='lwh_up' not in st.session_state or not st.session_state['lwh_up']):
+                log.info(f'opening {st.session_state.lwh_url}')
+                open_in_new_tab(st.session_state.lwh_url)
+
+            st.write('Snaptool')
+            if st.button("Snaptool", disabled='wekamon_up' not in st.session_state or not st.session_state['wekamon_up']):
+                log.info(f'opening {st.session_state.snaptool_url}')
+                open_in_new_tab(st.session_state.snaptool_url)
+
             st.write('WMS OS management')
             if st.button("WMS Linux Admin GUI"):
                 log.info(f'opening {st.session_state.cockpit_url}')
                 open_in_new_tab(st.session_state.cockpit_url)
 
-            st.write('Local Weka Home')
-            if st.button("Local WEKA Home"):
-                log.info(f'opening {st.session_state.lwh_url}')
-                open_in_new_tab(st.session_state.lwh_url)
-
-            st.write('WEKAmon')
-            if st.button("Grafana"):
-                log.info(f'opening {st.session_state.grafana_url}')
-                open_in_new_tab(st.session_state.grafana_url)
-
-            if st.button("Prometheus"):
+            st.write('Misc')
+            if st.button("Prometheus", disabled='wekamon_up' not in st.session_state or not st.session_state['wekamon_up']):
                 log.info(f'opening {st.session_state.prometheus_url}')
                 open_in_new_tab(st.session_state.prometheus_url)
 
-            if st.button("Alertmanager"):
+            if st.button("Alertmanager", disabled='wekamon_up' not in st.session_state or not st.session_state['wekamon_up']):
                 log.info(f'opening {st.session_state.alertmanager_url}')
                 open_in_new_tab(st.session_state.alertmanager_url)
-
-            st.write('Snaptool')
-            if st.button("Snaptool"):
-                log.info(f'opening {st.session_state.snaptool_url}')
-                open_in_new_tab(st.session_state.snaptool_url)
 
             st.write('Deploy WEKA Clusters')
             if st.button("Deploy a WEKA Cluster"):
@@ -164,10 +178,9 @@ if st.session_state.authentication_status:
                 open_in_new_tab(st.session_state.ansible_url)
 
             st.write('Manage your WEKA Cluster')
-            if "cluster_url" in st.session_state:
-                if st.button("Open cluster GUI"):
-                    log.info(f"opening {st.session_state.cluster_url}")
-                    open_in_new_tab(st.session_state.cluster_url)
+            if st.button("Open cluster GUI", disabled="cluster_url" not in st.session_state):
+                log.info(f"opening {st.session_state.cluster_url}")
+                open_in_new_tab(st.session_state.cluster_url)
 
         with col2:
             # initialize the lwh app object
@@ -187,11 +200,11 @@ if st.session_state.authentication_status:
             st.markdown("## Application Status")
             st.write()
             try:
-                if st.session_state.lwh_app.status() != Running:
+                if 'lwh_up' not in st.session_state or st.session_state['lwh_up'] == False:
                     lwh_emoji = ':thumbsdown:'
                 else:
                     lwh_emoji = ':thumbsup:'
-                if st.session_state.wekamon_app.status() != Running:
+                if 'wekamon_up' not in st.session_state or st.session_state['wekamon_up'] == False:
                     wekamon_emoji = ':thumbsdown:'
                 else:
                     wekamon_emoji = ':thumbsup:'

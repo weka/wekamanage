@@ -67,6 +67,8 @@ class AppConfig(object):
         self.snaptool_config = None
         self.alertmanager_config = None
         self.smtp_config = None
+        self.prom_config = None
+        self.prometheus_dir = None
         self.enable_export = None
         self.enable_alerts = None
         self.enable_quota = None
@@ -74,27 +76,29 @@ class AppConfig(object):
         self.enable_loki = None
         self.compose_file = None
         self.compose_dir = None
+    
+    def load_file(self, config_files, name):
+        try:
+            with open(config_files[name], 'r') as f:
+                return yaml.safe_load(f)
+        except FileNotFoundError:
+            log.error(f"load_file: {config_files[name]} not found")
+        return None
 
     def load_configs(self):
         try:
             if not self.configs_loaded:
                 config_files = self.app_config['config_files']
-                with open(config_files['passwords_file'], 'r') as f:
-                    self.passwords_config = yaml.safe_load(f)
-                with open(config_files['lwh_config_file'], 'r') as f:
-                    self.lwh_config = yaml.safe_load(f)
-                with open(config_files['clusters_config_file'], 'r') as f:
-                    self.clusters_config = yaml.safe_load(f)
-                with open(config_files['export_config_file'], 'r') as f:
-                    self.export_config = yaml.safe_load(f)
-                with open(config_files['quota_export_config_file'], 'r') as f:
-                    self.quota_export_config = yaml.safe_load(f)
-                with open(config_files['snaptool_config_file'], 'r') as f:
-                    self.snaptool_config = yaml.safe_load(f)
-                with open(config_files['alertmanager_config_file'], 'r') as f:
-                    self.alertmanager_config = yaml.safe_load(f)
-                with open(config_files['email_settings_file'], 'r') as f:
-                    self.smtp_config = yaml.safe_load(f)
+                self.passwords_config = self.load_file(config_files, 'passwords_file')
+                self.lwh_config = self.load_file(config_files, 'lwh_config_file')
+                self.clusters_config = self.load_file(config_files, 'clusters_config_file')
+                self.export_config = self.load_file(config_files, 'export_config_file')
+                self.quota_export_config = self.load_file(config_files, 'quota_export_config_file')
+                self.snaptool_config = self.load_file(config_files, 'snaptool_config_file')
+                self.alertmanager_config = self.load_file(config_files, 'alertmanager_config_file')
+                self.smtp_config = self.load_file(config_files, 'email_settings_file')
+                self.prom_config = self.load_file(config_files, 'prometheus_config_file')
+                self.prometheus_dir = config_files['prometheus_dir']
                 self.enable_export = config_files['enable_export']
                 self.enable_alerts = config_files['enable_alerts']
                 self.enable_quota = config_files['enable_quota']
@@ -186,7 +190,7 @@ class AppConfig(object):
             print('config is zero length!')
             return
         with open(filename, 'w') as f:
-            yaml.safe_dump(config, f, indent=4)
+            yaml.safe_dump(config, f, default_flow_style=False, sort_keys=False, indent=4)
 
     def save_auth_tokens(self, directory):
         if self.tokens is not None:
@@ -223,6 +227,48 @@ class AppConfig(object):
     def update_alertmanager(self):
         self.update_config(self.app_config['config_files']['alertmanager_config_file'], self.alertmanager_config)
 
+    def update_prometheus(self):
+        self.update_config(self.app_config['config_files']['prometheus_config_file'], self.prom_config)
+
+    def configure_prometheus(self):
+        # set up the whole file from scratch
+        log.info('Generating prometheus configuration')
+
+        self.prom_config = dict()
+        self.prom_config['global'] = {
+            "evaluation_interval": "1m",
+            "scrape_interval": "1m",
+            "scrape_timeout": "50s",
+        }
+
+        self.prom_config['scrape_configs'] = list()
+        scrape_configs = self.prom_config['scrape_configs']
+
+        def load_config(config, name):
+            print(f'loading prom config from dir {os.getcwd()}')
+            with open(f'{self.prometheus_dir}/{name}.yml') as f:
+                if type(config) == list:
+                    config.append(yaml.safe_load(f))
+                else:
+                    config[name] = yaml.safe_load(f)
+
+        # always add Prometheus (itself)
+        load_config(scrape_configs, "prometheus")
+        if self.enable_export:
+            load_config(scrape_configs, "export")
+            load_config(scrape_configs, "grafana")
+        if self.enable_quota:
+            load_config(scrape_configs, "quota-export")
+            load_config(self.prom_config, "alerting")   # special case
+            self.prom_config['rule_files'] = ["rules.yml"]       # special case
+        if self.enable_loki:
+            load_config(scrape_configs, "loki")
+
+        self.update_prometheus()
+        # Save the settings
+        self.save_configs()
+        log.info('prometheus configuration complete')
+
     def configure_compose(self):
         # build docker-compose configuration file
         compose_config = {'version': "3", 'services': dict()}
@@ -244,8 +290,6 @@ class AppConfig(object):
             load_config(services, "export")
             add_grafana = True
             add_prometheus = True
-        #if self.enable_alerts:
-        #    add_alertmanager = True     # maybe...
         if self.enable_loki:
             log.info('enabling loki')
             load_config(services, "loki")
@@ -275,3 +319,4 @@ class AppConfig(object):
             yaml.dump(compose_config, f, default_flow_style=False, sort_keys=False)
         # Save the settings
         self.save_configs()
+        log.info('compose configuration complete')

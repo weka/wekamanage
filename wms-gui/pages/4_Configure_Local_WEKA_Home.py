@@ -79,8 +79,7 @@ def config_lwh():
                  " It is likely the domain you use to access WMS (this server's name)",
             max_chars=30, on_change=check_not_empty,
             key="email_link",
-            value=config['alertdispatcher'][
-                'email_link_domain_name'])
+            value=config['alertdispatcher']['email_link_domain_name'])
         st.write()
 
         st.write()
@@ -99,7 +98,15 @@ def config_lwh():
         st.markdown("### Email Alert Configuration:")
         st.session_state.app_config.smtp_config['enable_lwh_email'] = \
             st.checkbox("Enable email notifications (configure in the Email Notification Settings page)",
+                        help="Please configure email server settings on the Email Notification Settings page",
                         value=st.session_state.app_config.smtp_config['enable_lwh_email'])
+
+        st.markdown("### Forward to Cloud Weka Home:")
+        st.session_state.app_config.smtp_config['api_forwarding'] = \
+        config['apiforwarding']['enabled'] = \
+            st.checkbox("Enable forwarding data to Cloud Weka Home",
+                        help="Requires internet connectivity to api.home.weka.io",
+                        value=config['apiforwarding']['enabled'])
 
         if st.button("Save and install/start LWH"):
             # bool from above checkbox

@@ -1,0 +1,4 @@
+  job_name: prometheus
+  static_configs:
+    - targets:
+        - "prometheus:9090"
