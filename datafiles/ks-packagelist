@@ -55,7 +55,6 @@ htop
 nload
 screen
 ice
-amazon-ssm-agent
 
 # iso rebuild tools
 genisoimage
