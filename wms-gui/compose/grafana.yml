@@ -1,7 +1,7 @@
 image: grafana/grafana:8.4.6
 volumes:
   - /dev/log:/dev/log
-  - /opt/weka-mon/etc_grafana_provisioning:/etc/grafana/provisioning
+  - /opt/weka-mon/etc_grafana:/etc/grafana/
   - /opt/weka-mon/var_lib_grafana:/var/lib/grafana/
   - /opt/weka-mon/usr_share_grafana_public_img:/usr/share/grafana/public/img/weka
 restart: always
