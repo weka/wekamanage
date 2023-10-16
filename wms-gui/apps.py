@@ -116,7 +116,7 @@ class MiniKube(AppBase):
 
         with pushd(self.MINIKUBE_DIR):
             cmd = self.MINIKUBE_DIR + '/minikube-offline_install.sh'
-            result = self.run(cmd, shell=True, cwd=self.MINIKUBE_DIR, timeout=5*60)
+            result = self.run(cmd, shell=True, cwd=self.MINIKUBE_DIR, timeout=10*60)
             # we should log this or something
             return result
 
@@ -142,7 +142,7 @@ class MiniKube(AppBase):
             raise Exception('minikube is not running')
 
         cmd = [self.MINIKUBE, 'stop']
-        self.run(cmd, timeout=60)
+        self.run(cmd, timeout=120)
         return True
 
 
@@ -155,7 +155,7 @@ class LocalWekaHome(AppBase):
         self.HELM = '/usr/bin/helm'
         self.KUBECTL = '/usr/bin/kubectl'
         self.CHECK_UP = [self.KUBECTL, 'wait', '--for=condition=ready', 'pod', '-l', 'app.group=common', '-n',
-                         'home-weka-io', '--timeout=5m']
+                         'home-weka-io', '--timeout=10m']
         self.RM_KUBE_GRAFANA = [self.KUBECTL, 'delete', 'pod', '-n', 'home-weka-io', '-l',
                                 'app.kubernetes.io/name=grafana']
         self.LWH_DIR = config_files['lwh_dir'] + '/wekahome_offline'
@@ -186,7 +186,7 @@ class LocalWekaHome(AppBase):
             return minikube_status  # NotRunning or NotInstalled
 
         cmd = [self.KUBECTL, 'get', 'pods', '--namespace', 'home-weka-io']
-        result = self.run(cmd, timeout=15)
+        result = self.run(cmd, timeout=30)
 
         if len(result.stderr.splitlines()) > 0:
             log.debug(result.stderr)
@@ -213,7 +213,7 @@ class LocalWekaHome(AppBase):
             # shutil.copyfile(self.CUSTOMER_CONFIG_FILE, self.CONFIG)
             # run the install script
             cmd = self.LWH_DIR + '/wekahome-install.sh'
-            result = self.run(cmd, timeout=7 * 60, shell=True)
+            result = self.run(cmd, timeout=10 * 60, shell=True)
             if result.returncode != 0:
                 log.debug(result.stdout)
                 log.debug(result.stderr)
@@ -224,7 +224,7 @@ class LocalWekaHome(AppBase):
         # start the app
 
         try:
-            self.run(self.UPDATE, timeout=5*60)
+            self.run(self.UPDATE, timeout=10*60)
         except Exception as exc:
             raise Exception(f'Local Weka Home update failed {exc}')
 
