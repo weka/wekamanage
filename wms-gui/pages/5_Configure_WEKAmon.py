@@ -107,10 +107,12 @@ if st.session_state["authentication_status"]:
                     st.error("Make sure you have DNS configured or have edited /etc/hosts")
                     st.error("See the OS Web Admin GUI on the Landing Page to configure DNS")
                     st.error("See the Edit Hosts File page to edit the hosts file")
+                    del st.session_state['weka_api']
                     st.stop()
             except Exception as exc:
                 with col1:
                     st.error(f'Unexpected error logging into API: {exc.args[0]}')
+                    del st.session_state['weka_api']
                     st.stop()
             if tokens is not None:  # was the cluster login successful?
                 with col1:
@@ -163,6 +165,7 @@ if st.session_state["authentication_status"]:
             else:
                 # cluster login failed.  disable WEKAmon completely because we don't have valid credentials
                 # wekamon = st.session_state['wekamon_app']
+                del st.session_state['weka_api']
                 st.session_state.wekamon_app.stop()  # does this prevent start on reboot?
 
     # update cluster url
