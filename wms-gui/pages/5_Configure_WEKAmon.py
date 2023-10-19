@@ -10,7 +10,7 @@ from weka_restapi import WekaAPIClient
 
 menu_items = {
     'get help': 'https://docs.weka.io',
-    'About': 'WEKA Management Station v1.0.2  \nwww.weka.io  \nCopyright 2023 WekaIO Inc.  All rights reserved'
+    'About': 'WEKA Management Station v1.1.1  \nwww.weka.io  \nCopyright 2023 WekaIO Inc.  All rights reserved'
 }
 
 st.set_page_config(page_title="WMS Config WEKAmon", page_icon='favicon.ico',
