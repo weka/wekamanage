@@ -1,6 +1,6 @@
 #! /usr/bin/env bash
 
 # Docker (and k8s) gets messy and never cleans up after itself.
-/usr/bin/docker system prune --all
-/usr/bin/docker image prune --all
+/usr/bin/docker system prune --all --force
+/usr/bin/docker image prune --all --force
 # This will prevent it from filling /var (hopefully!)

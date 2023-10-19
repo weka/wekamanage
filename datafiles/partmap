@@ -4,7 +4,7 @@ raid bootefi /boot/efi efi 300
 raid root / xfs 30000
 raid var /var xfs 30000
 raid varlog /var/log xfs 20000
-raid home /home xfs 20000
+raid home /home xfs 10000
 raid opt /opt xfs 20000 --grow
-part tmp /tmp tmpfs 5000
+part tmp /tmp xfs 10000
 part vartmp /var/tmp tmpfs 5000
