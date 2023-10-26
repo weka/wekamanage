@@ -9,7 +9,7 @@ BRANCH := $(shell git rev-parse --abbrev-ref HEAD)
 SUFFIX=-${BRANCH}
 SOURCEISO=../Rocky-8.6-LTS/Rocky-8.6-LTS${SUFFIX}.iso
 
-LABEL := $(shell file ${SOURCEISO} | cut -d\' -f2)
+LABEL := $(shell file -L ${SOURCEISO} | cut -d\' -f2)
 #WEKAVERSIONS=$(wildcard weka-*.tar)
 ISO=wekamanage${SUFFIX}.iso
 DIR=$(ISO:%.iso=%.dir)
