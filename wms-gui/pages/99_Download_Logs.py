@@ -10,7 +10,7 @@ from streamlit_common import add_logo, switch_to_login_page
 
 menu_items = {
     'get help': 'https://docs.weka.io',
-    'About': 'WEKA Management Station v1.1.1  \nwww.weka.io  \nCopyright 2023 WekaIO Inc.  All rights reserved'
+    'About': 'WEKA Management Station v1.1.2  \nwww.weka.io  \nCopyright 2023 WekaIO Inc.  All rights reserved'
 }
 
 st.set_page_config(page_title="WMS Download Logs", page_icon='favicon.ico',
