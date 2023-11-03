@@ -1,8 +1,8 @@
 
-# WEKA Management Station 1.0.2 Release Notes
+# WEKA Management Station 1.1.1 Release Notes
 
 #### Scope
-This document contains the release notes for WEKA Management Station 1.0.2.  Please visit
+This document contains the release notes for WEKA Management Station 1.1.1.  Please visit
 https://get.weka.io for the latest updates.
 
 #### Upgrade
