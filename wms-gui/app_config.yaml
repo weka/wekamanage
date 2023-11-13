@@ -8,7 +8,7 @@ config_files:
   quota_export_config_file: /opt/weka-mon/quota-export.yml
   snaptool_config_file: /opt/weka-mon/snaptool.yml
   email_settings_file: email_settings.yaml
-  alertmanager_config_file: /opt/weka-mon/etc_alertmanager/alerting.yml
+  alertmanager_config_file: /opt/weka-mon/etc_alertmanager/alertmanager.yml
   prometheus_config_file: /opt/weka-mon/etc_prometheus/prometheus.yml
   prometheus_dir: ./prometheus
   enable_export: true

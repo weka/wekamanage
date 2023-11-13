@@ -1,8 +1,8 @@
 
-# WEKA Management Station 1.1.2 Release Notes
+# WEKA Management Station 1.1.4 Release Notes
 
 #### Scope
-This document contains the release notes for WEKA Management Station 1.1.2.  Please visit
+This document contains the release notes for WEKA Management Station 1.1.4.  Please visit
 https://get.weka.io for the latest updates.
 
 #### Upgrade
@@ -10,6 +10,12 @@ Upgrades of existing WMS installations is currently not supported.  Future versi
 
 ## Important Notes
 #### **What is New?**
+
+##### V1.1.4
+Maintenance release
+
+##### V1.1.3
+Maintenance release
 
 ##### V1.1.2
 Maintenance release
@@ -28,6 +34,28 @@ Maintenance release
 
 ##### V1.0.0
 Initial Release
+
+## Version 1.1.4 Release Content
+
+This release of WEKA Management Station brings in new a version of the cluster deployment UI that fixes an issue with some SMC servers.
+
+**Updated versions of included Utilities**
+
+The WMS includes an updated version of Deployment UI
+
+| Issue | Details                                                                                                                                                      |
+|-------|--------------------------------------------------------------------------------------------------------------------------------------------------------------| 
+| VT-195 | **Alertmanager config file missing from WEKAmon bundle**<br>File re-added to bundle<br>**Configuration:** All configurations | 
+
+
+## Version 1.1.3 Release Content
+
+This release of WEKA Management Station brings in new a version of the cluster deployment UI that fixes an issue with some SMC servers.
+
+**Updated versions of included Utilities**
+
+The WMS includes an updated version of Deployment UI
+
 
 ## Version 1.1.2 Release Content
 
