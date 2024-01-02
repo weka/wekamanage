@@ -17,7 +17,7 @@ else:
 
 menu_items = {
     'get help': 'https://docs.weka.io',
-    'About': 'WEKA Management Station v1.1.3  \nwww.weka.io  \nCopyright 2023 WekaIO Inc.  All rights reserved'
+    'About': 'WEKA Management Station v1.1.4  \nwww.weka.io  \nCopyright 2023 WekaIO Inc.  All rights reserved'
 }
 
 st.set_page_config(page_title="WEKA Management Station Config", page_icon='favicon.ico',
