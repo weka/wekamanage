@@ -62,45 +62,46 @@ def config_lwh():
             max_chars=30, on_change=check_valid_domain,
             value=global_config['ingress']['domain'],
             help="Address/hostname that LWH will listen on.  Leave blank or use 0.0.0.0 to listen on all interfaces," +
-            " or an IP address, hostname, or FQDN as may be required by the TLS certificate")
+            " or an IP address, hostname, or FQDN as TLS certificate requires.")
 
         if config['alertdispatcher']['email_link_domain_name'] is None or \
                 len(config['alertdispatcher']['email_link_domain_name']) == 0:
             config['alertdispatcher']['email_link_domain_name'] = st.session_state.domain
         config['alertdispatcher']['email_link_domain_name'] = st.text_input(
-            "Email Alert Domain Name: (REQUIRED)",
-            help="A domain name (or ip address) to use in Alert Email URL links, for example: " +
-                 "sample.com will result in links of https://sample.com/something." +
-                 " It is likely the domain you use to access WMS (this server's name)",
+            "Email Alert Domain Name: (mandatory)",
+            help="Enter a domain name (or IP address) for Alert Email URL links. For instance, if you input" +
+                 " `sample.com`, the links appear as `https://sample.com/something`. Typically, this is the" +
+                 " domain you use to access WMS (this server's name).",
             max_chars=30, on_change=check_not_empty,
             key="email_link",
             value=config['alertdispatcher']['email_link_domain_name'])
         st.write()
 
         st.write()
-        st.markdown("### Web Server TLS Cert Configuration:")
+        st.markdown("### Web Server TLS Certificate Configuration:")
 
         tls = global_config['ingress']['nginx']['tls']
-        tls['enabled'] = st.checkbox("Enable Ingress TLS?",
+        tls['enabled'] = st.checkbox("Enable Ingress TLS",
                                      value=tls['enabled'],
-                                     help="Should TLS be used for all connections?")
-        tls['cert'] = st.text_area("TLS Cert:", value=tls['cert'],
-                                   help="The TLS certificate that should be used")
-        tls['key'] = st.text_area("TLS Key:", value=tls['key'],
-                                  help="The TLS key that matches the certificate above")
+                                     help="Toggle to enable TLS for all connections.")
+        tls['cert'] = st.text_area("TLS Certificate", value=tls['cert'],
+                                   help="Specify the TLS certificate to be used.")
+        tls['key'] = st.text_area("TLS Key", value=tls['key'],
+                                  help="Enter the TLS key corresponding to the specified certificate above.")
         st.write()
 
-        st.markdown("### Email Alert Configuration:")
+        st.markdown("### Email Alert Configuration")
         st.session_state.app_config.smtp_config['enable_lwh_email'] = \
-            st.checkbox("Enable email notifications (configure in the Email Notification Settings page)",
+            st.checkbox("Enable Email Notifications (configure in the Email Notification Settings page)",
                         help="Please configure email server settings on the Email Notification Settings page",
                         value=st.session_state.app_config.smtp_config['enable_lwh_email'])
 
         st.markdown("### Forward to Cloud Weka Home:")
         st.session_state.app_config.smtp_config['api_forwarding'] = \
         config['apiforwarding']['enabled'] = \
-            st.checkbox("Enable forwarding data to Cloud Weka Home",
-                        help="Requires internet connectivity to api.home.weka.io",
+            st.checkbox("Enable forwarding data to Cloud WEKA Home",
+                        help="Activate this feature to send data to Cloud WEKA Home. Internet connectivity to" +
+                             " api.home.weka.io is required for this functionality. The default setting is activated.",
                         value=config['apiforwarding']['enabled'])
 
         if st.button("Save and install/start LWH"):
