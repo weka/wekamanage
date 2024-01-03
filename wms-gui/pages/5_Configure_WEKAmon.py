@@ -5,17 +5,11 @@ import streamlit as st
 
 # from Landing_Page import authenticator
 from apps import WEKAmon, NotInstalled, state_text
-from streamlit_common import add_logo, switch_to_login_page
+from streamlit_common import add_logo, switch_to_login_page, menu_items
 from weka_restapi import WekaAPIClient
-
-menu_items = {
-    'get help': 'https://docs.weka.io',
-    'About': 'WEKA Management Station v1.1.4  \nwww.weka.io  \nCopyright 2023 WekaIO Inc.  All rights reserved'
-}
 
 st.set_page_config(page_title="WMS Config WEKAmon", page_icon='favicon.ico',
                    layout="wide", menu_items=menu_items)
-# log = logging.getLogger(__name__)
 
 if "authentication_status" not in st.session_state:
     st.session_state["authentication_status"] = None

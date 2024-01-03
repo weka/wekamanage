@@ -5,14 +5,8 @@ import streamlit_monaco_yaml
 import yaml
 
 #from Landing_Page import authenticator
-from streamlit_common import add_logo, switch_to_login_page
+from streamlit_common import add_logo, switch_to_login_page, menu_items
 from apps import WEKAmon, NotInstalled, state_text
-
-
-menu_items = {
-    'get help': 'https://docs.weka.io',
-    'About': 'WEKA Management Station v1.1.4  \nwww.weka.io  \nCopyright 2023 WekaIO Inc.  All rights reserved'
-}
 
 st.set_page_config(page_title="WMS Snaptool Config", page_icon='favicon.ico',
                    layout="wide", menu_items=menu_items)

@@ -7,18 +7,13 @@ from streamlit import logger
 from streamlit_javascript import st_javascript
 
 from apps import Running, LocalWekaHome, WEKAmon
-from streamlit_common import add_logo, open_in_new_tab
+from streamlit_common import add_logo, open_in_new_tab, menu_items
 from app_config import AppConfig
 
 if 'authentication_status' not in st.session_state or not st.session_state['authentication_status']:
     sidebar_state = st.session_state["sidebar_state"] = 'collapsed'
 else:
     sidebar_state = st.session_state["sidebar_state"] = 'expanded'
-
-menu_items = {
-    'get help': 'https://docs.weka.io',
-    'About': 'WEKA Management Station v1.1.4  \nwww.weka.io  \nCopyright 2023 WekaIO Inc.  All rights reserved'
-}
 
 st.set_page_config(page_title="WEKA Management Station Config", page_icon='favicon.ico',
                    layout="wide", initial_sidebar_state=sidebar_state, menu_items=menu_items)
@@ -88,7 +83,7 @@ if st.session_state.authentication_status:
     authenticator.logout('Logout', 'sidebar')
     if st.session_state.sidebar_state == 'collapsed':
         st.session_state.sidebar_state = "expanded"
-        st.experimental_rerun()
+        st.rerun()
 
     try:
         if st.session_state.lwh_app.status() != Running:

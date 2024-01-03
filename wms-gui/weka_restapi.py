@@ -52,7 +52,7 @@ class WekaAPIClient:
             # print(f"host = {host['hostname']}, mode= {host['mode']}, state={host['state']}, status={host['status']}")
             if host['mode'] == 'backend' and host["state"] == "ACTIVE" and host["status"] == "UP" and host['mgmt_port'] == 14000:
                 # print(f"   removing {host['hostname']}")
-                temp_hostlist.add(host)
+                temp_hostlist.append(host)
             else:
                 # it's online, but not the container we want
                 if host["mgmt_port"] != 14000:
