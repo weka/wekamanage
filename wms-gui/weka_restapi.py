@@ -46,20 +46,19 @@ class WekaAPIClient:
     # add this method to return a list of hosts/base containers
     def get_base_containers(self):
         hosts = self.get_hosts()
-        hostlist = hosts['data']
-        for host in hostlist:
+        temp_hostlist = list()
+        for host in hosts['data']:
             # get rid of clients and down hosts
             # print(f"host = {host['hostname']}, mode= {host['mode']}, state={host['state']}, status={host['status']}")
-            if host['mode'] != 'backend' or host["state"] != "ACTIVE" or host["status"] != "UP":
+            if host['mode'] == 'backend' and host["state"] == "ACTIVE" and host["status"] == "UP" and host['mgmt_port'] == 14000:
                 # print(f"   removing {host['hostname']}")
-                hostlist.remove(host)
+                temp_hostlist.add(host)
             else:
                 # it's online, but not the container we want
                 if host["mgmt_port"] != 14000:
                     self.mcb = True     # if there are containers not on 14000, it's MCB
-                    hostlist.remove(host)  # we only want one per server
         # print(hostlist)
-        return hostlist
+        return temp_hostlist
 
 
     def get_cluster(self):
