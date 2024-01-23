@@ -69,14 +69,14 @@ tarballs/wms-gui.tgz:
 	tar cvzf $@ wms-gui
 
 tarballs/local-weka-home.tgz:
-	mkdir -p /tmp/local-weka-home
-	cd /tmp/local-weka-home; curl -OL https://home-weka-io-offline-packages-dev.s3.eu-west-1.amazonaws.com/weka_minikube.tar.gz
-	cd /tmp/local-weka-home; tar xvf weka_minikube.tar.gz; rm weka_minikube.tar.gz
-	cd /tmp/local-weka-home; curl -OL https://home-weka-io-offline-packages-dev.s3.eu-west-1.amazonaws.com/wekahome-vm-docker-images.tar.gz
-	cd /tmp/local-weka-home; tar xvf wekahome-vm-docker-images.tar.gz; rm wekahome-vm-docker-images.tar.gz
-	cd /tmp; tar czvf local-weka-home.tgz local-weka-home
-	rm -rf /tmp/local-weka-home
-	mv /tmp/local-weka-home.tgz $@
+	#mkdir -p /tmp/local-weka-home
+	#cd /tmp/local-weka-home; curl -OL https://home-weka-io-offline-packages-dev.s3.eu-west-1.amazonaws.com/weka_minikube.tar.gz
+	#cd /tmp/local-weka-home; tar xvf weka_minikube.tar.gz; rm weka_minikube.tar.gz
+	#cd /tmp/local-weka-home; curl -OL https://home-weka-io-offline-packages-dev.s3.eu-west-1.amazonaws.com/wekahome-vm-docker-images.tar.gz
+	#cd /tmp/local-weka-home; tar xvf wekahome-vm-docker-images.tar.gz; rm wekahome-vm-docker-images.tar.gz
+	#cd /tmp; tar czvf local-weka-home.tgz local-weka-home
+	#rm -rf /tmp/local-weka-home
+	#mv /tmp/local-weka-home.tgz $@
 
 clean:
 	@echo making clean
