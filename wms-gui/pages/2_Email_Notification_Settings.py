@@ -8,16 +8,8 @@ import streamlit as st
 import yaml
 
 from apps import WEKAmon, NotInstalled, state_text
-from streamlit_common import add_logo, switch_to_login_page
+from streamlit_common import add_logo, switch_to_login_page, menu_items
 from weka_restapi import WekaAPIClient
-
-menu_items = {
-    'get help': 'https://docs.weka.io',
-    'About': 'WEKA Management Station v1.1.3  \nwww.weka.io  \nCopyright 2023 WekaIO Inc.  All rights reserved'
-}
-st.set_page_config(page_title="WMS Email Configuration", page_icon='favicon.ico',
-                   layout="wide", menu_items=menu_items)
-# log = logging.getLogger(__name__)
 
 if "authentication_status" not in st.session_state:
     st.session_state["authentication_status"] = None
@@ -59,39 +51,38 @@ if st.session_state["authentication_status"]:
     with col1:
         smtp_user_data = st.session_state.app_config.smtp_config
 
-        smtp_user_data['sender_email_name'] = st.text_input("Email From Name", max_chars=50,
+        smtp_user_data['sender_email_name'] = st.text_input("Sender Name for Emails", max_chars=50,
                                                             value=smtp_user_data['sender_email_name'],
-                                help="The name ('John Doe', or 'WEKA Cluster') that emails sent by WMS will come FROM")
-        smtp_user_data['sender_email'] = st.text_input("Email From Address", max_chars=50,
+                                                            help="The designated name for the sender of WMS emails.")
+        smtp_user_data['sender_email'] = st.text_input("Sender Email Address", max_chars=50,
                                                        value=smtp_user_data['sender_email'],
-                               help="The email address ('weka@somewhere.com') that emails sent by WMS will come FROM")
-        smtp_user_data['smtp_host'] = st.text_input("Email Relay Host", max_chars=50,  # on_change=check_valid_host_ip,
+                               help="The email address used for outgoing emails from WMS.")
+        smtp_user_data['smtp_host'] = st.text_input("SMTP Relay Host", max_chars=50,  # on_change=check_valid_host_ip,
                                                     value=smtp_user_data['smtp_host'],
-                            help="Aka SmartHost or upstream SMTP server that emails sent from WMS will be sent through")
+                            help="The smart host or upstream SMTP Relay server WMS uses for sending emails.")
 
         smtp_port_no = 25 if smtp_user_data['smtp_port'] == '' else int(smtp_user_data['smtp_port'])
 
-        smtp_port_no = st.number_input("Email Relay Port", step=1, min_value=25, max_value=99999, value=smtp_port_no,
-                                       help="The port number to use on the Relay Host, typically 25, 465, 587, or 2525")
+        smtp_port_no = st.number_input("SMTP Relay Port", step=1, min_value=25, max_value=99999, value=smtp_port_no,
+                                       help="The port number to use on the SMTP Relay Host, typically 25, 465, 587, or 2525")
 
         smtp_user_data['smtp_port'] = str(smtp_port_no)
 
-        smtp_user_data['smtp_tls'] = st.checkbox("SMTP Relay allows/requires TLS",
+        smtp_user_data['smtp_tls'] = st.checkbox("Enable TLS",
                                                           value=smtp_user_data['smtp_tls'],
-                                                 help="Select if the Relay Host can/should use TLS encryption")
-        smtp_user_data['smtp_username'] = st.text_input("Email Relay Username", max_chars=50,
-                                                        # on_change=check_valid_user_pass,
+                                                 help="Select if the SMTP Relay host uses TLS encryption")
+        smtp_user_data['smtp_username'] = st.text_input("SMTP Relay Username", max_chars=50,
                                                         value=smtp_user_data['smtp_username'],
-                                                        help="Username used to login to the Relay Host, if required")
-        smtp_user_data['smtp_password'] = st.text_input("Email Relay Password", max_chars=50,
+                                                    help="Username used to login to the SMTP Relay Host, if required")
+        smtp_user_data['smtp_password'] = st.text_input("SMTP Relay Password", max_chars=50,
                                                         type='password',
                                                         value=smtp_user_data['smtp_password'],
-                                                        help="Password used to login to the Relay Host, if required")
+                                                    help="Password used to login to the SMTP Relay host, if required")
 
         if smtp_user_data['smtp_tls']:
-            smtp_user_data['smtp_insecure_tls'] = st.checkbox("Allow Insecure TLS with SMTP Relay",
+            smtp_user_data['smtp_insecure_tls'] = st.checkbox("Enable TLS with Self-Signed Certificate",
                                                               value=smtp_user_data['smtp_insecure_tls'],
-                                                              help="Allow TLS to a host with a self-signed certificate")
+                                              help="Enable TLS for an SMTP Relay host with a self-signed certificate.")
 
         st.write()
 

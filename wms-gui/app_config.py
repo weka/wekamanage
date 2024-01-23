@@ -146,8 +146,10 @@ class AppConfig(object):
         alertmanager_smtp['smtp_require_tls'] = not self.smtp_config['smtp_insecure_tls']
         self.update_alertmanager()
 
+        smtp_config = self.smtp_config
+        smtp_config['smtp_password'] = ''   # don't save the password
         with open(config_files['email_settings_file'], 'w') as file:
-            return yaml.dump(self.smtp_config, file, default_flow_style=False)
+            return yaml.dump(smtp_config, file, default_flow_style=False)
 
     def save_passwords(self):
         config_files = self.app_config['config_files']
@@ -165,8 +167,10 @@ class AppConfig(object):
 
     def save_clusters(self):
         config_files = self.app_config['config_files']
+        clusters_config = self.clusters_config
+        clusters_config['password'] = ""   # don't save the password
         with open(config_files['clusters_config_file'], 'w') as file:
-            yaml.dump(self.clusters_config, file, default_flow_style=False)
+            yaml.dump(clusters_config, file, default_flow_style=False)
 
         print('updating cluster dicts')
         self.update_cluster_dict(self.export_config)
