@@ -22,7 +22,7 @@ mdurl==0.1.2
 numpy==1.26.3
 packaging==23.2
 pandas==2.1.4
-pillow==10.2.0
+pillow
 protobuf==4.25.1
 pyarrow==14.0.2
 pydeck==0.8.0
@@ -40,7 +40,7 @@ rich==13.7.0
 rpds-py==0.16.2
 six==1.16.0
 smmap==5.0.1
-streamlit==1.29.0
+streamlit>=1.29.0
 streamlit-authenticator==0.2.3
 streamlit-javascript==0.1.5
 streamlit-monaco-yaml==0.2.0
