@@ -3,6 +3,7 @@ import json
 import os
 
 import yaml
+import json
 import streamlit as st
 
 from logging import handlers
@@ -80,9 +81,16 @@ class AppConfig(object):
     def load_file(self, config_files, name):
         try:
             with open(config_files[name], 'r') as f:
-                return yaml.safe_load(f)
+                if config_files[name].split('.')[-1] == 'yml':
+                    return yaml.safe_load(f)
+                elif config_files[name].split('.')[-1] == 'json':
+                    return json.load(f)
+                log.error(f"load_file: unknown file type: {config_files[name]}")
         except FileNotFoundError:
             log.error(f"load_file: {config_files[name]} not found")
+        except Exception as exc:
+            log.error(f'load_file: ERROR {exc}')
+            raise exc
         return None
 
     def load_configs(self):
@@ -127,14 +135,14 @@ class AppConfig(object):
     def save_smtp(self):
         config_files = self.app_config['config_files']
         # update the lwh and alertmanager config files?
-        lwh_smtp = self.lwh_config['smtp_user_data']
-        lwh_smtp['sender_email'] = self.smtp_config['sender_email']
-        lwh_smtp['sender_email_name'] = self.smtp_config['sender_email_name']
-        lwh_smtp['smtp_host'] = self.smtp_config['smtp_host']
-        lwh_smtp['smtp_port'] = self.smtp_config['smtp_port']
-        lwh_smtp['smtp_insecure_tls'] = self.smtp_config['smtp_insecure_tls']
-        lwh_smtp['smtp_password'] = self.smtp_config['smtp_password']
-        lwh_smtp['smtp_username'] = self.smtp_config['smtp_username']
+        lwh_smtp = self.lwh_config['smtp']
+        lwh_smtp['senderEmail'] = self.smtp_config['sender_email']
+        lwh_smtp['sender'] = self.smtp_config['sender_email_name']
+        lwh_smtp['host'] = self.smtp_config['smtp_host']
+        lwh_smtp['port'] = self.smtp_config['smtp_port']
+        lwh_smtp['insecure'] = self.smtp_config['smtp_insecure_tls']
+        lwh_smtp['password'] = self.smtp_config['smtp_password']
+        lwh_smtp['user'] = self.smtp_config['smtp_username']
         self.save_lwh_config()
 
         alertmanager_smtp = self.alertmanager_config['global']
@@ -159,7 +167,8 @@ class AppConfig(object):
     def save_lwh_config(self):
         config_files = self.app_config['config_files']
         with open(config_files['lwh_config_file'], 'w') as file:
-            return yaml.dump(self.lwh_config, file, default_flow_style=False, sort_keys=False)
+            #return yaml.dump(self.lwh_config, file, default_flow_style=False, sort_keys=False)
+            return json.dump(self.lwh_config, file, indent=4, sort_keys=False)
 
     def update_tokens(self, weka_api, tokens):
         self.api = weka_api

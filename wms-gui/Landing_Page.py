@@ -29,7 +29,7 @@ if 'wms_gui_dir' not in st.session_state:
     st.session_state['wms_gui_dir'] = os.getcwd()
 
 if 'app_config' not in st.session_state:
-    st.session_state['app_config'] = AppConfig(st.session_state.wms_gui_dir + '/app_config.yaml')
+    st.session_state['app_config'] = AppConfig(st.session_state.wms_gui_dir + '/app_config.yml')
     try:
         st.session_state['app_config'].load_configs()
     except Exception as exc:

@@ -9,7 +9,8 @@ REPO=/run/install/repo
 pushd $SYSIMAGE/opt
 
 # unpack tarballs
-tar xvf $REPO/tarballs/local-weka-home.tgz
+#tar xvf $REPO/tarballs/local-weka-home.tgz
+cp $REPO/tarballs/wekahome*.bundle $SYSIMAGE/opt
 tar xvf $REPO/tarballs/weka-mon.tgz
 tar xvf $REPO/tarballs/tools.tgz
 tar xvf $REPO/tarballs/wms-gui.tgz
@@ -24,15 +25,12 @@ pushd weka-mon
 sed -i 's,${PWD},/opt/weka-mon,' docker-compose.yml
 popd
 
-# prep lwh
-chroot $SYSIMAGE <<EOF
-cd /opt/local-weka-home/wekahome_offline
-./update_config.sh
-EOF
-#echo We ae in $PWD
+# prep lwh (1.1.5 - will get installed interactively in apps.py)
+#chroot $SYSIMAGE <<EOF
+#cd /opt/local-weka-home/wekahome_offline
 #./update_config.sh
+#EOF
 #popd
-popd
 
 # install our gui
 #cp $REPO/wekabits/wms-gui.service $SYSIMAGE/etc/systemd/system

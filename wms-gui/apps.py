@@ -81,7 +81,7 @@ class AppBase(object):
         log.debug(result)
         return result
 
-
+# deprecated with LWH 3.x
 class MiniKube(AppBase):
     def __init__(self):
 
@@ -152,27 +152,28 @@ class LocalWekaHome(AppBase):
         config_files = st.session_state.app_config.app_config['config_files']
 
         self.CONFIG = config_files['lwh_config_file']
-        self.HELM = '/usr/bin/helm'
-        self.KUBECTL = '/usr/bin/kubectl'
+        self.HELM = '/opt/wekahome/current/bin/helm'
+        self.KUBECTL = '/usr/local/bin/k3s'
         self.CHECK_UP = [self.KUBECTL, 'wait', '--for=condition=ready', 'pod', '-l', 'app.group=common', '-n',
                          'home-weka-io', '--timeout=10m']
         self.RM_KUBE_GRAFANA = [self.KUBECTL, 'delete', 'pod', '-n', 'home-weka-io', '-l',
                                 'app.kubernetes.io/name=grafana']
-        self.LWH_DIR = config_files['lwh_dir'] + '/wekahome_offline'
-        tarball_list = glob.glob(self.LWH_DIR + '/home-weka-io-*.tgz')
+        self.LWH_DIR = config_files['lwh_dir'] + '/current'
+        tarball_list = glob.glob('/opt/wekahome*.bundle')
         if len(tarball_list) == 0:
-            raise Exception(f'ERROR: File not found: {self.LWH_DIR}/home-weka-io-*.tgz')
+            raise Exception(f'ERROR: File not found: {self.LWH_DIR}/wekahome*.bundle')
         elif len(tarball_list) != 1:
             raise Exception(f'ERROR: Too many files found: {tarball_list}')
         self.LWH_TARBALL = tarball_list[0]
-        self.UPDATE = [self.HELM, 'upgrade', 'homewekaio', '--namespace', 'home-weka-io', self.LWH_TARBALL,
-                       '--create-namespace', '-f', self.CONFIG, '--debug']
+        #self.UPDATE = [self.HELM, 'upgrade', 'homewekaio', '--namespace', 'home-weka-io', self.LWH_TARBALL,
+        #               '--create-namespace', '-f', self.CONFIG, '--debug']
+        self.UPDATE = ['/opt/wekahome/current/bin/homecli', 'local', 'upgrade']
 
         split_filename = self.LWH_TARBALL.split('/')
-        filename = split_filename[-1][:-4]  # trim off '.tgz'
+        filename = split_filename[-1][:-7]  # trim off '.bundle'
         self.version = filename.split('-')[-1]
         # We'll make minikube a sub-part of LWH...
-        self.minikube = MiniKube()
+        #self.minikube = MiniKube()
         super().__init__()
 
     def status(self):
@@ -181,9 +182,9 @@ class LocalWekaHome(AppBase):
             return NotInstalled
 
         # if minikube isn't installed, LWH certainly isn't
-        minikube_status = self.minikube.status()
-        if minikube_status != Running:
-            return minikube_status  # NotRunning or NotInstalled
+        #minikube_status = self.minikube.status()
+        #if minikube_status != Running:
+        #    return minikube_status  # NotRunning or NotInstalled
 
         cmd = [self.KUBECTL, 'get', 'pods', '--namespace', 'home-weka-io']
         result = self.run(cmd, timeout=30)
@@ -202,17 +203,18 @@ class LocalWekaHome(AppBase):
         if self.status() != NotInstalled:
             raise Exception("LWH already installed")
 
-        if self.minikube.status() == NotInstalled:
-            try:
-                self.minikube.install()
-            except Exception as exc:
-                raise Exception(f'Minikube install failed: {exc}')
+        #if self.minikube.status() == NotInstalled:
+        #    try:
+        #        self.minikube.install()
+        #    except Exception as exc:
+        #        raise Exception(f'Minikube install failed: {exc}')
 
-        with pushd(self.LWH_DIR):
+        with pushd('/opt'):
             # so we've already asked if LWH is installed, so we can assume this file isn't there
             # shutil.copyfile(self.CUSTOMER_CONFIG_FILE, self.CONFIG)
             # run the install script
-            cmd = self.LWH_DIR + '/wekahome-install.sh'
+            #cmd = self.LWH_DIR + '/wekahome-install.sh'
+            cmd = f'bash {self.LWH_TARBALL}'
             result = self.run(cmd, timeout=10 * 60, shell=True)
             if result.returncode != 0:
                 log.debug(result.stdout)

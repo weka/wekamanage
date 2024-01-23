@@ -3,7 +3,7 @@ volumes:
   - /dev/log:/dev/log
   - /opt/weka-mon/etc_loki:/etc/loki
   - /opt/weka-mon/loki_data:/loki
-command: -config.file=/etc/loki/loki-config.yaml
+command: -config.file=/etc/loki/loki-config.yml
 restart: always
 ports:
   - "3100:3100"
