@@ -25,12 +25,12 @@ pushd weka-mon
 sed -i 's,${PWD},/opt/weka-mon,' docker-compose.yml
 popd
 
-# prep lwh (1.1.5 - will get installed interactively in apps.py)
-#chroot $SYSIMAGE <<EOF
-#cd /opt/local-weka-home/wekahome_offline
-#./update_config.sh
-#EOF
-#popd
+# prep lwh
+chroot $SYSIMAGE <<EOF
+cd /opt/
+bash /opt/wekahome*.bundle
+EOF
+popd
 
 # install our gui
 #cp $REPO/wekabits/wms-gui.service $SYSIMAGE/etc/systemd/system
