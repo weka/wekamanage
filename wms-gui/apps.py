@@ -174,6 +174,10 @@ class LocalWekaHome(AppBase):
         self.version = filename.split('-')[-1]
         # We'll make minikube a sub-part of LWH...
         #self.minikube = MiniKube()
+
+        #cmd = ['bash', self.LWH_TARBALL]
+        #result = self.run(cmd, timeout=30)
+
         super().__init__()
 
     def status(self):
@@ -214,7 +218,8 @@ class LocalWekaHome(AppBase):
             # shutil.copyfile(self.CUSTOMER_CONFIG_FILE, self.CONFIG)
             # run the install script
             #cmd = self.LWH_DIR + '/wekahome-install.sh'
-            cmd = f'bash {self.LWH_TARBALL}'
+            lwh_config_file = st.session_state.app_config.app_config['config_files']['lwh_config_file']
+            cmd = f'/opt/wekahome/current/bin/homecli local setup -c ' + lwh_config_file
             result = self.run(cmd, timeout=10 * 60, shell=True)
             if result.returncode != 0:
                 log.debug(result.stdout)
@@ -231,7 +236,7 @@ class LocalWekaHome(AppBase):
             raise Exception(f'Local Weka Home update failed {exc}')
 
         # remove grafana?
-        self.run(self.RM_KUBE_GRAFANA, timeout=30)
+        #self.run(self.RM_KUBE_GRAFANA, timeout=30)
 
         self.run(self.CHECK_UP, timeout=3*60)
 

@@ -6,6 +6,7 @@ import streamlit as st
 from apps import LocalWekaHome, NotInstalled, MiniKube, state_text
 from streamlit_common import add_logo, switch_to_login_page, menu_items
 
+
 st.set_page_config(page_title="WMS LWH Config", page_icon='favicon.ico',
                    layout="wide", menu_items=menu_items)
 
@@ -36,6 +37,20 @@ def config_lwh():
         st.error("lwh configuration not loaded")
         st.stop()
     else:
+        if st.session_state.app_config.lwh_config is None:  # not installed yet
+            # lwh_url should be "http://hostname"
+            host_name_ip = st.session_state['lwh_url'].split('//')[1]
+            st.session_state.app_config.lwh_config = {
+                "host": host_name_ip,
+                "ip": "0.0.0.0",
+                "tls": dict(),
+                "smtp": dict(),
+                "retentionDays": dict(),
+                "forwarding": dict(),
+                "helmOverrides": None,
+                "k3sArgs": None
+            }
+
         config = st.session_state.app_config.lwh_config
 
     # initialize the lwh app object
@@ -54,15 +69,14 @@ def config_lwh():
     st.markdown("### Web Configuration:")
 
     #global_config = config['global']
-
     col1, col2 = st.columns(2)
     with col1:
         #global_config['ingress']['domain'] = st.text_input(
-        config['lwh_config']['host'] = st.text_input(
+        config['host'] = st.text_input(
             "Listen Address/Domain",
             max_chars=30, on_change=check_valid_domain,
             #value=global_config['ingress']['domain'],
-            value=config['lwh_config']['host'],
+            value=config['host'],
             help="Address/hostname that LWH will listen on.  Leave blank or use 0.0.0.0 to listen on all interfaces," +
             " or an IP address, hostname, or FQDN as TLS certificate requires.")
 
@@ -83,14 +97,14 @@ def config_lwh():
         st.markdown("### Web Server TLS Certificate Configuration:")
 
         #tls = global_config['ingress']['nginx']['tls']
-        tls = config['lwh_config']['tls']
+        tls = config['tls']
         tls['enabled'] = st.checkbox("Enable Ingress TLS",
-                                     value=tls['enabled'],
+                                     value=tls['enabled'] if 'enabled' in tls else False,
                                      help="Toggle to enable TLS for all connections.")
         if tls['enabled']:
-            tls['cert'] = st.text_area("TLS Certificate", value=tls['cert'],
+            tls['cert'] = st.text_area("TLS Certificate", value=tls['cert'] if 'cert' in tls else "",
                                    help="Specify the TLS certificate to be used.")
-            tls['key'] = st.text_area("TLS Key", value=tls['key'],
+            tls['key'] = st.text_area("TLS Key", value=tls['key'] if 'key' in tls else "",
                                   help="Enter the TLS key corresponding to the specified certificate above.")
         else:
             # remove them
@@ -113,25 +127,26 @@ def config_lwh():
             st.checkbox("Enable forwarding data to Cloud WEKA Home",
                         help="Activate this feature to send data to Cloud WEKA Home. Internet connectivity to" +
                              " api.home.weka.io is required for this functionality. The default setting is activated.",
-                        value=config['forwarding']['enabled'])
+                        value=config['forwarding']['enabled'] if 'forwarding' in config['forwarding'] else True)
 
         if st.button("Save and install/start LWH"):
             # bool from above checkbox
             if st.session_state.app_config.smtp_config['enable_lwh_email']:
                 # if the config is not validated, error
+                #validated = st.session_state.app_config.smtp_config['validated']
                 if st.session_state.app_config.smtp_config['validated']:
                     smtp_config = st.session_state.app_config.smtp_config
-                    lwh_smtp_user_data = config['smtp_user_data']
-                    lwh_smtp_user_data['senderEmail'] = smtp_config['sender_email']
-                    lwh_smtp_user_data['sender'] = smtp_config['sender_email_name']
-                    lwh_smtp_user_data['host'] = smtp_config['smtp_host']
-                    lwh_smtp_user_data['port'] = smtp_config['smtp_port']
-                    lwh_smtp_user_data['user'] = smtp_config['smtp_username']
-                    lwh_smtp_user_data['password'] = smtp_config['smtp_password']
-                    lwh_smtp_user_data['insecure'] = smtp_config['smtp_insecure_tls']
+                    config['smtp']['senderEmail'] = smtp_config['sender_email']
+                    config['smtp']['sender'] = smtp_config['sender_email_name']
+                    config['smtp']['host'] = smtp_config['smtp_host']
+                    config['smtp']['port'] = smtp_config['smtp_port']
+                    config['smtp']['user'] = smtp_config['smtp_username']
+                    config['smtp']['password'] = smtp_config['smtp_password']
+                    config['smtp']['insecure'] = smtp_config['smtp_insecure_tls']
                 else:
+                    # this doesn't always display?
                     st.error("Invalid SMTP configuration - go to Email Notification Settings page to configure")
-                    st.session_state.app_config.smtp_config.enable_lwh_email = False
+                    st.session_state.app_config.smtp_config['enable_lwh_email'] = False
                     # stop, or continue?
                     st.stop()
 
