@@ -40,8 +40,9 @@ if st.session_state["authentication_status"]:
                     log.info(f'log tarball is {st.session_state.logfile_name}')
 
                     # gather lwh logs
-                    with pushd('/opt/local-weka-home/wekahome_offline'):
-                        run(f'./dump.sh --full-disk-scan {st.session_state.logfile_dir}/lwh.tgz', shell=True)
+                    #with pushd('/opt/local-weka-home/wekahome_offline'):
+                    #    run(f'./dump.sh --full-disk-scan {st.session_state.logfile_dir}/lwh.tgz', shell=True)
+                    run(f'/opt/wekahome/current/bin/homecli local collect-debug-info {st.session_state.logfile_dir}/lwh.log', shell=True)
 
                     # gather WEKAmon logs
                     with pushd('/opt/weka-mon'):

@@ -153,7 +153,7 @@ class LocalWekaHome(AppBase):
 
         self.CONFIG = config_files['lwh_config_file']
         self.HELM = '/opt/wekahome/current/bin/helm'
-        self.KUBECTL = '/usr/local/bin/k3s'
+        self.KUBECTL = '/usr/local/bin/kubectl'
         self.CHECK_UP = [self.KUBECTL, 'wait', '--for=condition=ready', 'pod', '-l', 'app.group=common', '-n',
                          'home-weka-io', '--timeout=10m']
         self.RM_KUBE_GRAFANA = [self.KUBECTL, 'delete', 'pod', '-n', 'home-weka-io', '-l',
@@ -182,7 +182,7 @@ class LocalWekaHome(AppBase):
 
     def status(self):
         # returns status of the app (NotInstalled, NotRunning, Running)
-        if not os.path.isfile(self.CONFIG):
+        if not os.path.isfile(self.CONFIG) or not os.path.isfile(self.KUBECTL):
             return NotInstalled
 
         # if minikube isn't installed, LWH certainly isn't
@@ -248,14 +248,17 @@ class LocalWekaHome(AppBase):
 
     def admin_password(self):
         str_cmd = self.KUBECTL + \
-                  " get secret -n home-weka-io weka-home-admin-credentials  -o jsonpath='{.data.admin_password}'"
+                " get secret -n home-weka-io wekahome-admin-credentials  -o jsonpath='{.data.adminPassword}'"
+                  #" get secret -n home-weka-io weka-home-admin-credentials  -o jsonpath='{.data.admin_password}'"
         result = self.run(str_cmd, shell=True)
 
         password = base64.b64decode(result.stdout)
         return password.decode('utf-8')
 
     def grafana_password(self):
-        str_cmd = "kubectl get secret -n home-weka-io weka-home-grafana-credentials  -o jsonpath='{.data.password}'"
+        # str_cmd = "kubectl get secret -n home-weka-io weka-home-grafana-credentials  -o jsonpath='{.data.password}'"
+        str_cmd = self.KUBECTL + \
+                "  get secret -n home-weka-io wekahome-grafana-credentials  -o jsonpath='{.data.password}'"
 
         result = self.run(str_cmd, shell=True)
         password = base64.b64decode(result.stdout)
