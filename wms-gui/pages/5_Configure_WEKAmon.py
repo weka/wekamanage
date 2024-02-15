@@ -64,12 +64,17 @@ if st.session_state["authentication_status"]:
         st.session_state.app_config.enable_loki = st.checkbox("Enable WEKAmon Log storage",
                                                               value=st.session_state.app_config.enable_loki,
                                                               help="Enable long-term Event storage")
+        # hw monitoring implies wekaredfisheventlistener container
+        st.session_state.app_config.enable_hw_mon = st.checkbox("Enable WEKA Hardware Monitoring",
+                                                              value=st.session_state.app_config.enable_hw_mon,
+                                                              help="Enable Hardware Monitoring")
 
         # if any of the above are True, then we need to authenticate with the cluster
         if st.session_state.app_config.enable_export or \
                 st.session_state.app_config.enable_quota or \
                 st.session_state.app_config.enable_snaptool or \
-                st.session_state.app_config.enable_loki:
+                st.session_state.app_config.enable_loki or \
+                st.session_state.app_config.enable_hw_mon:
             st.session_state.app_config.clusters_config['hostname-ip'] = st.text_input(
                 "Cluster Location (hostname or IP addr)", max_chars=50,
                 value=st.session_state.app_config.clusters_config[
@@ -177,5 +182,3 @@ elif st.session_state["authentication_status"] is False:
     st.error('Username/password is incorrect')
 elif st.session_state["authentication_status"] is None:
     switch_to_login_page()
-    pass
-

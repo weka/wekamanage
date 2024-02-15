@@ -10,11 +10,13 @@ config_files:
   email_settings_file: email_settings.yml
   alertmanager_config_file: /opt/weka-mon/etc_alertmanager/alertmanager.yml
   prometheus_config_file: /opt/weka-mon/etc_prometheus/prometheus.yml
+  hw_min_config_file: /opt/weka-mon/WekaRedfishEventListener.yml
   prometheus_dir: ./prometheus
   enable_export: true
   enable_alerts: false
   enable_quota: false
   enable_snaptool: true
   enable_loki: false
+  enable_hw_mon: false
   compose_file: /opt/weka-mon/docker-compose.yml
   compose_dir: ./compose

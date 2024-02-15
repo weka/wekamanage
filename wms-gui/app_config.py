@@ -69,12 +69,14 @@ class AppConfig(object):
         self.alertmanager_config = None
         self.smtp_config = None
         self.prom_config = None
+        self.hw_mon_config = None
         self.prometheus_dir = None
         self.enable_export = None
         self.enable_alerts = None
         self.enable_quota = None
         self.enable_snaptool = None
         self.enable_loki = None
+        self.enable_hw_mon = None
         self.compose_file = None
         self.compose_dir = None
     
@@ -106,12 +108,15 @@ class AppConfig(object):
                 self.alertmanager_config = self.load_file(config_files, 'alertmanager_config_file')
                 self.smtp_config = self.load_file(config_files, 'email_settings_file')
                 self.prom_config = self.load_file(config_files, 'prometheus_config_file')
+                self.hw_mon_config = self.load_file(config_files, 'hw_mon_config_file')
+
                 self.prometheus_dir = config_files['prometheus_dir']
                 self.enable_export = config_files['enable_export']
                 self.enable_alerts = config_files['enable_alerts']
                 self.enable_quota = config_files['enable_quota']
                 self.enable_snaptool = config_files['enable_snaptool']
                 self.enable_loki = config_files['enable_loki']
+                self.enable_hw_mon = config_files['enable_hw_mon']
                 self.compose_file = config_files['compose_file']
                 self.compose_dir = config_files['compose_dir']
 
@@ -129,6 +134,7 @@ class AppConfig(object):
             config_files['enable_quota'] = self.enable_quota
             config_files['enable_snaptool'] = self.enable_snaptool
             config_files['enable_loki'] = self.enable_loki
+            config_files['enable_hw_mon'] = self.enable_hw_mon
             with open(self.config_file, 'w') as f:
                 yaml.dump(self.app_config, f, default_flow_style=False, sort_keys=False)
 
@@ -185,16 +191,19 @@ class AppConfig(object):
         self.update_cluster_dict(self.export_config)
         self.update_cluster_dict(self.quota_export_config)
         self.update_cluster_dict(self.snaptool_config)
+        self.update_cluster_dict(self.hw_mon_config)
 
         print('updating config files')
         self.update_export()
         self.update_quota_export()
         self.update_snaptool()
+        self.update_hw_mon()
 
         print('writing security tokens')
         self.save_auth_tokens(os.path.dirname(config_files['export_config_file']))
         self.save_auth_tokens(os.path.dirname(config_files['quota_export_config_file']))
         self.save_auth_tokens(os.path.dirname(config_files['snaptool_config_file']))
+        self.save_auth_tokens(os.path.dirname(config_files['hw_mon_config_file']))
 
         print('save complete')
 
@@ -315,6 +324,9 @@ class AppConfig(object):
         if self.enable_snaptool:
             log.info('enabling snaptool')
             load_config(services, "snaptool")
+        if self.enable_hw_mon:
+            log.info('enabling hw_mon')
+            load_config(services, "hw_mon")
 
         if add_grafana:
             log.info('enabling grafana')
