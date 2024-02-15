@@ -36,7 +36,6 @@ ${DIR}: docker-ce tarballs/ansible-install.tgz tarballs/tools.tgz tarballs/weka-
 	./prep_base.py source_iso $@
 	#
 	#cp -rf source_iso $@ # need to trim - how to copy everything BUT the repos?  Python??
-	# left off here
 	#rsync -a --info=progress2 --delete source_iso/ $@
 	cp -rf wekabits $@
 	cp -rf tarballs $@
