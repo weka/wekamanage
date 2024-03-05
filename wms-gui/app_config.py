@@ -246,6 +246,9 @@ class AppConfig(object):
     def update_snaptool(self):
         self.update_config(self.app_config['config_files']['snaptool_config_file'], self.snaptool_config)
 
+    def update_hw_mon(self):
+        self.update_config(self.app_config['config_files']['hw_mon_config_file'], self.hw_mon_config)
+
     def update_alertmanager(self):
         self.update_config(self.app_config['config_files']['alertmanager_config_file'], self.alertmanager_config)
 
@@ -285,6 +288,8 @@ class AppConfig(object):
             self.prom_config['rule_files'] = ["rules.yml"]       # special case
         if self.enable_loki:
             load_config(scrape_configs, "loki")
+        #if self.enable_hw_mon:
+        #    load_config(scrape_configs, "hw_mon")
 
         self.update_prometheus()
         # Save the settings

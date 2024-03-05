@@ -26,7 +26,7 @@ if st.session_state["authentication_status"]:
     authenticator.logout('Logout', 'sidebar', key="snaptool_logout")
     st.title('Snaptool Configuration')
 
-    snaptool_config = st.session_state.app_config.hw_mon_config
+    snaptool_config = st.session_state.app_config.snaptool_config
 
     if 'snaptool_initial_text' not in st.session_state:
         st.session_state['snaptool_initial_text'] = yaml.dump(snaptool_config)
@@ -49,9 +49,9 @@ if st.session_state["authentication_status"]:
     # returns None on the initial load
     if result is not None:
         if st.button("Save"):
-            st.session_state.app_config.hw_mon_config = yaml.safe_load(result['text'])
+            st.session_state.app_config.snaptool_config = yaml.safe_load(result['text'])
             st.session_state.app_config.update_snaptool()
-            st.session_state['snaptool_initial_text'] = yaml.dump(st.session_state.app_config.hw_mon_config)
+            st.session_state['snaptool_initial_text'] = yaml.dump(st.session_state.app_config.snaptool_config)
             st.success("Snaptool configuration saved")
             if not st.session_state.wekamon_app.is_running('wekasolutions/snaptool'):
                 st.info('Snaptool is not runnning/enabled.  Visit the Configure WEKAmon page to enable it.')
