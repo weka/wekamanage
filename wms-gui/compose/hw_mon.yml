@@ -3,7 +3,7 @@ volumes:
   - /dev/log:/dev/log
   - /opt/weka-mon/.weka:/weka/.weka
   - /etc/hosts:/etc/hosts
-  - /opt/weka-mon/hw_monitor.yml:/weka/hw_.yml
+  - /opt/weka-mon/hw_monitor.yml:/weka/hw_monitor.yml
   - /opt/weka-mon/weka-cert.crt:/weka/weka-cert.crt
   - /opt/weka-mon/private.key:/weka/private.key
 command: -vvv

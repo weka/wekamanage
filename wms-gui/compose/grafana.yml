@@ -1,4 +1,4 @@
-image: grafana/grafana:8.4.6
+image: grafana/grafana:10.2.4
 volumes:
   - /dev/log:/dev/log
   - /opt/weka-mon/etc_grafana:/etc/grafana/

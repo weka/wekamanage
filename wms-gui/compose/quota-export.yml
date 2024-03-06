@@ -1,4 +1,4 @@
-image: wekasolutions/quota-export:latest
+image: wekasolutions/quota-export:1.0.0
 volumes:
   - /dev/log:/dev/log
   - /opt/weka-mon/.weka:/weka/.weka

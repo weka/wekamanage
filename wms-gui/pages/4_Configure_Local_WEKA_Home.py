@@ -3,7 +3,7 @@ import os
 import streamlit as st
 
 # from Landing_Page import authenticator
-from apps import LocalWekaHome, NotInstalled, MiniKube, state_text
+from apps import LocalWekaHome, NotInstalled, state_text
 from streamlit_common import add_logo, switch_to_login_page, menu_items
 
 

@@ -1,6 +1,6 @@
 config_files:
   passwords_file: passwd.yml
-  lwh_config_file: /etc/wekahome/config.json
+  lwh_config_file: config.json
   lwh_dir: /opt/wekahome/current
   clusters_config_file: clusters.yml
   weka_mon_dir: /opt/weka-mon

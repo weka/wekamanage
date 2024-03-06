@@ -1,4 +1,4 @@
-image: prom/prometheus:latest
+image: prom/prometheus:v2.50.1
 volumes:
   - /dev/log:/dev/log
   - /etc/hosts:/etc/hosts

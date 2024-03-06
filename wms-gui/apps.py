@@ -81,12 +81,13 @@ class AppBase(object):
         log.debug(result)
         return result
 
+"""
 # deprecated with LWH 3.x
 class MiniKube(AppBase):
     def __init__(self):
 
         # Minikube class
-        self.KUBECTL = '/usr/bin/kubectl'
+        self.KUBECTL = '/opt/k3s/bin/kubectl'
         self.MINIKUBE = '/usr/bin/minikube'
         self.GET_PODS = [self.KUBECTL] + ' get pods --namespace kube-system'.split()
         config_files = st.session_state.app_config.app_config['config_files']
@@ -144,6 +145,7 @@ class MiniKube(AppBase):
         cmd = [self.MINIKUBE, 'stop']
         self.run(cmd, timeout=120)
         return True
+"""
 
 
 class LocalWekaHome(AppBase):
@@ -153,7 +155,7 @@ class LocalWekaHome(AppBase):
 
         self.CONFIG = config_files['lwh_config_file']
         self.HELM = '/opt/wekahome/current/bin/helm'
-        self.KUBECTL = '/usr/local/bin/kubectl'
+        self.KUBECTL = '/opt/k3s/bin/kubectl'
         self.CHECK_UP = [self.KUBECTL, 'wait', '--for=condition=ready', 'pod', '-l', 'app.group=common', '-n',
                          'home-weka-io', '--timeout=10m']
         self.RM_KUBE_GRAFANA = [self.KUBECTL, 'delete', 'pod', '-n', 'home-weka-io', '-l',
@@ -213,19 +215,19 @@ class LocalWekaHome(AppBase):
         #    except Exception as exc:
         #        raise Exception(f'Minikube install failed: {exc}')
 
-        with pushd('/opt'):
-            # so we've already asked if LWH is installed, so we can assume this file isn't there
-            # shutil.copyfile(self.CUSTOMER_CONFIG_FILE, self.CONFIG)
-            # run the install script
-            #cmd = self.LWH_DIR + '/wekahome-install.sh'
-            lwh_config_file = st.session_state.app_config.app_config['config_files']['lwh_config_file']
-            cmd = f'/opt/wekahome/current/bin/homecli local setup -c ' + lwh_config_file
-            result = self.run(cmd, timeout=10 * 60, shell=True)
-            if result.returncode != 0:
-                log.debug(result.stdout)
-                log.debug(result.stderr)
-                raise Exception(f"Errors installing LWH")
-            return True
+        #with pushd('/opt'):
+        # so we've already asked if LWH is installed, so we can assume this file isn't there
+        # shutil.copyfile(self.CUSTOMER_CONFIG_FILE, self.CONFIG)
+        # run the install script
+        #cmd = self.LWH_DIR + '/wekahome-install.sh'
+        lwh_config_file = st.session_state.app_config.app_config['config_files']['lwh_config_file']
+        cmd = f'/opt/wekahome/current/bin/homecli local setup -c ' + lwh_config_file
+        result = self.run(cmd, timeout=10 * 60, shell=True)
+        if result.returncode != 0:
+            log.debug(result.stdout)
+            log.debug(result.stderr)
+            raise Exception(f"Errors installing LWH")
+        return True
 
     def start(self):
         # start the app
@@ -284,7 +286,7 @@ class WEKAmon(AppBase):
         log.debug(result)
 
         # make sure there are 3 wekasolutions container images (export, quota-export, and snaptool)
-        if len(result.stdout.splitlines()) != 3:
+        if len(result.stdout.splitlines()) != 4:
             return NotInstalled
 
         log.info("running docker compose ps")
