@@ -12,7 +12,7 @@ function update_net_issue {
     dhcp=$(echo "$rt" | grep -oP "^default .* \Kdhcp")
     # echo dv:"$dv" ip:"$ip" dhcp:"$dhcp" gw:"$gw" 
     if [ "$ip" == "" ]; then
-       ip=$(ip --brief a | grep -oP "eno1\s*UP\s*\K[0-9\.]+")
+       ip=$(ip --brief a | grep -oP "$dv\s*UP\s*\K[0-9\.]+")
     fi
     if [ "$ip" != "" ]; then
         wmsline=$(echo "WMS (Weka Management Server) home page is http://$ip:8501")
