@@ -1,5 +1,8 @@
 #! /usr/bin/env bash
 
+export PATH=$PATH:/opt/wekahome/current/bin:/opt/k3s/bin
+export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
+
 if [ ! -d venv ]; then 
 	/usr/bin/python3.11 -m venv venv
 

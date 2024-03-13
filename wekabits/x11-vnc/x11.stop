@@ -1,0 +1,6 @@
+#!/bin/bash
+source /root/.bashrc
+pkill -e x11vnc
+pkill -e xfce4-session
+pkill -e Xvfb
+

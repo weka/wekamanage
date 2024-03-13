@@ -1,4 +1,4 @@
-image: prom/alertmanager:latest
+image: prom/alertmanager:v0.27.0
 volumes:
   - /dev/log:/dev/log
   - /opt/weka-mon/etc_alertmanager:/etc/alertmanager

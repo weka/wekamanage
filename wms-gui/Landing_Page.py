@@ -7,18 +7,13 @@ from streamlit import logger
 from streamlit_javascript import st_javascript
 
 from apps import Running, LocalWekaHome, WEKAmon
-from streamlit_common import add_logo, open_in_new_tab
+from streamlit_common import add_logo, open_in_new_tab, menu_items
 from app_config import AppConfig
 
 if 'authentication_status' not in st.session_state or not st.session_state['authentication_status']:
     sidebar_state = st.session_state["sidebar_state"] = 'collapsed'
 else:
     sidebar_state = st.session_state["sidebar_state"] = 'expanded'
-
-menu_items = {
-    'get help': 'https://docs.weka.io',
-    'About': 'WEKA Management Station v1.0.2  \nwww.weka.io  \nCopyright 2023 WekaIO Inc.  All rights reserved'
-}
 
 st.set_page_config(page_title="WEKA Management Station Config", page_icon='favicon.ico',
                    layout="wide", initial_sidebar_state=sidebar_state, menu_items=menu_items)
@@ -34,7 +29,7 @@ if 'wms_gui_dir' not in st.session_state:
     st.session_state['wms_gui_dir'] = os.getcwd()
 
 if 'app_config' not in st.session_state:
-    st.session_state['app_config'] = AppConfig(st.session_state.wms_gui_dir + '/app_config.yaml')
+    st.session_state['app_config'] = AppConfig(st.session_state.wms_gui_dir + '/app_config.yml')
     try:
         st.session_state['app_config'].load_configs()
     except Exception as exc:
@@ -75,7 +70,7 @@ col1, col2, col3 = st.columns(3)
 with col1:
     st.markdown("## Applications")
     if 'authentication_status' not in st.session_state or not st.session_state['authentication_status']:
-        authenticator.login('Login', 'main')
+        authenticator.login('main','Login')
         if len(st.session_state.username) != 0:
             log.info(f"User {st.session_state.username} logged in")
 
@@ -88,7 +83,7 @@ if st.session_state.authentication_status:
     authenticator.logout('Logout', 'sidebar')
     if st.session_state.sidebar_state == 'collapsed':
         st.session_state.sidebar_state = "expanded"
-        st.experimental_rerun()
+        st.rerun()
 
     try:
         if st.session_state.lwh_app.status() != Running:

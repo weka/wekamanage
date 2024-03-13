@@ -1,4 +1,4 @@
-image: grafana/loki:2.3.0
+image: grafana/loki:2.8.10
 volumes:
   - /dev/log:/dev/log
   - /opt/weka-mon/etc_loki:/etc/loki

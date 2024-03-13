@@ -1,0 +1,22 @@
+config_files:
+  passwords_file: passwd.yml
+  lwh_config_file: config.json
+  lwh_dir: /opt/wekahome/current
+  clusters_config_file: clusters.yml
+  weka_mon_dir: /opt/weka-mon
+  export_config_file: /opt/weka-mon/export.yml
+  quota_export_config_file: /opt/weka-mon/quota-export.yml
+  snaptool_config_file: /opt/weka-mon/snaptool.yml
+  email_settings_file: email_settings.yml
+  alertmanager_config_file: /opt/weka-mon/etc_alertmanager/alertmanager.yml
+  prometheus_config_file: /opt/weka-mon/etc_prometheus/prometheus.yml
+  hw_mon_config_file: /opt/weka-mon/hw_monitor.yml
+  prometheus_dir: /opt/wms-gui/prometheus
+  enable_export: true
+  enable_alerts: false
+  enable_quota: true
+  enable_snaptool: true
+  enable_loki: true
+  enable_hw_mon: true
+  compose_file: /opt/weka-mon/docker-compose.yml
+  compose_dir: /opt/wms-gui/compose

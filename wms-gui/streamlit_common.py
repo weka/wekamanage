@@ -3,6 +3,13 @@ import base64
 import streamlit as st
 from streamlit_javascript import st_javascript
 
+YEAR = '2024'
+VERSION = 'v1.2.1'
+
+menu_items = {
+    'get help': 'https://docs.weka.io',
+    'About': (f'WEKA Management Station {VERSION}  \nwww.weka.io  \nCopyright {YEAR} WekaIO Inc.  All rights reserved')
+}
 
 @st.cache_data()
 def get_base64_of_bin_file(png_file):

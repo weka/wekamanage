@@ -5,17 +5,11 @@ import streamlit as st
 
 # from Landing_Page import authenticator
 from apps import WEKAmon, NotInstalled, state_text
-from streamlit_common import add_logo, switch_to_login_page
+from streamlit_common import add_logo, switch_to_login_page, menu_items
 from weka_restapi import WekaAPIClient
-
-menu_items = {
-    'get help': 'https://docs.weka.io',
-    'About': 'WEKA Management Station v1.0.2  \nwww.weka.io  \nCopyright 2023 WekaIO Inc.  All rights reserved'
-}
 
 st.set_page_config(page_title="WMS Config WEKAmon", page_icon='favicon.ico',
                    layout="wide", menu_items=menu_items)
-# log = logging.getLogger(__name__)
 
 if "authentication_status" not in st.session_state:
     st.session_state["authentication_status"] = None
@@ -70,12 +64,17 @@ if st.session_state["authentication_status"]:
         st.session_state.app_config.enable_loki = st.checkbox("Enable WEKAmon Log storage",
                                                               value=st.session_state.app_config.enable_loki,
                                                               help="Enable long-term Event storage")
+        # hw monitoring implies wekaredfisheventlistener container
+        st.session_state.app_config.enable_hw_mon = st.checkbox("Enable WEKA Hardware Monitoring",
+                                                              value=st.session_state.app_config.enable_hw_mon,
+                                                              help="Enable Hardware Monitoring")
 
         # if any of the above are True, then we need to authenticate with the cluster
         if st.session_state.app_config.enable_export or \
                 st.session_state.app_config.enable_quota or \
                 st.session_state.app_config.enable_snaptool or \
-                st.session_state.app_config.enable_loki:
+                st.session_state.app_config.enable_loki or \
+                st.session_state.app_config.enable_hw_mon:
             st.session_state.app_config.clusters_config['hostname-ip'] = st.text_input(
                 "Cluster Location (hostname or IP addr)", max_chars=50,
                 value=st.session_state.app_config.clusters_config[
@@ -107,10 +106,12 @@ if st.session_state["authentication_status"]:
                     st.error("Make sure you have DNS configured or have edited /etc/hosts")
                     st.error("See the OS Web Admin GUI on the Landing Page to configure DNS")
                     st.error("See the Edit Hosts File page to edit the hosts file")
+                    del st.session_state['weka_api']
                     st.stop()
             except Exception as exc:
                 with col1:
                     st.error(f'Unexpected error logging into API: {exc.args[0]}')
+                    del st.session_state['weka_api']
                     st.stop()
             if tokens is not None:  # was the cluster login successful?
                 with col1:
@@ -163,6 +164,7 @@ if st.session_state["authentication_status"]:
             else:
                 # cluster login failed.  disable WEKAmon completely because we don't have valid credentials
                 # wekamon = st.session_state['wekamon_app']
+                del st.session_state['weka_api']
                 st.session_state.wekamon_app.stop()  # does this prevent start on reboot?
 
     # update cluster url
@@ -180,5 +182,3 @@ elif st.session_state["authentication_status"] is False:
     st.error('Username/password is incorrect')
 elif st.session_state["authentication_status"] is None:
     switch_to_login_page()
-    pass
-

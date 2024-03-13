@@ -3,6 +3,7 @@ import json
 import os
 
 import yaml
+import json
 import streamlit as st
 
 from logging import handlers
@@ -68,21 +69,30 @@ class AppConfig(object):
         self.alertmanager_config = None
         self.smtp_config = None
         self.prom_config = None
+        self.hw_mon_config = None
         self.prometheus_dir = None
         self.enable_export = None
         self.enable_alerts = None
         self.enable_quota = None
         self.enable_snaptool = None
         self.enable_loki = None
+        self.enable_hw_mon = None
         self.compose_file = None
         self.compose_dir = None
     
     def load_file(self, config_files, name):
         try:
             with open(config_files[name], 'r') as f:
-                return yaml.safe_load(f)
+                if config_files[name].split('.')[-1] == 'yml':
+                    return yaml.safe_load(f)
+                elif config_files[name].split('.')[-1] == 'json':
+                    return json.load(f)
+                log.error(f"load_file: unknown file type: {config_files[name]}")
         except FileNotFoundError:
             log.error(f"load_file: {config_files[name]} not found")
+        except Exception as exc:
+            log.error(f'load_file: ERROR {exc}')
+            raise exc
         return None
 
     def load_configs(self):
@@ -98,12 +108,15 @@ class AppConfig(object):
                 self.alertmanager_config = self.load_file(config_files, 'alertmanager_config_file')
                 self.smtp_config = self.load_file(config_files, 'email_settings_file')
                 self.prom_config = self.load_file(config_files, 'prometheus_config_file')
+                self.hw_mon_config = self.load_file(config_files, 'hw_mon_config_file')
+
                 self.prometheus_dir = config_files['prometheus_dir']
                 self.enable_export = config_files['enable_export']
                 self.enable_alerts = config_files['enable_alerts']
                 self.enable_quota = config_files['enable_quota']
                 self.enable_snaptool = config_files['enable_snaptool']
                 self.enable_loki = config_files['enable_loki']
+                self.enable_hw_mon = config_files['enable_hw_mon']
                 self.compose_file = config_files['compose_file']
                 self.compose_dir = config_files['compose_dir']
 
@@ -121,20 +134,21 @@ class AppConfig(object):
             config_files['enable_quota'] = self.enable_quota
             config_files['enable_snaptool'] = self.enable_snaptool
             config_files['enable_loki'] = self.enable_loki
+            config_files['enable_hw_mon'] = self.enable_hw_mon
             with open(self.config_file, 'w') as f:
                 yaml.dump(self.app_config, f, default_flow_style=False, sort_keys=False)
 
     def save_smtp(self):
         config_files = self.app_config['config_files']
         # update the lwh and alertmanager config files?
-        lwh_smtp = self.lwh_config['smtp_user_data']
-        lwh_smtp['sender_email'] = self.smtp_config['sender_email']
-        lwh_smtp['sender_email_name'] = self.smtp_config['sender_email_name']
-        lwh_smtp['smtp_host'] = self.smtp_config['smtp_host']
-        lwh_smtp['smtp_port'] = self.smtp_config['smtp_port']
-        lwh_smtp['smtp_insecure_tls'] = self.smtp_config['smtp_insecure_tls']
-        lwh_smtp['smtp_password'] = self.smtp_config['smtp_password']
-        lwh_smtp['smtp_username'] = self.smtp_config['smtp_username']
+        lwh_smtp = self.lwh_config['smtp']
+        lwh_smtp['senderEmail'] = self.smtp_config['sender_email']
+        lwh_smtp['sender'] = self.smtp_config['sender_email_name']
+        lwh_smtp['host'] = self.smtp_config['smtp_host']
+        lwh_smtp['port'] = self.smtp_config['smtp_port']
+        lwh_smtp['insecure'] = self.smtp_config['smtp_insecure_tls']
+        lwh_smtp['password'] = self.smtp_config['smtp_password']
+        lwh_smtp['user'] = self.smtp_config['smtp_username']
         self.save_lwh_config()
 
         alertmanager_smtp = self.alertmanager_config['global']
@@ -146,8 +160,10 @@ class AppConfig(object):
         alertmanager_smtp['smtp_require_tls'] = not self.smtp_config['smtp_insecure_tls']
         self.update_alertmanager()
 
+        smtp_config = self.smtp_config
+        smtp_config['smtp_password'] = ''   # don't save the password
         with open(config_files['email_settings_file'], 'w') as file:
-            return yaml.dump(self.smtp_config, file, default_flow_style=False)
+            return yaml.dump(smtp_config, file, default_flow_style=False)
 
     def save_passwords(self):
         config_files = self.app_config['config_files']
@@ -157,7 +173,8 @@ class AppConfig(object):
     def save_lwh_config(self):
         config_files = self.app_config['config_files']
         with open(config_files['lwh_config_file'], 'w') as file:
-            return yaml.dump(self.lwh_config, file, default_flow_style=False, sort_keys=False)
+            #return yaml.dump(self.lwh_config, file, default_flow_style=False, sort_keys=False)
+            return json.dump(self.lwh_config, file, indent=4, sort_keys=False)
 
     def update_tokens(self, weka_api, tokens):
         self.api = weka_api
@@ -165,23 +182,28 @@ class AppConfig(object):
 
     def save_clusters(self):
         config_files = self.app_config['config_files']
+        clusters_config = self.clusters_config
+        clusters_config['password'] = ""   # don't save the password
         with open(config_files['clusters_config_file'], 'w') as file:
-            yaml.dump(self.clusters_config, file, default_flow_style=False)
+            yaml.dump(clusters_config, file, default_flow_style=False)
 
         print('updating cluster dicts')
         self.update_cluster_dict(self.export_config)
         self.update_cluster_dict(self.quota_export_config)
         self.update_cluster_dict(self.snaptool_config)
+        self.update_cluster_dict(self.hw_mon_config)
 
         print('updating config files')
         self.update_export()
         self.update_quota_export()
         self.update_snaptool()
+        self.update_hw_mon()
 
         print('writing security tokens')
         self.save_auth_tokens(os.path.dirname(config_files['export_config_file']))
         self.save_auth_tokens(os.path.dirname(config_files['quota_export_config_file']))
         self.save_auth_tokens(os.path.dirname(config_files['snaptool_config_file']))
+        self.save_auth_tokens(os.path.dirname(config_files['hw_mon_config_file']))
 
         print('save complete')
 
@@ -224,6 +246,9 @@ class AppConfig(object):
     def update_snaptool(self):
         self.update_config(self.app_config['config_files']['snaptool_config_file'], self.snaptool_config)
 
+    def update_hw_mon(self):
+        self.update_config(self.app_config['config_files']['hw_mon_config_file'], self.hw_mon_config)
+
     def update_alertmanager(self):
         self.update_config(self.app_config['config_files']['alertmanager_config_file'], self.alertmanager_config)
 
@@ -263,6 +288,8 @@ class AppConfig(object):
             self.prom_config['rule_files'] = ["rules.yml"]       # special case
         if self.enable_loki:
             load_config(scrape_configs, "loki")
+        #if self.enable_hw_mon:
+        #    load_config(scrape_configs, "hw_mon")
 
         self.update_prometheus()
         # Save the settings
@@ -302,6 +329,9 @@ class AppConfig(object):
         if self.enable_snaptool:
             log.info('enabling snaptool')
             load_config(services, "snaptool")
+        if self.enable_hw_mon:
+            log.info('enabling hw_mon')
+            load_config(services, "hw_mon")
 
         if add_grafana:
             log.info('enabling grafana')

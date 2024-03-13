@@ -81,12 +81,13 @@ class AppBase(object):
         log.debug(result)
         return result
 
-
+"""
+# deprecated with LWH 3.x
 class MiniKube(AppBase):
     def __init__(self):
 
         # Minikube class
-        self.KUBECTL = '/usr/bin/kubectl'
+        self.KUBECTL = '/opt/k3s/bin/kubectl'
         self.MINIKUBE = '/usr/bin/minikube'
         self.GET_PODS = [self.KUBECTL] + ' get pods --namespace kube-system'.split()
         config_files = st.session_state.app_config.app_config['config_files']
@@ -116,7 +117,7 @@ class MiniKube(AppBase):
 
         with pushd(self.MINIKUBE_DIR):
             cmd = self.MINIKUBE_DIR + '/minikube-offline_install.sh'
-            result = self.run(cmd, shell=True, cwd=self.MINIKUBE_DIR, timeout=5*60)
+            result = self.run(cmd, shell=True, cwd=self.MINIKUBE_DIR, timeout=10*60)
             # we should log this or something
             return result
 
@@ -142,8 +143,9 @@ class MiniKube(AppBase):
             raise Exception('minikube is not running')
 
         cmd = [self.MINIKUBE, 'stop']
-        self.run(cmd, timeout=60)
+        self.run(cmd, timeout=120)
         return True
+"""
 
 
 class LocalWekaHome(AppBase):
@@ -152,41 +154,46 @@ class LocalWekaHome(AppBase):
         config_files = st.session_state.app_config.app_config['config_files']
 
         self.CONFIG = config_files['lwh_config_file']
-        self.HELM = '/usr/bin/helm'
-        self.KUBECTL = '/usr/bin/kubectl'
+        self.HELM = '/opt/wekahome/current/bin/helm'
+        self.KUBECTL = '/opt/k3s/bin/kubectl'
         self.CHECK_UP = [self.KUBECTL, 'wait', '--for=condition=ready', 'pod', '-l', 'app.group=common', '-n',
-                         'home-weka-io', '--timeout=5m']
+                         'home-weka-io', '--timeout=10m']
         self.RM_KUBE_GRAFANA = [self.KUBECTL, 'delete', 'pod', '-n', 'home-weka-io', '-l',
                                 'app.kubernetes.io/name=grafana']
-        self.LWH_DIR = config_files['lwh_dir'] + '/wekahome_offline'
-        tarball_list = glob.glob(self.LWH_DIR + '/home-weka-io-*.tgz')
+        self.LWH_DIR = config_files['lwh_dir'] + '/current'
+        tarball_list = glob.glob('/opt/wekahome*.bundle')
         if len(tarball_list) == 0:
-            raise Exception(f'ERROR: File not found: {self.LWH_DIR}/home-weka-io-*.tgz')
+            raise Exception(f'ERROR: File not found: {self.LWH_DIR}/wekahome*.bundle')
         elif len(tarball_list) != 1:
             raise Exception(f'ERROR: Too many files found: {tarball_list}')
         self.LWH_TARBALL = tarball_list[0]
-        self.UPDATE = [self.HELM, 'upgrade', 'homewekaio', '--namespace', 'home-weka-io', self.LWH_TARBALL,
-                       '--create-namespace', '-f', self.CONFIG, '--debug']
+        #self.UPDATE = [self.HELM, 'upgrade', 'homewekaio', '--namespace', 'home-weka-io', self.LWH_TARBALL,
+        #               '--create-namespace', '-f', self.CONFIG, '--debug']
+        self.UPDATE = ['/opt/wekahome/current/bin/homecli', 'local', 'upgrade']
 
         split_filename = self.LWH_TARBALL.split('/')
-        filename = split_filename[-1][:-4]  # trim off '.tgz'
+        filename = split_filename[-1][:-7]  # trim off '.bundle'
         self.version = filename.split('-')[-1]
         # We'll make minikube a sub-part of LWH...
-        self.minikube = MiniKube()
+        #self.minikube = MiniKube()
+
+        #cmd = ['bash', self.LWH_TARBALL]
+        #result = self.run(cmd, timeout=30)
+
         super().__init__()
 
     def status(self):
         # returns status of the app (NotInstalled, NotRunning, Running)
-        if not os.path.isfile(self.CONFIG):
+        if not os.path.isfile(self.CONFIG) or not os.path.isfile(self.KUBECTL):
             return NotInstalled
 
         # if minikube isn't installed, LWH certainly isn't
-        minikube_status = self.minikube.status()
-        if minikube_status != Running:
-            return minikube_status  # NotRunning or NotInstalled
+        #minikube_status = self.minikube.status()
+        #if minikube_status != Running:
+        #    return minikube_status  # NotRunning or NotInstalled
 
         cmd = [self.KUBECTL, 'get', 'pods', '--namespace', 'home-weka-io']
-        result = self.run(cmd, timeout=15)
+        result = self.run(cmd, timeout=30)
 
         if len(result.stderr.splitlines()) > 0:
             log.debug(result.stderr)
@@ -202,34 +209,36 @@ class LocalWekaHome(AppBase):
         if self.status() != NotInstalled:
             raise Exception("LWH already installed")
 
-        if self.minikube.status() == NotInstalled:
-            try:
-                self.minikube.install()
-            except Exception as exc:
-                raise Exception(f'Minikube install failed: {exc}')
+        #if self.minikube.status() == NotInstalled:
+        #    try:
+        #        self.minikube.install()
+        #    except Exception as exc:
+        #        raise Exception(f'Minikube install failed: {exc}')
 
-        with pushd(self.LWH_DIR):
-            # so we've already asked if LWH is installed, so we can assume this file isn't there
-            # shutil.copyfile(self.CUSTOMER_CONFIG_FILE, self.CONFIG)
-            # run the install script
-            cmd = self.LWH_DIR + '/wekahome-install.sh'
-            result = self.run(cmd, timeout=7 * 60, shell=True)
-            if result.returncode != 0:
-                log.debug(result.stdout)
-                log.debug(result.stderr)
-                raise Exception(f"Errors installing LWH")
-            return True
+        #with pushd('/opt'):
+        # so we've already asked if LWH is installed, so we can assume this file isn't there
+        # shutil.copyfile(self.CUSTOMER_CONFIG_FILE, self.CONFIG)
+        # run the install script
+        #cmd = self.LWH_DIR + '/wekahome-install.sh'
+        lwh_config_file = st.session_state.app_config.app_config['config_files']['lwh_config_file']
+        cmd = f'/opt/wekahome/current/bin/homecli local setup -c ' + lwh_config_file
+        result = self.run(cmd, timeout=10 * 60, shell=True)
+        if result.returncode != 0:
+            log.debug(result.stdout)
+            log.debug(result.stderr)
+            raise Exception(f"Errors installing LWH")
+        return True
 
     def start(self):
         # start the app
 
         try:
-            self.run(self.UPDATE, timeout=5*60)
+            self.run(self.UPDATE, timeout=10*60)
         except Exception as exc:
             raise Exception(f'Local Weka Home update failed {exc}')
 
         # remove grafana?
-        self.run(self.RM_KUBE_GRAFANA, timeout=30)
+        #self.run(self.RM_KUBE_GRAFANA, timeout=30)
 
         self.run(self.CHECK_UP, timeout=3*60)
 
@@ -241,14 +250,17 @@ class LocalWekaHome(AppBase):
 
     def admin_password(self):
         str_cmd = self.KUBECTL + \
-                  " get secret -n home-weka-io weka-home-admin-credentials  -o jsonpath='{.data.admin_password}'"
+                " get secret -n home-weka-io wekahome-admin-credentials  -o jsonpath='{.data.adminPassword}'"
+                  #" get secret -n home-weka-io weka-home-admin-credentials  -o jsonpath='{.data.admin_password}'"
         result = self.run(str_cmd, shell=True)
 
         password = base64.b64decode(result.stdout)
         return password.decode('utf-8')
 
     def grafana_password(self):
-        str_cmd = "kubectl get secret -n home-weka-io weka-home-grafana-credentials  -o jsonpath='{.data.password}'"
+        # str_cmd = "kubectl get secret -n home-weka-io weka-home-grafana-credentials  -o jsonpath='{.data.password}'"
+        str_cmd = self.KUBECTL + \
+                "  get secret -n home-weka-io wekahome-grafana-credentials  -o jsonpath='{.data.password}'"
 
         result = self.run(str_cmd, shell=True)
         password = base64.b64decode(result.stdout)
@@ -274,7 +286,7 @@ class WEKAmon(AppBase):
         log.debug(result)
 
         # make sure there are 3 wekasolutions container images (export, quota-export, and snaptool)
-        if len(result.stdout.splitlines()) != 3:
+        if len(result.stdout.splitlines()) != 4:
             return NotInstalled
 
         log.info("running docker compose ps")
