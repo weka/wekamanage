@@ -1,0 +1,10 @@
+#!/bin/bash
+source /root/.bashrc
+export DISPLAY=:1
+# Xvfb $DISPLAY -screen 0 2048x1536x24 > x11.Xvfb.log 2>&1  &
+Xvfb $DISPLAY -screen 0 1280x800x24 > x11.Xvfb.log 2>&1  &
+xfce4-session > x11.xfce4.log 2>&1 &
+sleep 2
+pkill -e xfce4-screensaver
+x11vnc -display $DISPLAY -forever -loop -noxdamage -repeat -rfbauth /root/.vnc/passwd -rfbport 5900 -shared > x11.vnc.log 2>&1 &
+

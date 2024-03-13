@@ -1,0 +1,17 @@
+# allow ssh-dss key algorithm
+# turn off host key checking for wekapod backend hosts
+
+# for wekapod hosts by name, indirectly use ip address instead
+Host wekapod*
+   ProxyCommand ssh -W %h:22  $(echo %h | sed 's/wekapod/192.168.3./')
+   StrictHostKeyChecking no
+   UserKnownHostsFile /dev/null
+   User root
+   HostKeyAlgorithms=+ssh-dss
+
+Match Host 192.168.*.*
+  HostKeyAlgorithms=+ssh-dss
+  User root
+  StrictHostKeyChecking no
+  UserKnownHostsFile /dev/null
+

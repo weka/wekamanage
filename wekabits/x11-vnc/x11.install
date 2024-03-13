@@ -1,0 +1,18 @@
+dnf -y install epel-release 
+dnf -y install epel-release --enablerepo=baseos-full --enablerepo=appstream-full
+yum -y groupinstall "Xfce" "base-x" --enablerepo=baseos-full --enablerepo=appstream-full
+yum -y install xorg-x11-server-Xvfb --enablerepo=baseos-full --enablerepo=appstream-full
+yum -y install x11vnc --enablerepo=baseos-full --enablerepo=appstream-full
+yum -y install liberation-fonts --enablerepo=baseos-full --enablerepo=appstream-full
+yum -y install vulkan --enablerepo=baseos-full --enablerepo=appstream-full
+wget https://dl.google.com/linux/direct/google-chrome-stable_current_x86_64.rpm
+yum -y install ./google-chrome-stable_current_x86_64.rpm
+yum -y install firefox --enablerepo=baseos-full --enablerepo=appstream-full
+
+firewall-cmd --permanent --add-port 5900/tcp
+firewall-cmd --permanent --add-port 5901/tcp
+
+
+x11vnc --storepasswd
+
+
