@@ -170,7 +170,7 @@ glib-networking-2.56.1-1.1.el8.x86_64.rpm
 gmp-6.1.2-10.el8.x86_64.rpm
 gnupg2-2.2.20-3.el8_6.x86_64.rpm
 gnupg2-smime-2.2.20-3.el8_6.x86_64.rpm
-gnutls-3.6.16-8.el8_6.86ciq_lts.x86_64.rpm
+gnutls-3.6.16-8.el8_6.86ciq_lts.1.x86_64.rpm
 gobject-introspection-1.56.1-1.el8.x86_64.rpm
 go-srpm-macros-2-17.el8.noarch.rpm
 gpgme-1.13.1-11.el8.x86_64.rpm
