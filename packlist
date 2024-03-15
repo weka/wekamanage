@@ -805,7 +805,7 @@ sssd-ldap-2.6.2-4.el8_6.1.x86_64.rpm
 sssd-nfs-idmap-2.6.2-4.el8_6.1.x86_64.rpm
 sssd-proxy-2.6.2-4.el8_6.1.x86_64.rpm
 strace-5.13-4.el8.x86_64.rpm
-sudo-1.8.29-8.el8.ciqlts.1.x86_64.rpm
+sudo-1.9.5p2-1.el8_6.86ciq_lts.x86_64.rpm
 symlinks-1.4-19.el8.x86_64.rpm
 sysstat-11.7.3-7.el8.x86_64.rpm
 systemd-239-74.el8_6.0.ciqlts.3.x86_64.rpm
