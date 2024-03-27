@@ -35,7 +35,7 @@ if st.session_state["authentication_status"]:
     # passwd = st.session_state['app_config'].passwords_config
 
     # passwd = read_passwd_file()
-    st.session_state['app_config'].passwords_config['credentials'] = authenticator.credentials
+    st.session_state['app_config'].passwords_config['credentials'] = authenticator.authentication_handler.credentials
     st.session_state['app_config'].save_passwords()
     # save_passwd_file(passwd)
 
