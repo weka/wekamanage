@@ -71,7 +71,7 @@ with col1:
     st.markdown("## Applications")
     if 'authentication_status' not in st.session_state or not st.session_state['authentication_status']:
         authenticator.login()
-        if len(st.session_state.username) != 0:
+        if st.session_state.username is not None and len(st.session_state.username) != 0:
             log.info(f"User {st.session_state.username} logged in")
 
         # save state - don't need to as authenticator sets these
