@@ -285,8 +285,8 @@ class WEKAmon(AppBase):
             return NotInstalled  # grep will return 1 if no matches
         log.debug(result)
 
-        # make sure there are 3 wekasolutions container images (export, quota-export, and snaptool)
-        if len(result.stdout.splitlines()) != 4:
+        # make sure there are wekasolutions container images (export, quota-export, hw_monitor, and snaptool)
+        if len(result.stdout.splitlines()) < 1:
             return NotInstalled
 
         log.info("running docker compose ps")

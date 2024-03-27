@@ -1,0 +1,34 @@
+#!/bin/bash
+source /root/.bashrc
+xfconf-query -c xsettings -p '/Gtk/FontName' -s 'Liberation Sans'
+xfconf-query -c xsettings -p '/Gtk/MonospaceFontName' -s 'Liberation Mono'
+xfconf-query -c xfce4-desktop -t bool --create -p '/desktop-icons/file-icons/show-removable' -s 'false'
+xfconf-query -c xfce4-desktop -t bool --create -p '/desktop-icons/use-custom-font-size' -s 'true'
+
+echo "
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Firefox
+Comment=
+Exec=/usr/bin/firefox
+Icon=firefox
+Path=
+Terminal=false
+StartupNotify=false" > ~/Desktop/Firefox.desktop
+
+#echo "
+#[Desktop Entry]
+#Version=1.0
+#Type=Application
+#Name=Google Chrome
+#Comment=
+#Exec=google-chrome --no-sandbox
+#Icon=google-chrome
+#Path=
+#Terminal=false
+#StartupNotify=false" > ~/Desktop/Chrome.desktop
+
+
+
+

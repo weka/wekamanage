@@ -4,7 +4,7 @@ import streamlit as st
 from streamlit_javascript import st_javascript
 
 YEAR = '2024'
-VERSION = 'v1.2.2'
+VERSION = 'v1.2.3'
 
 menu_items = {
     'get help': 'https://docs.weka.io',
