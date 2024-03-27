@@ -70,7 +70,7 @@ col1, col2, col3 = st.columns(3)
 with col1:
     st.markdown("## Applications")
     if 'authentication_status' not in st.session_state or not st.session_state['authentication_status']:
-        authenticator.login('main','Login')
+        authenticator.login()
         if len(st.session_state.username) != 0:
             log.info(f"User {st.session_state.username} logged in")
 

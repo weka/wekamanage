@@ -1,5 +1,5 @@
 cookie:
-  expiry_days: 0
+  expiry_days: 1
   key: wms_auth_secret
   name: wms_auth
 credentials:
@@ -14,4 +14,3 @@ credentials:
       password: $2b$12$/5rIeHr2KhKrLZqflt.Uk.T8.7uKOOIEDFWLrmC2WHSxRjozceqo6
 preauthorized:
   emails:
-  - vince@weka.io

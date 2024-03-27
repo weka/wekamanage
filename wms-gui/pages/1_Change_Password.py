@@ -26,7 +26,7 @@ if st.session_state["authentication_status"]:
     col1, col2, col3 = st.columns(3)
     with col1:
         try:
-            if authenticator.reset_password(st.session_state['username'], 'Reset password'):
+            if authenticator.reset_password(st.session_state['username']):
                 st.success('Password modified successfully')
                 log.info(f"User {st.session_state.username} changed their password")
         except Exception as e:
