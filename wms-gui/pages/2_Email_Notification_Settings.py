@@ -66,7 +66,7 @@ if st.session_state["authentication_status"]:
         smtp_port_no = st.number_input("SMTP Relay Port", step=1, min_value=25, max_value=99999, value=smtp_port_no,
                                        help="The port number to use on the SMTP Relay Host, typically 25, 465, 587, or 2525")
 
-        smtp_user_data['smtp_port'] = str(smtp_port_no)
+        smtp_user_data['smtp_port'] = int(smtp_port_no)
 
         smtp_user_data['smtp_tls'] = st.checkbox("Enable TLS",
                                                           value=smtp_user_data['smtp_tls'],

@@ -108,6 +108,9 @@ if st.session_state.authentication_status:
     if "wms_url" in st.session_state:
         # print(st.session_state['wms_url'])
         # figure out the URLs to LWH, WEKAmon, and Snaptool
+        our_ip = st.session_state.wms_url.split(':')[1]  # should be 3; 'http', '//<hostname/ip>' and port #
+        HTTP='http://'
+        HTTPS='https://'
         if "lwh_url" not in st.session_state:
             tempvar1 = st.session_state.wms_url.split(':')  # should be 3; 'http', '//<hostname/ip>' and port #
             st.session_state['lwh_url'] = f"{tempvar1[0]}:{tempvar1[1]}"  # leave off port: should be port 80 by default
