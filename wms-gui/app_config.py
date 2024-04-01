@@ -140,7 +140,19 @@ class AppConfig(object):
 
     def save_smtp(self):
         config_files = self.app_config['config_files']
-        # update the lwh and alertmanager config files?
+        # update the lwh and alertmanager config files
+        """
+            "smtp":{
+            "sender": "Weka Home",
+            "host": "smtp.gmail.com",
+            "port": 587,
+            "user": "username@your-domain.com",
+            "password": "your_password",
+            "senderEmail": "weka-home-noreply@your-domain.com",
+            "insecure": false,
+           }
+        """
+
         lwh_smtp = self.lwh_config['smtp']
         lwh_smtp['senderEmail'] = self.smtp_config['sender_email']
         lwh_smtp['sender'] = self.smtp_config['sender_email_name']

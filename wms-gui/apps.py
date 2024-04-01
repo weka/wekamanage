@@ -76,77 +76,11 @@ class AppBase(object):
         self.start()
 
     def run(self, cmd, *args, capture_output=True, check=True, text=True, timeout=5, **kwargs):
+        result=None
         log.debug(f'AppBase: Running {cmd}: {kwargs}')
         result = run(cmd, *args, capture_output=capture_output, check=check, text=text, timeout=timeout, **kwargs)
         log.debug(result)
         return result
-
-"""
-# deprecated with LWH 3.x
-class MiniKube(AppBase):
-    def __init__(self):
-
-        # Minikube class
-        self.KUBECTL = '/opt/k3s/bin/kubectl'
-        self.MINIKUBE = '/usr/bin/minikube'
-        self.GET_PODS = [self.KUBECTL] + ' get pods --namespace kube-system'.split()
-        config_files = st.session_state.app_config.app_config['config_files']
-        self.MINIKUBE_DIR = config_files['lwh_dir'] + "/minikube_offline"
-        super().__init__()
-
-    def status(self):
-        # see if the kubectl command is installed ($(which kubectl)
-        # get pods to see if we have the kube-system up
-        if not os.path.isfile(self.KUBECTL):
-            return NotInstalled
-
-        log.info("running get pods")
-        result = self.run(self.KUBECTL + ' get pods --namespace kube-system | grep Running', shell=True)
-
-        if len(result.stdout.splitlines()) == 9:  # should we just say >0?
-            log.info("returning minikube Running")
-            return Running
-        else:
-            log.info(f"returning minikube NotRunning.  Lines={len(result.stdout.splitlines())}")
-            return NotRunning
-
-    def install(self):
-        # install the app
-        if self.status() != NotInstalled:
-            raise Exception('minikube is already installed')
-
-        with pushd(self.MINIKUBE_DIR):
-            cmd = self.MINIKUBE_DIR + '/minikube-offline_install.sh'
-            result = self.run(cmd, shell=True, cwd=self.MINIKUBE_DIR, timeout=10*60)
-            # we should log this or something
-            return result
-
-    def start(self):
-        # start the app
-        # minikube is started automatically by docker.
-        # we should never have to start it
-        return True
-        # if we do have to, this is how:
-        # if self.status() == Running:
-        #    raise Exception('minikube is already running')
-        #   minikube start --driver=none --apiserver-port=6443 --extra-config=kubelet.housekeeping-interval=10s --kubernetes-version v1.23.1
-        #   minikube addons enable ingress --images="IngressController=ingress-nginx/controller:v1.1.0,KubeWebhookCertgenCreate=k8s.gcr.io/ingress-nginx/kube-webhook-certgen:v1.1.1,KubeWebhookCertgenPatch=k8s.gcr.io/ingress-nginx/kube-webhook-certgen:v1.1.1"
-        #   minikube addons enable ingress-dns --images="IngressDNS=k8s-minikube/minikube-ingress-dns:0.0.2"
-        #   minikube addons enable metrics-server --images="MetricsServer=metrics-server/metrics-server:v0.4.2"
-        #   minikube addons enable dashboard --images="Dashboard=kubernetesui/dashboard:v2.3.1,MetricsScraper=kubernetesui/metrics-scraper:v1.0.7"
-        #   mkdir -p /opt/local-path-provisioner
-        #   kubectl apply -f /opt/local-weka-home/minikube_offline/local-path-storage.yaml
-
-    def stop(self):
-        # stop the app
-        if self.status() != Running:
-            raise Exception('minikube is not running')
-
-        cmd = [self.MINIKUBE, 'stop']
-        self.run(cmd, timeout=120)
-        return True
-"""
-
 
 class LocalWekaHome(AppBase):
     # Local Weka Home class
@@ -156,8 +90,11 @@ class LocalWekaHome(AppBase):
         self.CONFIG = config_files['lwh_config_file']
         self.HELM = '/opt/wekahome/current/bin/helm'
         self.KUBECTL = '/opt/k3s/bin/kubectl'
-        self.CHECK_UP = [self.KUBECTL, 'wait', '--for=condition=ready', 'pod', '-l', 'app.group=common', '-n',
-                         'home-weka-io', '--timeout=10m']
+        #self.CHECK_UP = [self.KUBECTL, 'wait', '--for=condition=ready', 'pod', '-l', 'app.group=common', '-n',
+        #                 'home-weka-io', '--timeout=10m']
+        # this returns something like 'wekahome.local   True'
+        self.CHECK_UP = [self.KUBECTL, 'get', 'node', '--no-headers=true', '-o', 
+                                'custom-columns=NODE_NAME:.metadata.name,STATUS:.status.conditions[?(@.type=="Ready")].status]']
         self.RM_KUBE_GRAFANA = [self.KUBECTL, 'delete', 'pod', '-n', 'home-weka-io', '-l',
                                 'app.kubernetes.io/name=grafana']
         self.LWH_DIR = config_files['lwh_dir'] + '/current'
@@ -224,8 +161,8 @@ class LocalWekaHome(AppBase):
         cmd = f'/opt/wekahome/current/bin/homecli local setup -c ' + lwh_config_file
         result = self.run(cmd, timeout=10 * 60, shell=True)
         if result.returncode != 0:
-            log.debug(result.stdout)
-            log.debug(result.stderr)
+            log.critical(result.stdout)
+            log.critical(result.stderr)
             raise Exception(f"Errors installing LWH")
         return True
 
@@ -237,10 +174,7 @@ class LocalWekaHome(AppBase):
         except Exception as exc:
             raise Exception(f'Local Weka Home update failed {exc}')
 
-        # remove grafana?
-        #self.run(self.RM_KUBE_GRAFANA, timeout=30)
-
-        self.run(self.CHECK_UP, timeout=3*60)
+        #self.run(self.CHECK_UP, timeout=60)
 
         return True
 

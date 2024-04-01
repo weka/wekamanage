@@ -8,3 +8,8 @@ weka-*.tar
 tarballs/weka-*.tar
 tarballs/*.tgz
 wms-gui/local_wheels/*.whl
+wekamanage-1.2.1.iso.last
+tarballs/wekahome-3.0.1.bundle
+*.dir/
+
+
