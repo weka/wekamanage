@@ -98,7 +98,7 @@ if st.session_state["authentication_status"]:
                 st.session_state['weka_api'] = WekaAPIClient(st.session_state.app_config.clusters_config['hostname-ip'])
             try:
                 tokens = st.session_state.weka_api.login(st.session_state.app_config.clusters_config['user'],
-                                                         st.session_state.app_config.clusters_config['password'])
+                                                         st.session_state.app_config.clusters_config['password'], timeout=10)
             except requests.exceptions.ConnectionError as exc:
                 with col1:
                     st.error(

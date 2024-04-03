@@ -9,6 +9,7 @@ from streamlit_javascript import st_javascript
 from apps import Running, LocalWekaHome, WEKAmon
 from streamlit_common import add_logo, open_in_new_tab, menu_items
 from app_config import AppConfig
+from logging import INFO
 
 if 'authentication_status' not in st.session_state or not st.session_state['authentication_status']:
     sidebar_state = st.session_state["sidebar_state"] = 'collapsed'
@@ -24,6 +25,8 @@ if "log" not in st.session_state:
     st.session_state['log'] = log
 else:
     log = st.session_state.log
+
+log.setLevel(INFO)
 
 if 'wms_gui_dir' not in st.session_state:
     st.session_state['wms_gui_dir'] = os.getcwd()
@@ -85,6 +88,21 @@ if st.session_state.authentication_status:
         st.session_state.sidebar_state = "expanded"
         st.rerun()
 
+    # initialize the lwh app object
+    if 'lwh_app' not in st.session_state:
+        try:
+            st.session_state['lwh_app'] = LocalWekaHome()
+        except Exception as exc:
+            st.error(exc)
+            st.stop()
+    # initialize the wekamon app object
+    if 'wekamon_app' not in st.session_state:
+        try:
+            st.session_state['wekamon_app'] = WEKAmon()
+        except Exception as exc:
+            st.error(exc)
+            st.stop()
+
     try:
         if st.session_state.lwh_app.status() != Running:
             st.session_state['lwh_up'] = False
@@ -94,8 +112,8 @@ if st.session_state.authentication_status:
             st.session_state['wekamon_up'] = False
         else:
             st.session_state['wekamon_up'] = True
-    except:
-        pass  # sometimes on initial load, this pukes with a timeout...
+    except Exception as exc:
+        log.info(f'app status fetch got an exception: {exc}')
 
     # Get the URL used to get to this app
     # second time around - usually works like a charm
@@ -103,7 +121,7 @@ if st.session_state.authentication_status:
         url = st_javascript("await fetch('').then(r => window.parent.location.href)")
         if type(url) is not int:
             st.session_state['wms_url'] = url
-            log.error('second try succeeded')
+            log.error('URL received')
 
     if "wms_url" in st.session_state:
         # print(st.session_state['wms_url'])
@@ -181,20 +199,7 @@ if st.session_state.authentication_status:
                 open_in_new_tab(st.session_state.cluster_url)
 
         with col2:
-            # initialize the lwh app object
-            if 'lwh_app' not in st.session_state:
-                try:
-                    st.session_state['lwh_app'] = LocalWekaHome()
-                except Exception as exc:
-                    st.error(exc)
-                    st.stop()
-            # initialize the wekamon app object
-            if 'wekamon_app' not in st.session_state:
-                try:
-                    st.session_state['wekamon_app'] = WEKAmon()
-                except Exception as exc:
-                    st.error(exc)
-                    st.stop()
+
             st.markdown("## Application Status")
             st.write()
             try:

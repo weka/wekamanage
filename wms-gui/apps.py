@@ -106,7 +106,7 @@ class LocalWekaHome(AppBase):
         self.LWH_TARBALL = tarball_list[0]
         #self.UPDATE = [self.HELM, 'upgrade', 'homewekaio', '--namespace', 'home-weka-io', self.LWH_TARBALL,
         #               '--create-namespace', '-f', self.CONFIG, '--debug']
-        self.UPDATE = ['/opt/wekahome/current/bin/homecli', 'local', 'upgrade']
+        #self.UPDATE = ['/opt/wekahome/current/bin/homecli', 'local', 'upgrade', '-c', 'config.json']
 
         split_filename = self.LWH_TARBALL.split('/')
         filename = split_filename[-1][:-7]  # trim off '.bundle'
@@ -157,25 +157,30 @@ class LocalWekaHome(AppBase):
         # shutil.copyfile(self.CUSTOMER_CONFIG_FILE, self.CONFIG)
         # run the install script
         #cmd = self.LWH_DIR + '/wekahome-install.sh'
+        log.info("Installing LWH")
         lwh_config_file = st.session_state.app_config.app_config['config_files']['lwh_config_file']
-        cmd = f'/opt/wekahome/current/bin/homecli local setup -c ' + lwh_config_file
+        cmd = f'/opt/wekahome/current/bin/homecli local setup -c {lwh_config_file}'
         result = self.run(cmd, timeout=10 * 60, shell=True)
         if result.returncode != 0:
             log.critical(result.stdout)
             log.critical(result.stderr)
             raise Exception(f"Errors installing LWH")
+        log.info("LWH installation succeeded")
         return True
 
-    def start(self):
+    def update(self):
         # start the app
 
+        log.info("updating LWH")
         try:
-            self.run(self.UPDATE, timeout=10*60)
+            lwh_config_file = st.session_state.app_config.app_config['config_files']['lwh_config_file']
+            cmd = f'/opt/wekahome/current/bin/homecli local upgrade -c {lwh_config_file}'
+            self.run(cmd, timeout=10*60, shell=True)
         except Exception as exc:
+            log.critical(f'Local Weka Home update failed {exc}')
             raise Exception(f'Local Weka Home update failed {exc}')
 
-        #self.run(self.CHECK_UP, timeout=60)
-
+        log.info("LWH update succeeded")
         return True
 
     def stop(self):

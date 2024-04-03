@@ -1,6 +1,7 @@
 import requests
 
 http = "http://"
+https = "https://"
 
 
 class WekaAPIClient:
@@ -12,11 +13,11 @@ class WekaAPIClient:
         self.weka_version = None
         self.mcb = False
 
-    def login(self, user, password):
+    def login(self, user, password, timeout=2):
         """ returns auth-tokens """
         url = self.base_url + "/login"
         body = {"username": user, "password": password, "org": "root"}
-        response = requests.post(url, data=body, timeout=0.2)
+        response = requests.post(url, data=body, timeout=timeout)
         if response.status_code != 200:
             raise Exception("Invalid username or password")
         answer = response.json()['data']
