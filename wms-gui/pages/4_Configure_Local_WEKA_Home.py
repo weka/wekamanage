@@ -179,9 +179,9 @@ def config_lwh():
                         st.success("Local Weka Home installed")
             else:
                 with st.spinner('Updating Local Weka Home, please wait (this can take several minutes)'):
-                    if not st.session_state.lwh_app.start():
-                        log.error('Error starting LWH')
-                        st.error('Error starting LWH')
+                    if not st.session_state.lwh_app.update():
+                        log.error('Error updating LWH')
+                        st.error('Error updating LWH')
 
         if st.session_state.lwh_app.status() != NotInstalled:
             if st.button("Get Admin Password"):

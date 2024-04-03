@@ -6,13 +6,13 @@ function update_net_issue {
     echo; echo [$(date)]
     ipwarn=""; gwwarn=""; dhwarn=""; pingresult=1
     rt=$(ip route)
-    gw=$(echo "$rt" | grep -oP "^default via \K[0-9\.]*")
-    dv=$(echo "$rt" | grep -oP "^default .* dev \K\S*")
-    ip=$(echo "$rt" | grep -oP "^default .* src \K\S*")
-    dhcp=$(echo "$rt" | grep -oP "^default .* \Kdhcp")
+    gw=$(echo "$rt" | grep -oP "^default via \K[0-9\.]*" | head -n1)
+    dv=$(echo "$rt" | grep -oP "^default .* dev \K\S*" | head -n1)
+    ip=$(echo "$rt" | grep -oP "^default .* src \K\S*" | head -n1)
+    dhcp=$(echo "$rt" | grep -oP "^default .* \Kdhcp" | head -n1)
     # echo dv:"$dv" ip:"$ip" dhcp:"$dhcp" gw:"$gw" 
     if [ "$ip" == "" ]; then
-       ip=$(ip --brief a | grep -oP "$dv\s*UP\s*\K[0-9\.]+")
+       ip=$(ip --brief a | grep -oP "$dv\s*UP\s*\K[0-9\.]+" | head -n1)
     fi
     if [ "$ip" != "" ]; then
         wmsline=$(echo "WMS (Weka Management Server) home page is http://$ip:8501")

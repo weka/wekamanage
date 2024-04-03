@@ -63,7 +63,7 @@ ${DIR}: docker-ce tarballs/ansible-install.tgz tarballs/tools.tgz tarballs/weka-
 	echo 'module_hotfixes=1' >> $@/media.repo
 	touch $@
 	date > $@/.weka-buildstamp
-	echo ${BRANCH} >> $@/.wms-version
+	echo ${BRANCH} > $@/.wms-version
 
 #trimmed_iso:
 #	mkdir -p source_iso

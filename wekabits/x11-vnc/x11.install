@@ -1,18 +1,37 @@
-dnf -y install epel-release 
+# dnf -y install epel-release 
 dnf -y install epel-release --enablerepo=baseos-full --enablerepo=appstream-full
-yum -y groupinstall "Xfce" "base-x" --enablerepo=baseos-full --enablerepo=appstream-full
+
+# yum -y groupinstall "Xfce" "base-x" --enablerepo=baseos-full --enablerepo=appstream-full 
+
+yum -y groupinstall "Xfce" "base-x" --enablerepo=baseos-full --enablerepo=appstream-full --enablerepo=epel --setopt=epel.module_hotfixes=true --setopt=baseos-full.module_hotfixes=true --setopt=appstream-full.module_hotfixes=true
+
 yum -y install xorg-x11-server-Xvfb --enablerepo=baseos-full --enablerepo=appstream-full
 yum -y install x11vnc --enablerepo=baseos-full --enablerepo=appstream-full
 yum -y install liberation-fonts --enablerepo=baseos-full --enablerepo=appstream-full
 yum -y install vulkan --enablerepo=baseos-full --enablerepo=appstream-full
-wget https://dl.google.com/linux/direct/google-chrome-stable_current_x86_64.rpm
-yum -y install ./google-chrome-stable_current_x86_64.rpm
 yum -y install firefox --enablerepo=baseos-full --enablerepo=appstream-full
 
-firewall-cmd --permanent --add-port 5900/tcp
-firewall-cmd --permanent --add-port 5901/tcp
+# wget https://dl.google.com/linux/direct/google-chrome-stable_current_x86_64.rpm
+# yum -y install ./google-chrome-stable_current_x86_64.rpm
+# this is big and causes issues with firefox.   Removing it doesn't seem to hurt anything (so far)
+yum -y remove xdg-desktop-portal
 
+fw5900=$(firewall-cmd --query-port 5900/tcp)
+fw5901=$(firewall-cmd --query-port 5901/tcp)
+if [[ "$fw5900" == "no" ]]; then
+   firewall-cmd --permanent --add-port 5900/tcp
+   firewall-cmd --reload
+fi
+if [[ "$fw5901" == "no" ]]; then
+   firewall-cmd --permanent --add-port 5901/tcp
+   firewall-cmd --reload
+fi
 
-x11vnc --storepasswd
+echo
+echo "------ Set vnc password: "
+mkdir -p ~/.vnc
+x11vnc --storepasswd WekaService ~/.vnc/passwd
+
+./x11.setupdesktop
 
 
