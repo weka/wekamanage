@@ -139,6 +139,7 @@ class AppConfig(object):
                 yaml.dump(self.app_config, f, default_flow_style=False, sort_keys=False)
 
     def save_smtp(self):
+        import copy
         config_files = self.app_config['config_files']
         # update the lwh and alertmanager config files
         """
@@ -172,7 +173,7 @@ class AppConfig(object):
         alertmanager_smtp['smtp_require_tls'] = not self.smtp_config['smtp_insecure_tls']
         self.update_alertmanager()
 
-        smtp_config = self.smtp_config
+        smtp_config = copy.deepcopy(self.smtp_config)
         smtp_config['smtp_password'] = ''   # don't save the password
         with open(config_files['email_settings_file'], 'w') as file:
             return yaml.dump(smtp_config, file, default_flow_style=False)
