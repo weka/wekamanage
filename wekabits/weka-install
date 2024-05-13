@@ -72,5 +72,12 @@ firewall-cmd --remove-port=14000-15000/tcp
 firewall-cmd --add-port 7860/tcp --add-port 8060/tcp
 firewall-cmd --reload
 
+# install motd (for betas, it's a warning, otherwise a welcome message)
+logger "setting motd"
+VERS=$(cat /.wms-version)
+echo "Version $VERS" >> motd
+echo >> motd
+cp motd /etc/
+
 # stupid bug in LWH means we have to make sure there's an /etc/resolv.conf.  Otherwise it won't install
 touch /etc/resolv.conf
