@@ -1,1 +1,1 @@
-{"host":"0.0.0.0","ip":"0.0.0.0","proxy":{},"tls":{},"smtp":{},"retentionDays":{},"forwarding":{}}
+{"helmOverrides": {"workers.alertsDispatcher.enabled": true},"host":"0.0.0.0","ip":"0.0.0.0","proxy":{},"tls":{},"smtp":{},"retentionDays":{},"forwarding":{}}

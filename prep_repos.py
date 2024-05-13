@@ -8,6 +8,7 @@ import glob
 import os.path
 import shutil
 import subprocess
+import sys
 
 parser = argparse.ArgumentParser(description='Copy an ISO, but not the dnf repos')
 parser.add_argument('input_file', type=str, help='Input file of rpms to copy')
@@ -76,9 +77,10 @@ repo_dirs = find_repo_dirs(args.source_dir)
 print(f'searching {repo_dirs}')
 
 # copy all the rpms to the dest directory
+files_not_found=0
 with open(args.input_file) as f:
     for filename in f:
-        filename = filename.rstrip()
+        filename = filename.rstrip() + '.rpm'
         if len(filename) == 0:
             print('Blank line found, continuing')
             continue
@@ -99,6 +101,7 @@ with open(args.input_file) as f:
         if not found:
             # we've looked in all the repos, and didn't find the package!
             print(f'{filename}: File Not Found')
+            files_not_found += 1
             continue
 
         if args.verbosity > 1:
@@ -113,6 +116,10 @@ with open(args.input_file) as f:
         result = shutil.copyfile(sourcefile, destfile)     # copy it
         if args.verbosity > 0:
             print(f'{destfile}')
+
+if files_not_found > 0:
+    print(f'ERROR: {files_not_found} files were not found')
+    sys.exit(1)
 
 # all the rpms should have been copied to their destinations, so
 # run 'createrepo' on all repos...

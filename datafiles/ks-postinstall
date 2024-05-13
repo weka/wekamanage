@@ -46,6 +46,7 @@ popd
 
 # install ansible install stuff
 cp $REPO/wekabits/install-gui.service $SYSIMAGE/etc/systemd/system
+cp $REPO/.wms-vers* $SYSIMAGE/
 
 # enable docker, cockpit and gui services
 chroot $SYSIMAGE systemctl enable docker.socket
