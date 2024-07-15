@@ -40,7 +40,7 @@ rich>=13.7.0
 rpds-py>=0.16.2
 six>=1.16.0
 smmap>=5.0.1
-streamlit>=1.29.0
+streamlit==1.34.0
 streamlit-authenticator>=0.2.3
 streamlit-javascript>=0.1.5
 streamlit-monaco-yaml>=0.2.0
