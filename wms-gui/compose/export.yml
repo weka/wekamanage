@@ -1,4 +1,4 @@
-image: wekasolutions/export:1.7.1
+image: wekasolutions/export:1.8.0
 volumes:
   - /dev/log:/dev/log
   - /opt/weka-mon/.weka:/weka/.weka
