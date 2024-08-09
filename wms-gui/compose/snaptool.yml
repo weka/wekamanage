@@ -1,4 +1,4 @@
-image: wekasolutions/snaptool:1.5.3
+image: wekasolutions/snaptool:1.6.1
 volumes:
   - /dev/log:/dev/log
   - /etc/hosts:/etc/hosts
